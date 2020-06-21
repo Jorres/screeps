@@ -1,2 +1,8 @@
 # Vim swap files
 *.swp
+
+# Todo plan
+todo.todo
+
+# Typescript sources
+*.ts

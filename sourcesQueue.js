@@ -92,7 +92,7 @@ function parseCreepBody(creep) {
     return ans;
 }
 
-function testIfUploads() {
+function testIfUploadsNoLogin() {
 
 }
 
