@@ -55,9 +55,11 @@ var sourcesQueue = {
         try {
             for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
                 var source = sources_3_1.value;
-                var curCoef = checkIfGoTo(creep, source);
+                var myBorders = determineMyLimits(creep, source);
+                var curCoef = checkIfGoTo(creep, source, myBorders);
                 if (curCoef > bestCoef) {
                     bestSource = source;
+                    bestBorders = myBorders;
                     bestCoef = curCoef;
                 }
             }
@@ -99,10 +101,9 @@ var sourcesQueue = {
         }
     }
 };
-function checkIfGoTo(creep, source) {
+function checkIfGoTo(creep, source, myBorders) {
     var e_5, _a;
-    var myBorders = determineMyLimits(creep, source);
-    var ans = 0;
+    var ans = 1;
     try {
         for (var _b = __values(sourceToNames[source.toString()]), _c = _b.next(); !_c.done; _c = _b.next()) {
             var competitor = _c.value;
@@ -133,7 +134,9 @@ function checkIfGoTo(creep, source) {
         }
         finally { if (e_5) throw e_5.error; }
     }
-    return (1 / ans) * freeTilesNear(source.pos);
+    var result = (1 / ans) * freeTilesNear(source.pos);
+    console.log(result);
+    return result;
 }
 function freeTilesNear(pos) {
     var x = pos.x;
