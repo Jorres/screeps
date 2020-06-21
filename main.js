@@ -8,9 +8,9 @@ module.exports.loop = function () {
     checkGeneratePixel();
     cleanupDeadCreeps();
     try {
-        trySpawn('harvester', 2);
-        trySpawn('upgrader', 5);
-        trySpawn('builder', 2);
+        trySpawn('harvester', 3);
+        trySpawn('upgrader', 3);
+        trySpawn('builder', 3);
     }
     catch (e) {
         console.log(e);
@@ -28,18 +28,16 @@ module.exports.loop = function () {
         }
     }
 };
-module.exports.stuff = function () {
-};
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {
         Game.cpu.generatePixel();
     }
 }
 function cleanupDeadCreeps() {
-    for (var name in Memory.creeps) {
-        if (!Game.creeps[name]) {
-            delete Memory.creeps[name];
-            console.log('Clearing non-existing creep memory:', name);
+    for (var name_1 in Memory.creeps) {
+        if (!Game.creeps[name_1]) {
+            delete Memory.creeps[name_1];
+            console.log('Clearing non-existing creep memory:', name_1);
         }
     }
 }
@@ -50,7 +48,7 @@ function trySpawn(roleName, maxCreepsWithRoleAllowed) {
             return;
         }
         var newName = roleName + Game.time;
-        var spawningError = Game.spawns['Spawn1'].spawnCreep([WORK, WORK, CARRY, MOVE, MOVE], newName, { memory: { role: roleName } });
+        var spawningError = Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE, MOVE], newName, { memory: { role: roleName } });
         if (!spawningError) {
             throw ("yay,  spawning " + roleName);
         }

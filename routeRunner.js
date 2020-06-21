@@ -1,24 +1,48 @@
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var config = require('config');
 var terrain = new Room.Terrain(config.roomName);
 var closestAlternativeIfAllBusy;
 var routeRunner = {
     smartPlot: function (creep, structureType, action) {
+        var e_1, _a;
         var sources = creep.room.find(structureType);
         var i = 0;
         var bestDestination;
-        for (var _i = 0, sources_1 = sources; _i < sources_1.length; _i++) {
-            var source = sources_1[_i];
-            if (findFreeTileNear(source, creep)) {
-                bestDestination = checkIfBetterDestination(creep, neutralPos(bestDestination), source.pos)
-                    ? source : bestDestination;
+        try {
+            for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
+                var source = sources_1_1.value;
+                if (findFreeTileNear(source, creep)) {
+                    bestDestination = checkIfBetterDestination(creep, neutralPos(bestDestination), source.pos)
+                        ? source : bestDestination;
+                }
             }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (sources_1_1 && !sources_1_1.done && (_a = sources_1["return"])) _a.call(sources_1);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         if (bestDestination == undefined) {
             creep.moveTo(closestAlternativeIfAllBusy);
         }
         else if (action == 'harvest') {
             if (creep.harvest(bestDestination) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(bestDestination, { visualizePathStyle: { stroke: '#ffaa00' } });
+                creep.moveTo(bestDestination, {
+                    reusePath: 0,
+                    visualizePathStyle: { stroke: '#ffaa00' }
+                });
             }
         }
         else {
@@ -59,8 +83,8 @@ function findFreeTileNear(source, creep) {
     }
     return false;
 }
-function neutralPos(obj) {
-    return obj == undefined ? undefined : obj.pos;
+function neutralPos(structure) {
+    return structure == undefined ? undefined : structure.pos;
 }
 function checkIfBetterDestination(creep, old, fresh) {
     if (!old) {
