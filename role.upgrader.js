@@ -17,10 +17,7 @@ var roleUpgrader = {
             }
         }
         else {
-            var source = sourcesQueue.selectSourceToRun(creep);
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, { visualizePathStyle: { stroke: '#ffffff' } });
-            }
+            routeRunner.smartPlot(creep, FIND_SOURCES, 'harvest');
         }
     }
 };
