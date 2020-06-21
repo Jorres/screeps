@@ -9,8 +9,8 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var planningNames = {};
-var planningDates = {};
+var sourceToNames = {};
+var nameToDates = {};
 var sourcesQueue = {
     selectSourceToRun: function (creep) {
         var e_1, _a, e_2, _b;
@@ -18,9 +18,9 @@ var sourcesQueue = {
         try {
             for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
                 var source = sources_1_1.value;
-                if (planningNames[source.toString()] === undefined) {
+                if (sourceToNames[source.toString()] === undefined) {
                     console.log("creating new Set for source " + source.toString());
-                    planningNames[source.toString()] = new Set();
+                    sourceToNames[source.toString()] = new Set();
                 }
             }
         }
@@ -36,7 +36,7 @@ var sourcesQueue = {
         try {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
-                if (planningNames[source.toString()].has(creep.name)) {
+                if (sourceToNames[source.toString()].has(creep.name)) {
                     console.log("creep " + creep.name + " already to source " + source.toString());
                     return source;
                 }
@@ -62,8 +62,8 @@ var sourcesQueue = {
         try {
             for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
                 var source = sources_3_1.value;
-                if (planningNames[source.toString()].has(creep.name)) {
-                    planningNames[source.toString()]["delete"](creep.name);
+                if (sourceToNames[source.toString()].has(creep.name)) {
+                    sourceToNames[source.toString()]["delete"](creep.name);
                 }
             }
         }
@@ -81,9 +81,9 @@ function checkIfGoTo(creep, source) {
     var myBorders = determineMyLimits(creep, source);
     var ans = 0;
     try {
-        for (var _b = __values(planningNames[source.toString()]), _c = _b.next(); !_c.done; _c = _b.next()) {
+        for (var _b = __values(sourceToNames[source.toString()]), _c = _b.next(); !_c.done; _c = _b.next()) {
             var competitor = _c.value;
-            var anotherBorders = planningDates[competitor];
+            var anotherBorders = nameToDates[competitor];
             var borders = [myBorders.first, myBorders.second];
             borders.push(anotherBorders.first);
             borders.push(anotherBorders.second);
@@ -91,10 +91,10 @@ function checkIfGoTo(creep, source) {
             var start = false;
             var end = false;
             for (var i = 0; i < 4; i++) {
-                if (borders[i] = myBorders.first) {
+                if (borders[i] == myBorders.first) {
                     start = true;
                 }
-                if (borders[i] = anotherBorders.second) {
+                if (borders[i] == anotherBorders.second) {
                     end = true;
                 }
                 if (start && !end) {
@@ -121,28 +121,12 @@ function determineMyLimits(creep, source) {
     return { first: left + Game.time, second: right + Game.time };
 }
 function parseCreepBody(creep) {
-    var e_5, _a;
-    var ans = {};
-    var bodyparts = creep.body;
-    ans['ALL'] = 0;
-    try {
-        for (var bodyparts_1 = __values(bodyparts), bodyparts_1_1 = bodyparts_1.next(); !bodyparts_1_1.done; bodyparts_1_1 = bodyparts_1.next()) {
-            var bodypart = bodyparts_1_1.value;
-            var bodypartName = bodypart.type.toString();
-            if (ans.hasOwnProperty(bodypartName)) {
-                ans[bodypartName] = 0;
-            }
-            ans[bodypartName]++;
-            ans['ALL']++;
-        }
-    }
-    catch (e_5_1) { e_5 = { error: e_5_1 }; }
-    finally {
-        try {
-            if (bodyparts_1_1 && !bodyparts_1_1.done && (_a = bodyparts_1["return"])) _a.call(bodyparts_1);
-        }
-        finally { if (e_5) throw e_5.error; }
-    }
+    var ans = {
+        'ALL': 4,
+        'WORK': 1,
+        'CARRY': 1,
+        'MOVE': 2
+    };
     console.log('body parts are :');
     console.log(ans);
     return ans;
