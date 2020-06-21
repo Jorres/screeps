@@ -9,8 +9,8 @@ module.exports.loop = function () {
     cleanupDeadCreeps();
     try {
         trySpawn('harvester', 3);
-        trySpawn('upgrader', 3);
-        trySpawn('builder', 3);
+        trySpawn('upgrader', 5);
+        trySpawn('builder', 5);
     }
     catch (e) {
         console.log(e);

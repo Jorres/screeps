@@ -9,6 +9,8 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+var config = require('config');
+var terrain = config.terrain();
 var sourceToNames = {};
 var nameToDates = {};
 var sourcesQueue = {
@@ -49,6 +51,7 @@ var sourcesQueue = {
         }
         var bestCoef = -1;
         var bestSource;
+        var bestBorders = { first: -1, second: -1 };
         try {
             for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
                 var source = sources_3_1.value;
@@ -66,7 +69,15 @@ var sourcesQueue = {
             }
             finally { if (e_3) throw e_3.error; }
         }
-        return bestSource;
+        if (bestBorders.first == -1) {
+            console.log("alarm, bestBorders not set");
+            return sources[0];
+        }
+        else {
+            sourceToNames[bestSource.toString()].add(creep.name);
+            nameToDates[creep.name] = bestBorders;
+            return bestSource;
+        }
     },
     cleanIntentionForSource: function (creep) {
         var e_4, _a;
@@ -122,7 +133,20 @@ function checkIfGoTo(creep, source) {
         }
         finally { if (e_5) throw e_5.error; }
     }
-    return 1 / ans;
+    return (1 / ans) * freeTilesNear(source.pos);
+}
+function freeTilesNear(pos) {
+    var x = pos.x;
+    var y = pos.y;
+    var ans = 0;
+    for (var i = x - 1; i <= x + 1; i++) {
+        for (var j = y - 1; j <= y + 1; j++) {
+            if (terrain.get(i, j) == 0) {
+                ans++;
+            }
+        }
+    }
+    return ans;
 }
 function determineMyLimits(creep, source) {
     var pathToSource = creep.room.findPath(creep.pos, source.pos);

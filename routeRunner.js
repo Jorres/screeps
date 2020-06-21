@@ -10,7 +10,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var config = require('config');
-var terrain = new Room.Terrain(config.roomName);
+var terrain = config.terrain();
 var closestAlternativeIfAllBusy;
 var routeRunner = {
     smartPlot: function (creep, structureType, action) {
@@ -100,7 +100,7 @@ function findNextTo(position) {
     for (var i = x - 1; i <= x + 1; i++) {
         for (var j = y - 1; j <= y + 1; j++) {
             if (terrain.get(i, j) == 0) {
-                return new RoomPosition(i, j, config.roomName);
+                return new RoomPosition(i, j, config.roomName());
             }
         }
     }
