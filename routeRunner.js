@@ -1,89 +1,85 @@
 var config = require('config');
-
-const terrain = new Room.Terrain(config.roomName);
-
+var terrain = new Room.Terrain(config.roomName);
 var closestAlternativeIfAllBusy;
-
 var routeRunner = {
-    smartPlot: function(creep, structureType, action) {
+    smartPlot: function (creep, structureType, action) {
         var sources = creep.room.find(structureType);
-        
-        let i = 0;
-        let bestDestination;
-    
-        for (let source of sources) {
+        var i = 0;
+        var bestDestination;
+        for (var _i = 0, sources_1 = sources; _i < sources_1.length; _i++) {
+            var source = sources_1[_i];
             if (findFreeTileNear(source, creep)) {
                 bestDestination = checkIfBetterDestination(creep, neutralPos(bestDestination), source.pos)
-                ? source : bestDestination;
+                    ? source : bestDestination;
             }
         }
-        
         if (bestDestination == undefined) {
-             creep.moveTo(closestAlternativeIfAllBusy);
-        } else if (action == 'harvest') {
-            if(creep.harvest(bestDestination) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(bestDestination, {visualizePathStyle: {stroke: '#ffaa00'}});
-            }    
-        } else {
+            creep.moveTo(closestAlternativeIfAllBusy);
+        }
+        else if (action == 'harvest') {
+            if (creep.harvest(bestDestination) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(bestDestination, { visualizePathStyle: { stroke: '#ffaa00' } });
+            }
+        }
+        else {
             console.log("Unknown action " + action + " for creep " + creep.name);
         }
-    }    
+    }
 };
-
 function findFreeTileNear(source, creep) {
-    let x = source.pos.x;
-    let y = source.pos.y;
-    
-    let myCreeps = creep.room.find(FIND_MY_CREEPS);
-
-    for (let i = x - 1; i <= x + 1; i++) {
-        for (let j = y - 1; j <= y + 1; j++) {
-            if (terrain.get(i, j) == 0) { // PLAIN
-                if (!myCreeps.some((anotherCreep) => {
-                    let cond = creep.name != anotherCreep.name && anotherCreep.pos.isEqualTo(i, j);
+    var x = source.pos.x;
+    var y = source.pos.y;
+    var myCreeps = creep.room.find(FIND_MY_CREEPS);
+    var _loop_1 = function (i) {
+        var _loop_2 = function (j) {
+            if (terrain.get(i, j) == 0) {
+                if (!myCreeps.some(function (anotherCreep) {
+                    var cond = creep.name != anotherCreep.name && anotherCreep.pos.isEqualTo(i, j);
                     if (cond) {
-                        let curAlternative = findNextTo(anotherCreep.pos);
+                        var curAlternative = findNextTo(anotherCreep.pos);
                         closestAlternativeIfAllBusy = checkIfBetterDestination(creep, closestAlternativeIfAllBusy, curAlternative)
-                        ? curAlternative : closestAlternativeIfAllBusy;
+                            ? curAlternative : closestAlternativeIfAllBusy;
                     }
                     return cond;
                 })) {
-                    return true;
+                    return { value: true };
                 }
             }
+        };
+        for (var j = y - 1; j <= y + 1; j++) {
+            var state_2 = _loop_2(j);
+            if (typeof state_2 === "object")
+                return state_2;
         }
+    };
+    for (var i = x - 1; i <= x + 1; i++) {
+        var state_1 = _loop_1(i);
+        if (typeof state_1 === "object")
+            return state_1.value;
     }
-
     return false;
 }
-
 function neutralPos(obj) {
     return obj == undefined ? undefined : obj.pos;
 }
-
 function checkIfBetterDestination(creep, old, fresh) {
     if (!old) {
         return true;
     }
-    
-    let curdif = Math.abs(creep.pos.x - fresh.x) + Math.abs(creep.pos.y - fresh.y);
-    let bestDif = Math.abs(creep.pos.x - old.x) + Math.abs(creep.pos.y - old.y);
+    var curdif = Math.abs(creep.pos.x - fresh.x) + Math.abs(creep.pos.y - fresh.y);
+    var bestDif = Math.abs(creep.pos.x - old.x) + Math.abs(creep.pos.y - old.y);
     return curdif < bestDif;
 }
-
 function findNextTo(position) {
-    let x = position.x;
-    let y = position.y;
-
-    for (let i = x - 1; i <= x + 1; i++) {
-        for (let j = y - 1; j <= y + 1; j++) {
-            if (terrain.get(i, j) == 0) { // PLAIN
-               return new RoomPosition(i, j, config.roomName);
+    var x = position.x;
+    var y = position.y;
+    for (var i = x - 1; i <= x + 1; i++) {
+        for (var j = y - 1; j <= y + 1; j++) {
+            if (terrain.get(i, j) == 0) {
+                return new RoomPosition(i, j, config.roomName);
             }
         }
     }
-    
     return position;
 }
-
 module.exports = routeRunner;

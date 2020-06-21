@@ -4,5 +4,10 @@
 # Todo plan
 todo.todo
 
-# Typescript sources
-*.ts
+# Typescript config file
+tsconfig.json
+
+usefulInfo.txt
+compile.py
+
+typed-screeps/
