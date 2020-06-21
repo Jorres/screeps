@@ -48,10 +48,44 @@ function trySpawn(roleName, maxCreepsWithRoleAllowed) {
             return;
         }
         var newName = roleName + Game.time;
-        var spawningError = Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE, MOVE], newName, { memory: { role: roleName } });
+        var spawningError = Game.spawns['Spawn1'].spawnCreep(bestUniversalCreep(), newName, { memory: { role: roleName } });
         if (!spawningError) {
             throw ("yay,  spawning " + roleName);
         }
         console.log("Error from spawning is " + spawningError);
     }
+}
+function bestUniversalCreep() {
+    var partToConstant = {
+        'WORK': WORK,
+        'MOVE': MOVE,
+        'CARRY': CARRY,
+        'ATTACK': ATTACK,
+        'HEAL': HEAL,
+        'RANGED_ATTACK': RANGED_ATTACK,
+        'TOUGH': TOUGH,
+        'CLAIM': CLAIM
+    };
+    var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'CARRY'];
+    var mapping = {
+        'WORK': 100,
+        'MOVE': 50,
+        'CARRY': 50,
+        'ATTACK': 80,
+        'HEAL': 250,
+        'RANGED_ATTACK': 150,
+        'TOUGH': 10,
+        'CLAIM': 600
+    };
+    var maxEnergy = firstSpawn.store.getCapacity(RESOURCE_ENERGY);
+    console.log(maxEnergy);
+    var i = 0;
+    var ans = [];
+    while (maxEnergy > 0 && i < order.length) {
+        maxEnergy -= mapping[order[i]];
+        ans.push(partToConstant[order[i]]);
+        i++;
+    }
+    console.log(ans);
+    return ans;
 }
