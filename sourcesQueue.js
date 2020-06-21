@@ -92,5 +92,9 @@ function parseCreepBody(creep) {
     return ans;
 }
 
+function testIfUploads() {
+
+}
+
 module.exports = sourcesQueue;
 
