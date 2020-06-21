@@ -8,6 +8,6 @@ todo.todo
 tsconfig.json
 
 usefulInfo.txt
-compile.py
+*.py
 
 typed-screeps/
