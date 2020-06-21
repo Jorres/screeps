@@ -77,12 +77,16 @@ function bestUniversalCreep() {
         'TOUGH': 10,
         'CLAIM': 600
     };
-    var maxEnergy = firstSpawn.store.getCapacity(RESOURCE_ENERGY);
+    var maxEnergy = firstSpawn.room.energyCapacityAvailable;
     console.log(maxEnergy);
     var i = 0;
     var ans = [];
-    while (maxEnergy > 0 && i < order.length) {
-        maxEnergy -= mapping[order[i]];
+    while (i < order.length) {
+        var cost = mapping[order[i]];
+        if (maxEnergy < cost) {
+            break;
+        }
+        maxEnergy -= cost;
         ans.push(partToConstant[order[i]]);
         i++;
     }
