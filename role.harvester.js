@@ -53,7 +53,7 @@ function trySelectDestination(creep) {
     try {
         for (var targets_1 = __values(targets), targets_1_1 = targets_1.next(); !targets_1_1.done; targets_1_1 = targets_1.next()) {
             var target = targets_1_1.value;
-            if (isPossibleEnergyContainer(target)) {
+            if (isPossibleEnergyContainer(target) && target.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
                 freeForStorage.push(target);
             }
         }
@@ -65,6 +65,6 @@ function trySelectDestination(creep) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    creep.memory.currentActiveDestinationId = freeForStorage[U.random(targets.length)].id;
+    creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
 }
 module.exports = roleHarvester;
