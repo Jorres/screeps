@@ -34,10 +34,15 @@ var sourcesQueue = {
             }
             finally { if (e_1) throw e_1.error; }
         }
+        var existingSource;
         try {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
-                sourceToNames.get(source.toString())["delete"](creep.name);
+                var namesOfSource = sourceToNames.get(source.toString());
+                if (namesOfSource && namesOfSource.has(creep.name)) {
+                    existingSource = source;
+                    break;
+                }
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -71,13 +76,14 @@ var sourcesQueue = {
         }
         if (bestBorders.first == -1) {
             console.log("alarm, bestBorders not set");
-            return sources[0];
+            bestSource = sources[0];
         }
-        else {
+        if (bestSource != existingSource) {
+            this.cleanIntentionForSource(creep);
             sourceToNames.get(bestSource.toString()).add(creep.name);
             nameToDates.set(creep.name, bestBorders);
-            return bestSource;
         }
+        return bestSource;
     },
     cleanIntentionForSource: function (creep) {
         var e_4, _a;
@@ -97,6 +103,7 @@ var sourcesQueue = {
             }
             finally { if (e_4) throw e_4.error; }
         }
+        nameToDates.set(creep.name, { first: -1, second: -1 });
     }
 };
 function checkIfGoTo(creep, source, myBorders) {
