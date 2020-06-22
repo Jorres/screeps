@@ -117,7 +117,7 @@ function checkIfGoTo(creep, source, myBorders) {
             borders.push(anotherBorders.first);
             borders.push(anotherBorders.second);
             borders.sort();
-            borders.forEach(function (b) { return console.log(b - Game.time); });
+            console.log(borders);
             var start = false;
             var end = false;
             for (var i = 0; i < 4; i++) {
