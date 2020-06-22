@@ -135,8 +135,15 @@ function checkIfGoTo(creep, source, myBorders) {
         }
         finally { if (e_5) throw e_5.error; }
     }
-    var result = (1 / ans) * freeTilesNear(source.pos);
+    var distMultiplier = getDistMultiplier(U.manhattanDist(source.pos, creep.pos));
+    var tilesMultiplier = freeTilesNear(source.pos);
+    var crossingMultiplier = 1.0 / ans;
+    var exhaustionMultiplier = source.energy / source.energyCapacity;
+    var result = distMultiplier * tilesMultiplier * crossingMultiplier * exhaustionMultiplier;
     return result;
+}
+function getDistMultiplier(dist) {
+    return 1 - dist / 100.0;
 }
 function freeTilesNear(pos) {
     var x = pos.x;

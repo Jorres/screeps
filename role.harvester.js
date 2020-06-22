@@ -33,9 +33,13 @@ var roleHarvester = {
             U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
         }
         else {
-            trySelectDestination(creep);
+            if (!creep.memory.currentActiveDestinationId) {
+                reselectDestination(creep);
+            }
             if (creep.memory.currentActiveDestinationId) {
-                U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+                if (U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId)) == OK) {
+                    reselectDestination(creep);
+                }
             }
             else {
                 creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
@@ -43,12 +47,8 @@ var roleHarvester = {
         }
     }
 };
-function trySelectDestination(creep) {
+function reselectDestination(creep) {
     var e_1, _a;
-    var curId = creep.memory.currentActiveDestinationId;
-    if (curId && U.getById(curId).store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-        return;
-    }
     var targets = creep.room.find(FIND_STRUCTURES);
     var freeForStorage = [];
     try {

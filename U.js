@@ -4,24 +4,23 @@ var U = {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     },
     moveAndRepair: function (creep, target) {
-        if (creep.repair(target) == ERR_NOT_IN_RANGE) {
-            defaultMove(creep, target);
-        }
+        return this.defaultAction(creep, target, function () { return creep.repair(target); });
     },
     moveAndHarvest: function (creep, target) {
-        if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
-            defaultMove(creep, target);
-        }
+        return this.defaultAction(creep, target, function () { return creep.harvest(target); });
     },
     moveAndTransfer: function (creep, target) {
-        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            defaultMove(creep, target);
-        }
+        return this.defaultAction(creep, target, function () { return creep.transfer(target, RESOURCE_ENERGY); });
     },
     moveAndUpgradeController: function (creep, target) {
-        if (creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
+        return this.defaultAction(creep, target, function () { return creep.upgradeController(target); });
+    },
+    defaultAction: function (creep, target, action) {
+        var error = action();
+        if (error == ERR_NOT_IN_RANGE) {
             defaultMove(creep, target);
         }
+        return error;
     },
     getById: function (id) {
         return Game.getObjectById(id);
