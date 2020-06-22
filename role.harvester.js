@@ -1,5 +1,6 @@
 var config = require('config');
 var sourcesQueue = require('sourcesQueue');
+var U = require('U');
 function extensionTowerSpawn(structure) {
     return (structure.structureType == STRUCTURE_EXTENSION ||
         structure.structureType == STRUCTURE_SPAWN ||
