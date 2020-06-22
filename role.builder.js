@@ -48,13 +48,15 @@ var roleBuilder = {
                     }
                     finally { if (e_1) throw e_1.error; }
                 }
+                var bestTarget = void 0;
+                var bestDifference = -1;
                 try {
                     for (var structures_2 = __values(structures), structures_2_1 = structures_2.next(); !structures_2_1.done; structures_2_1 = structures_2.next()) {
                         var target = structures_2_1.value;
-                        console.log("hits difference: " + (target.hitsMax - target.hits));
-                        if (target.hitsMax - target.hits > 1000) {
-                            U.moveAndRepair(creep, target);
-                            return;
+                        var curDifference = target.hitsMax - target.hits;
+                        if (curDifference > bestDifference) {
+                            bestTarget = target;
+                            bestDifference = curDifference;
                         }
                     }
                 }
@@ -65,7 +67,12 @@ var roleBuilder = {
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
-                creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
+                if (bestDifference != -1) {
+                    U.moveAndRepair(creep, bestTarget);
+                }
+                else {
+                    creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
+                }
             }
         }
         else {
