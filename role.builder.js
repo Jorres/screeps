@@ -31,7 +31,7 @@ var roleBuilder = {
                 return;
             }
             else {
-                var structures = creep.room.find(FIND_MY_STRUCTURES);
+                var structures = creep.room.find(FIND_STRUCTURES);
                 try {
                     for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
                         var target = structures_1_1.value;
