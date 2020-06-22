@@ -11,8 +11,8 @@ var __values = (this && this.__values) || function(o) {
 };
 var config = require('config');
 var terrain = config.terrain();
-var sourceToNames = {};
-var nameToDates = {};
+var sourceToNames = new Map();
+var nameToDates = new Map();
 var sourcesQueue = {
     selectSourceToRun: function (creep) {
         var e_1, _a, e_2, _b, e_3, _c;
@@ -20,9 +20,9 @@ var sourcesQueue = {
         try {
             for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
                 var source = sources_1_1.value;
-                if (sourceToNames[source.toString()] === undefined) {
+                if (sourceToNames.get(source.toString()) === undefined) {
                     console.log("creating new Set for source " + source.toString());
-                    sourceToNames[source.toString()] = new Set();
+                    sourceToNames.set(source.toString(), new Set());
                 }
             }
         }
@@ -36,7 +36,7 @@ var sourcesQueue = {
         try {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
-                if (sourceToNames[source.toString()].has(creep.name)) {
+                if (sourceToNames.get(source.toString()).has(creep.name)) {
                     console.log("creep " + creep.name + " already to source " + source.toString());
                     return source;
                 }
@@ -76,8 +76,8 @@ var sourcesQueue = {
             return sources[0];
         }
         else {
-            sourceToNames[bestSource.toString()].add(creep.name);
-            nameToDates[creep.name] = bestBorders;
+            sourceToNames.get(bestSource.toString()).add(creep.name);
+            nameToDates.set(creep.name, bestBorders);
             return bestSource;
         }
     },
@@ -87,9 +87,7 @@ var sourcesQueue = {
         try {
             for (var sources_4 = __values(sources), sources_4_1 = sources_4.next(); !sources_4_1.done; sources_4_1 = sources_4.next()) {
                 var source = sources_4_1.value;
-                if (sourceToNames[source.toString()].has(creep.name)) {
-                    sourceToNames[source.toString()]["delete"](creep.name);
-                }
+                sourceToNames.get(source.toString())["delete"](creep.name);
             }
         }
         catch (e_4_1) { e_4 = { error: e_4_1 }; }
@@ -105,9 +103,9 @@ function checkIfGoTo(creep, source, myBorders) {
     var e_5, _a;
     var ans = 1;
     try {
-        for (var _b = __values(sourceToNames[source.toString()]), _c = _b.next(); !_c.done; _c = _b.next()) {
+        for (var _b = __values(sourceToNames.get(source.toString())), _c = _b.next(); !_c.done; _c = _b.next()) {
             var competitor = _c.value;
-            var anotherBorders = nameToDates[competitor];
+            var anotherBorders = nameToDates.get(competitor);
             var borders = [myBorders.first, myBorders.second];
             borders.push(anotherBorders.first);
             borders.push(anotherBorders.second);
@@ -154,18 +152,18 @@ function freeTilesNear(pos) {
 function determineMyLimits(creep, source) {
     var pathToSource = creep.room.findPath(creep.pos, source.pos);
     var creepBody = parseCreepBody(creep);
-    var step = creepBody['ALL'] / creepBody['WORK'];
+    var step = creepBody.get('ALL') / creepBody.get('WORK');
     var left = Math.floor(pathToSource.length * step);
-    var right = Math.floor(left + (creepBody['CARRY'] * 50 / creepBody['WORK']));
+    var right = Math.floor(left + (creepBody.get('CARRY') * 50 / creepBody.get('WORK')));
     return { first: left + Game.time, second: right + Game.time };
 }
 function parseCreepBody(creep) {
-    var ans = {
-        'ALL': 4,
-        'WORK': 1,
-        'CARRY': 1,
-        'MOVE': 2
-    };
+    var ans = new Map([
+        ['ALL', 4],
+        ['WORK', 1],
+        ['CARRY', 1],
+        ['MOVE', 2]
+    ]);
     return ans;
 }
 module.exports = sourcesQueue;

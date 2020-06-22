@@ -88,37 +88,37 @@ function trySpawn(roleName, maxCreepsWithRoleAllowed) {
     }
 }
 function bestUniversalCreep() {
-    var partToConstant = {
-        'WORK': WORK,
-        'MOVE': MOVE,
-        'CARRY': CARRY,
-        'ATTACK': ATTACK,
-        'HEAL': HEAL,
-        'RANGED_ATTACK': RANGED_ATTACK,
-        'TOUGH': TOUGH,
-        'CLAIM': CLAIM
-    };
+    var partToConstant = new Map([
+        ['WORK', WORK],
+        ['MOVE', MOVE],
+        ['CARRY', CARRY],
+        ['ATTACK', ATTACK],
+        ['HEAL', HEAL],
+        ['RANGED_ATTACK', RANGED_ATTACK],
+        ['TOUGH', TOUGH],
+        ['CLAIM', CLAIM]
+    ]);
     var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'MOVE', 'CARRY'];
-    var mapping = {
-        'WORK': 100,
-        'MOVE': 50,
-        'CARRY': 50,
-        'ATTACK': 80,
-        'HEAL': 250,
-        'RANGED_ATTACK': 150,
-        'TOUGH': 10,
-        'CLAIM': 600
-    };
+    var mapping = new Map([
+        ['WORK', 100],
+        ['MOVE', 50],
+        ['CARRY', 50],
+        ['ATTACK', 80],
+        ['HEAL', 250],
+        ['RANGED_ATTACK', 150],
+        ['TOUGH', 10],
+        ['CLAIM', 600]
+    ]);
     var maxEnergy = firstSpawn.room.energyCapacityAvailable;
     var i = 0;
     var ans = [];
     while (i < order.length) {
-        var cost = mapping[order[i]];
+        var cost = mapping.get(order[i]);
         if (maxEnergy < cost) {
             break;
         }
         maxEnergy -= cost;
-        ans.push(partToConstant[order[i]]);
+        ans.push(partToConstant.get(order[i]));
         i++;
     }
     return ans;
