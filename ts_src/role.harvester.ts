@@ -1,4 +1,6 @@
 // @ts-ignore
+var config  = require('config');
+// @ts-ignore
 var routePlanner = require('routeRunner');
 
 function extensionTowerSpawn(structure: Structure): structure is StructureExtension | StructureTower | StructureSpawn {
@@ -9,7 +11,7 @@ function extensionTowerSpawn(structure: Structure): structure is StructureExtens
 
 var roleHarvester = {
     run: function(creep: Creep) {
-        if(creep.store.getFreeCapacity() > 0) {
+        if(creep.store.getUsedCapacity() < 50) {
             routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
         } else {
             var targets = creep.room.find(FIND_STRUCTURES, {
@@ -23,7 +25,7 @@ var roleHarvester = {
 
             if(targets.length > 0) {
                 if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {reusePath: 0, visualizePathStyle: {stroke: '#ffffff'}});
+                    creep.moveTo(targets[0], {reusePath: config.reusePath(), visualizePathStyle: {stroke: '#ffffff'}});
                 }
             } else {
                 creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});

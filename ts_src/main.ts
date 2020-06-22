@@ -4,10 +4,16 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 // @ts-ignore
 var roleBuilder = require('role.builder');
+// @ts-ignore
+var towerBehaviour = require('behaviour.tower');
 
 var MAX_BUCKET_SIZE: number = 10000;
 
 var firstSpawn = Game.spawns['Spawn1'];
+
+function isTower(structure: Structure): structure is Structure {
+    return structure.structureType == STRUCTURE_TOWER;
+}
 
 // @ts-ignore
 module.exports.loop = function () {
@@ -16,23 +22,14 @@ module.exports.loop = function () {
     cleanupDeadCreeps();
 
     try {
-        trySpawn('harvester', 5);
-        trySpawn('upgrader', 7);
-        trySpawn('builder', 3);
+        trySpawn('harvester', 4);
+        trySpawn('upgrader', 5);
+        trySpawn('builder', 4);
     } catch (e) {
         console.log(e);
     }
 
-    /*if (firstSpawn.spawning) {
-        var spawningCreep = Game.creeps[firstSpawn.spawning.name];
-        firstSpawn.room.visual.text(
-            spawningCreep.memory.role,
-            firstSpawn.pos.x + 1,
-            firstSpawn.pos.y,
-            {align: 'left', opacity: 0.8});
-    }*/
-
-    for(var name in Game.creeps) {
+    for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
@@ -44,22 +41,27 @@ module.exports.loop = function () {
             roleBuilder.run(creep);
         }
     }
+
+    for (let tower in Room.find(FIND_STRUCTURES), {
+        filter: (structure: Structure) => isTower(structure)) {
+        towerBehaviour.run(tower);
+    }
 }
 
-    /*var tower = Game.getObjectById('TOWER_ID');
-    if(tower) {
-        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => structure.hits < structure.hitsMax
-        });
-        if(closestDamagedStructure) {
-            tower.repair(closestDamagedStructure);
-        }
+/*var tower = Game.getObjectById('TOWER_ID');
+if(tower) {
+    var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (structure) => structure.hits < structure.hitsMax
+    });
+    if(closestDamagedStructure) {
+        tower.repair(closestDamagedStructure);
+    }
 
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile) {
-            tower.attack(closestHostile);
-        }
-    }*/
+    var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+    if(closestHostile) {
+        tower.attack(closestHostile);
+    }
+}*/
 
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {

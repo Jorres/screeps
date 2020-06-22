@@ -6,6 +6,9 @@ var U = {
         if(creep.repair(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
+    },
+    getById(id: string): any {
+        return Game.getObjectById(id);
     }
 };
 

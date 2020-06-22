@@ -4,6 +4,9 @@ var config = {
     },
     terrain: function(): RoomTerrain {
         return terrainData;
+    },
+    reusePath: function(): number {
+        return 1; // re-plot every second route
     }
 };
 

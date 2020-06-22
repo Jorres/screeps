@@ -35,14 +35,21 @@ var roleBuilder = {
                 }
 
                 // then damaged hard
+                let bestTarget;
+                let bestDifference = -1;
                 for (let target of structures) {
-                    console.log("hits difference: " + (target.hitsMax - target.hits));
-                    if (target.hitsMax - target.hits > 1000) {
-                        U.moveAndRepair(creep, target);
-                        return;
+                    let curDifference = target.hitsMax - target.hits;
+                    if (curDifference > bestDifference) {
+                        bestTarget = target.id;
+                        bestDifference = curDifference;
                     }
                 }
-                creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
+
+                if (bestDifference != -1) {
+                    U.moveAndRepair(creep, U.getById(bestTarget));
+                } else {
+                    creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
+                }
             }
         } else {
             routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
