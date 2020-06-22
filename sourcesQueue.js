@@ -118,17 +118,23 @@ function checkIfGoTo(creep, source, myBorders) {
             borders.push(anotherBorders.second);
             borders.sort();
             console.log(borders);
-            var start = false;
-            var end = false;
+            var startL = false, startR = false;
+            var endL = false, endR = false;
             for (var i = 0; i < 4; i++) {
                 if (borders[i] == myBorders.first) {
-                    start = true;
+                    startL = true;
+                }
+                if (borders[i] == anotherBorders.first) {
+                    startR = true;
+                }
+                if (startL && startR && !endL && !endR) {
+                    ans += borders[i] - borders[i - 1];
+                }
+                if (borders[i] == myBorders.second) {
+                    endL = true;
                 }
                 if (borders[i] == anotherBorders.second) {
-                    end = true;
-                }
-                if (start && !end) {
-                    ans += borders[i] - borders[i - 1];
+                    endR = true;
                 }
             }
         }
@@ -179,7 +185,6 @@ function determineMyLimits(creep, source) {
     var creepBody = parseCreepBody(creep);
     var left = Math.floor(pathToSource.length * getMovingSpeed(creepBody.get('ALL'), creepBody.get(MOVE.toString())));
     var right = Math.floor(left + (creepBody.get(CARRY.toString()) * 50 / creepBody.get(WORK.toString())));
-    console.log(left + " " + right);
     return { first: left + Game.time, second: right + Game.time };
 }
 function parseCreepBody(creep) {
