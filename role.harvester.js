@@ -49,7 +49,7 @@ var roleHarvester = {
 function trySelectDestination(creep) {
     var e_1, _a;
     var targets = creep.room.find(FIND_STRUCTURES);
-    var freeForStorage;
+    var freeForStorage = [];
     try {
         for (var targets_1 = __values(targets), targets_1_1 = targets_1.next(); !targets_1_1.done; targets_1_1 = targets_1.next()) {
             var target = targets_1_1.value;
