@@ -1,10 +1,11 @@
+
+// @ts-ignore
 var sourcesQueue = require('sourcesQueue');
+// @ts-ignore
 var routeRunner = require('routeRunner');
 
 var roleUpgrader = {
-
-    /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep: Creep) {
 
         if (creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.upgrading = false;
@@ -19,18 +20,19 @@ var roleUpgrader = {
 
         if(creep.memory.upgrading) {
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
+                creep.moveTo(creep.room.controller, {reusePath: 0, visualizePathStyle: {stroke: '#ffffff'}});
             }
         } else {
-            routeRunner.smartPlot(creep, FIND_SOURCES, 'harvest');
-            // let source  = sourcesQueue.selectSourceToRun(creep);
-            // if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            //    creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
-            //}
+            // routeRunner.smartPlot(creep, FIND_SOURCES, 'harvest');
+            let source  = sourcesQueue.selectSourceToRun(creep);
+            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
+               creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
+            }
         }
     }
 };
 
 
+// @ts-ignore
 module.exports = roleUpgrader;
 
