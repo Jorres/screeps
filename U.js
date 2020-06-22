@@ -18,6 +18,11 @@ var U = {
             defaultMove(creep, target);
         }
     },
+    moveAndUpgradeController: function (creep, target) {
+        if (creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
+            defaultMove(creep, target);
+        }
+    },
     getById: function (id) {
         return Game.getObjectById(id);
     },

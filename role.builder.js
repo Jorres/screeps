@@ -10,7 +10,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
-var routePlanner = require('routeRunner');
+var sourcesQueue = require('sourcesQueue');
 var roleBuilder = {
     run: function (creep) {
         var e_1, _a, e_2, _b;
@@ -77,7 +77,7 @@ var roleBuilder = {
             }
         }
         else {
-            routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
+            U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
         }
     }
 };
