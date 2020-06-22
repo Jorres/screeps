@@ -140,7 +140,8 @@ function checkIfGoTo(creep, source, myBorders) {
         finally { if (e_5) throw e_5.error; }
     }
     var distMultiplier = getDistMultiplier(U.manhattanDist(source.pos, creep.pos));
-    var tilesMultiplier = freeTilesNear(source.pos);
+    var x = freeTilesNear(source.pos);
+    var tilesMultiplier = 1.0 + Math.pow(2, -(x - 4) * (x - 4) / 4);
     var crossingMultiplier = 1.0 / ans;
     var exhaustionMultiplier = Math.sqrt(Math.sqrt(source.energy / source.energyCapacity));
     var result = distMultiplier * tilesMultiplier * crossingMultiplier * exhaustionMultiplier;
