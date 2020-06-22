@@ -1,5 +1,5 @@
 var sourcesQueue = require('sourcesQueue');
-var routeRunner = require('routeRunner');
+var U = require('U');
 var config = require('config');
 var roleUpgrader = {
     run: function (creep) {
