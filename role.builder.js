@@ -20,6 +20,7 @@ var roleBuilder = {
         }
         if (!creep.memory.building && creep.store.getFreeCapacity() == 0) {
             creep.memory.building = true;
+            sourcesQueue.cleanIntentionForSource(creep);
             creep.say('build');
         }
         if (creep.memory.building) {

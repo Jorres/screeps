@@ -20,6 +20,9 @@ var U = {
     },
     getById: function (id) {
         return Game.getObjectById(id);
+    },
+    random: function (upTo) {
+        return Math.floor(Math.random() * Math.floor(upTo));
     }
 };
 function defaultMove(creep, target) {
