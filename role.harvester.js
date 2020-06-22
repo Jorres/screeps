@@ -27,18 +27,18 @@ var roleHarvester = {
         }
         if (!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.harvesting = true;
-            creep.memory.currentActiveDestination = null;
+            creep.memory.currentActiveDestinationId = null;
             creep.say('harvest');
         }
         if (creep.memory.harvesting) {
             U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
         }
         else {
-            if (!creep.memory.currentActiveDestination) {
+            if (!creep.memory.currentActiveDestinationId) {
                 trySelectDestination(creep);
             }
-            if (creep.memory.currentActiveDestination) {
-                U.moveAndTransfer(creep, creep.memory.currentActiveDestination);
+            if (creep.memory.currentActiveDestinationId) {
+                U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
             }
             else {
                 creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
@@ -65,6 +65,6 @@ function trySelectDestination(creep) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    creep.memory.currentActiveDestination = freeForStorage[U.random(targets.length)];
+    creep.memory.currentActiveDestinationId = freeForStorage[U.random(targets.length)].id;
 }
 module.exports = roleHarvester;
