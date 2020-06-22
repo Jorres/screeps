@@ -1,5 +1,5 @@
 var config = require('config');
-var routePlanner = require('routeRunner');
+var sourcesQueue = require('sourcesQueue');
 function extensionTowerSpawn(structure) {
     return (structure.structureType == STRUCTURE_EXTENSION ||
         structure.structureType == STRUCTURE_SPAWN ||
@@ -7,16 +7,16 @@ function extensionTowerSpawn(structure) {
 }
 var roleHarvester = {
     run: function (creep) {
-        if (creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
+        if (creep.memory.harvesting && creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
             creep.memory.harvesting = false;
             creep.say('transfer');
         }
-        if (!creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
+        if (!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.harvesting = true;
             creep.say('harvest');
         }
         if (creep.memory.harvesting) {
-            routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
+            U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
         }
         else {
             var targets = creep.room.find(FIND_STRUCTURES, {
@@ -28,9 +28,7 @@ var roleHarvester = {
                 }
             });
             if (targets.length > 0) {
-                if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], { reusePath: config.reusePath(), visualizePathStyle: { stroke: '#ffffff' } });
-                }
+                U.moveAndTransfer(creep, targets[0]);
             }
             else {
                 creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
