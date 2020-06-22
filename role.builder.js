@@ -32,7 +32,6 @@ var roleBuilder = {
             }
             else {
                 var structures = creep.room.find(FIND_MY_STRUCTURES);
-                console.log("trying to find structures");
                 try {
                     for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
                         var target = structures_1_1.value;
@@ -52,9 +51,10 @@ var roleBuilder = {
                 try {
                     for (var structures_2 = __values(structures), structures_2_1 = structures_2.next(); !structures_2_1.done; structures_2_1 = structures_2.next()) {
                         var target = structures_2_1.value;
-                        console.log(target.hitsMax - target.hits);
+                        console.log("hits difference: " + (target.hitsMax - target.hits));
                         if (target.hitsMax - target.hits > 100) {
                             U.moveAndRepair(creep, target);
+                            return;
                         }
                     }
                 }
@@ -65,6 +65,7 @@ var roleBuilder = {
                     }
                     finally { if (e_2) throw e_2.error; }
                 }
+                creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
             }
         }
         else {
