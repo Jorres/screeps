@@ -88,8 +88,9 @@ var sourcesQueue = {
         try {
             for (var sources_4 = __values(sources), sources_4_1 = sources_4.next(); !sources_4_1.done; sources_4_1 = sources_4.next()) {
                 var source = sources_4_1.value;
-                console.log("deleting from " + source.toString() + " creep " + creep.name);
-                sourceToNames.get(source.toString())["delete"](creep.name);
+                if (sourceToNames.get(source.toString())["delete"](creep.name)) {
+                    console.log("deleting from " + source.toString() + " creep " + creep.name);
+                }
             }
         }
         catch (e_4_1) { e_4 = { error: e_4_1 }; }
