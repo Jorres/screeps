@@ -55,7 +55,7 @@ var roleBuilder = {
                         var target = structures_2_1.value;
                         var curDifference = target.hitsMax - target.hits;
                         if (curDifference > bestDifference) {
-                            bestTarget = target;
+                            bestTarget = target.id;
                             bestDifference = curDifference;
                         }
                     }
@@ -68,7 +68,7 @@ var roleBuilder = {
                     finally { if (e_2) throw e_2.error; }
                 }
                 if (bestDifference != -1) {
-                    U.moveAndRepair(creep, bestTarget);
+                    U.moveAndRepair(creep, U.getById(bestTarget));
                 }
                 else {
                     creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
