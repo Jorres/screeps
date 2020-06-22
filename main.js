@@ -98,7 +98,7 @@ function bestUniversalCreep() {
         'TOUGH': TOUGH,
         'CLAIM': CLAIM
     };
-    var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'MOVE', 'CARRY', 'MOVE'];
+    var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'MOVE', 'CARRY'];
     var mapping = {
         'WORK': 100,
         'MOVE': 50,
@@ -110,7 +110,6 @@ function bestUniversalCreep() {
         'CLAIM': 600
     };
     var maxEnergy = firstSpawn.room.energyCapacityAvailable;
-    console.log(maxEnergy);
     var i = 0;
     var ans = [];
     while (i < order.length) {
@@ -122,6 +121,5 @@ function bestUniversalCreep() {
         ans.push(partToConstant[order[i]]);
         i++;
     }
-    console.log(ans);
     return ans;
 }
