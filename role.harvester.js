@@ -27,16 +27,13 @@ var roleHarvester = {
         }
         if (!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.harvesting = true;
-            creep.memory.currentActiveDestinationId = null;
             creep.say('harvest');
         }
         if (creep.memory.harvesting) {
             U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
         }
         else {
-            if (!creep.memory.currentActiveDestinationId) {
-                trySelectDestination(creep);
-            }
+            trySelectDestination(creep);
             if (creep.memory.currentActiveDestinationId) {
                 U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
             }
@@ -48,6 +45,10 @@ var roleHarvester = {
 };
 function trySelectDestination(creep) {
     var e_1, _a;
+    var curId = creep.memory.currentActiveDestinationId;
+    if (curId && U.getById(curId).store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+        return;
+    }
     var targets = creep.room.find(FIND_STRUCTURES);
     var freeForStorage = [];
     try {
