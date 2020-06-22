@@ -147,7 +147,7 @@ function checkIfGoTo(creep, source, myBorders) {
     var result = distMultiplier * tilesMultiplier * crossingMultiplier * exhaustionMultiplier;
     console.log("source: " + source);
     console.log("dist: " + distMultiplier);
-    console.log("tiles: " + tilesMultiplier);
+    console.log("tiles: " + tilesMultiplier + " " + x);
     console.log("crossing: " + crossingMultiplier);
     console.log("exhaustion: " + exhaustionMultiplier);
     return result;
