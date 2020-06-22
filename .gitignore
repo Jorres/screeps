@@ -1,5 +1,5 @@
 # Vim swap files
-*.swp
+*.sw*
 
 # Todo plan
 todo.todo
@@ -8,6 +8,5 @@ todo.todo
 tsconfig.json
 
 usefulInfo.txt
-*.py
 
 typed-screeps/

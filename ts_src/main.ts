@@ -1,20 +1,24 @@
+// @ts-ignore
 var roleHarvester = require('role.harvester');
+// @ts-ignore
 var roleUpgrader = require('role.upgrader');
+// @ts-ignore
 var roleBuilder = require('role.builder');
 
-var MAX_BUCKET_SIZE = 10000;
+var MAX_BUCKET_SIZE: number = 10000;
 
 var firstSpawn = Game.spawns['Spawn1'];
 
+// @ts-ignore
 module.exports.loop = function () {
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
 
     try {
-        trySpawn('harvester', 2);
-        trySpawn('upgrader', 5);
-        trySpawn('builder', 2);
+        trySpawn('harvester', 5);
+        trySpawn('upgrader', 7);
+        trySpawn('builder', 3);
     } catch (e) {
         console.log(e);
     }
@@ -42,7 +46,6 @@ module.exports.loop = function () {
     }
 }
 
-module.exports.stuff = function () {
     /*var tower = Game.getObjectById('TOWER_ID');
     if(tower) {
         var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -57,16 +60,16 @@ module.exports.stuff = function () {
             tower.attack(closestHostile);
         }
     }*/
-}
 
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {
+        // @ts-ignore
         Game.cpu.generatePixel();
     }
 }
 
 function cleanupDeadCreeps() {
-    for(var name in Memory.creeps) {
+    for(let name in Memory.creeps) {
         if(!Game.creeps[name]) {
             delete Memory.creeps[name];
             console.log('Clearing non-existing creep memory:', name);
@@ -74,15 +77,16 @@ function cleanupDeadCreeps() {
     }
 }
 
-function trySpawn(roleName, maxCreepsWithRoleAllowed) {
-    var roleSpecificCreeps = _.filter(Game.creeps, (creep) => creep.memory.role == roleName);
+function trySpawn(roleName: CreepRoles, maxCreepsWithRoleAllowed: number) {
+    // @ts-ignore
+    var roleSpecificCreeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.role == roleName);
     if (roleSpecificCreeps.length < maxCreepsWithRoleAllowed) {
         if (Game.spawns['Spawn1'].spawning) {
             return;
         }
 
         let newName = roleName + Game.time;
-        let spawningError = Game.spawns['Spawn1'].spawnCreep([WORK, WORK, CARRY, MOVE, MOVE], newName,
+        let spawningError = Game.spawns['Spawn1'].spawnCreep(bestUniversalCreep(), newName,
             {memory: {role: roleName}} );
         if (!spawningError) {
             throw ("yay,  spawning " + roleName);
@@ -92,3 +96,42 @@ function trySpawn(roleName, maxCreepsWithRoleAllowed) {
     }
 }
 
+function bestUniversalCreep(): BodyPartConstant[] {
+    let partToConstant: StringHashMap<BodyPartConstant> = {
+        'WORK': WORK,
+        'MOVE': MOVE,
+        'CARRY': CARRY,
+        'ATTACK': ATTACK,
+        'HEAL': HEAL,
+        'RANGED_ATTACK': RANGED_ATTACK,
+        'TOUGH': TOUGH,
+        'CLAIM': CLAIM
+    };
+
+    let order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'MOVE', 'CARRY', 'MOVE'];
+    let mapping: StringHashMap<number>  = {
+        'WORK': 100,
+        'MOVE': 50,
+        'CARRY': 50,
+        'ATTACK': 80,
+        'HEAL': 250,
+        'RANGED_ATTACK': 150,
+        'TOUGH': 10,
+        'CLAIM': 600
+    };
+    let maxEnergy: number = firstSpawn.room.energyCapacityAvailable;
+    console.log(maxEnergy);
+    let i = 0;
+    let ans: BodyPartConstant[] = [];
+    while (i < order.length) {
+        let cost: number = mapping[order[i]];
+        if (maxEnergy < cost) {
+            break;
+        }
+        maxEnergy -= cost;
+        ans.push(partToConstant[order[i]]);
+        i++;
+    }
+    console.log(ans);
+    return ans;
+}

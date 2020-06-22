@@ -1,24 +1,29 @@
+// @ts-ignore
 var routePlanner = require('routeRunner');
 
-var roleHarvester = {
+function extensionTowerSpawn(structure: Structure): structure is StructureExtension | StructureTower | StructureSpawn {
+    return (structure.structureType == STRUCTURE_EXTENSION ||
+            structure.structureType == STRUCTURE_SPAWN ||
+            structure.structureType == STRUCTURE_TOWER);
+}
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
+var roleHarvester = {
+    run: function(creep: Creep) {
         if(creep.store.getFreeCapacity() > 0) {
             routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
         } else {
             var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_EXTENSION ||
-                        structure.structureType == STRUCTURE_SPAWN ||
-                        structure.structureType == STRUCTURE_TOWER) &&
-                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                filter: (structure: Structure) => {
+                    if (extensionTowerSpawn(structure)) {
+                        return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                    }
+                    return false;
                 }
             });
-            
+
             if(targets.length > 0) {
                 if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                    creep.moveTo(targets[0], {reusePath: 0, visualizePathStyle: {stroke: '#ffffff'}});
                 }
             } else {
                 creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
@@ -27,4 +32,5 @@ var roleHarvester = {
     }
 };
 
+// @ts-ignore
 module.exports = roleHarvester;
