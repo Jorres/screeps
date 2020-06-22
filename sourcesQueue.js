@@ -37,9 +37,7 @@ var sourcesQueue = {
         try {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
-                if (sourceToNames.get(source.toString()).has(creep.name)) {
-                    return source;
-                }
+                sourceToNames.get(source.toString())["delete"](creep.name);
             }
         }
         catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -52,11 +50,9 @@ var sourcesQueue = {
         var bestCoef = -1;
         var bestSource;
         var bestBorders = { first: -1, second: -1 };
-        console.log("starting to iterate over sources:");
         try {
             for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
                 var source = sources_3_1.value;
-                console.log(source);
                 var myBorders = determineMyLimits(creep, source);
                 var curCoef = checkIfGoTo(creep, source, myBorders);
                 if (curCoef > bestCoef) {
