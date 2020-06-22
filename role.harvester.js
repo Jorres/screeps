@@ -27,6 +27,7 @@ var roleHarvester = {
         }
         if (!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.harvesting = true;
+            creep.memory.currentActiveDestination = null;
             creep.say('harvest');
         }
         if (creep.memory.harvesting) {
@@ -38,7 +39,6 @@ var roleHarvester = {
             }
             if (creep.memory.currentActiveDestination) {
                 U.moveAndTransfer(creep, creep.memory.currentActiveDestination);
-                creep.memory.currentActiveDestination = null;
             }
             else {
                 creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
