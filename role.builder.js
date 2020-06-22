@@ -30,37 +30,40 @@ var roleBuilder = {
                 }
                 return;
             }
-            var structures = creep.room.find(FIND_MY_STRUCTURES);
-            try {
-                for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
-                    var target = structures_1_1.value;
-                    if (U.manhattanDist(target.pos, creep.pos) < 5 && (target.hitsMax - target.hits > 20)) {
-                        U.moveAndRepair(creep, target);
-                        return;
+            else {
+                var structures = creep.room.find(FIND_MY_STRUCTURES);
+                console.log("trying to find structures");
+                try {
+                    for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
+                        var target = structures_1_1.value;
+                        if (U.manhattanDist(target.pos, creep.pos) < 5 && (target.hitsMax - target.hits > 20)) {
+                            U.moveAndRepair(creep, target);
+                            return;
+                        }
                     }
                 }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
                 }
-                finally { if (e_1) throw e_1.error; }
-            }
-            try {
-                for (var structures_2 = __values(structures), structures_2_1 = structures_2.next(); !structures_2_1.done; structures_2_1 = structures_2.next()) {
-                    var target = structures_2_1.value;
-                    if (target.hitsMax - target.hits > 100) {
-                        U.moveAndRepair(creep, target);
+                try {
+                    for (var structures_2 = __values(structures), structures_2_1 = structures_2.next(); !structures_2_1.done; structures_2_1 = structures_2.next()) {
+                        var target = structures_2_1.value;
+                        if (target.hitsMax - target.hits > 100) {
+                            U.moveAndRepair(creep, target);
+                        }
                     }
                 }
-            }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
-            finally {
-                try {
-                    if (structures_2_1 && !structures_2_1.done && (_b = structures_2["return"])) _b.call(structures_2);
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (structures_2_1 && !structures_2_1.done && (_b = structures_2["return"])) _b.call(structures_2);
+                    }
+                    finally { if (e_2) throw e_2.error; }
                 }
-                finally { if (e_2) throw e_2.error; }
             }
         }
         else {

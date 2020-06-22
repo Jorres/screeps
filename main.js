@@ -66,7 +66,7 @@ function bestUniversalCreep() {
         'TOUGH': TOUGH,
         'CLAIM': CLAIM
     };
-    var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'CARRY'];
+    var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'MOVE', 'CARRY', 'WORK', 'MOVE'];
     var mapping = {
         'WORK': 100,
         'MOVE': 50,
