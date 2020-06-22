@@ -7,7 +7,15 @@ function extensionTowerSpawn(structure) {
 }
 var roleHarvester = {
     run: function (creep) {
-        if (creep.store.getUsedCapacity() < 50) {
+        if (creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.harvesting = false;
+            creep.say('transfer');
+        }
+        if (!creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
+            creep.memory.harvesting = true;
+            creep.say('harvest');
+        }
+        if (creep.memory.harvesting) {
             routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
         }
         else {
