@@ -1,6 +1,6 @@
 var config = {
     roomName: function () {
-        return "W13S22";
+        return "W8S24";
     },
     terrain: function () {
         return terrainData;
