@@ -9,7 +9,7 @@ var towerBehaviour = {
             tower.attack(closestHostile);
             return;
         }
-        if (closestDamagedStructure && U.manhattanDist(closestDamagedStructure.pos, tower.pos) < 5) {
+        if (closestDamagedStructure && U.manhattanDist(closestDamagedStructure.pos, tower.pos) < 10) {
             tower.repair(closestDamagedStructure);
         }
     }
