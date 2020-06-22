@@ -37,7 +37,6 @@ var sourcesQueue = {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
                 if (sourceToNames.get(source.toString()).has(creep.name)) {
-                    console.log("creep " + creep.name + " already to source " + source.toString());
                     return source;
                 }
             }
@@ -89,6 +88,7 @@ var sourcesQueue = {
         try {
             for (var sources_4 = __values(sources), sources_4_1 = sources_4.next(); !sources_4_1.done; sources_4_1 = sources_4.next()) {
                 var source = sources_4_1.value;
+                console.log("deleting from " + source.toString() + " creep " + creep.name);
                 sourceToNames.get(source.toString())["delete"](creep.name);
             }
         }
@@ -135,7 +135,6 @@ function checkIfGoTo(creep, source, myBorders) {
         finally { if (e_5) throw e_5.error; }
     }
     var result = (1 / ans) * freeTilesNear(source.pos);
-    console.log(result);
     return result;
 }
 function freeTilesNear(pos) {
@@ -151,21 +150,39 @@ function freeTilesNear(pos) {
     }
     return ans;
 }
+function getMovingSpeed(total, movement) {
+    var rest = total - movement;
+    var ticksOnCell = 1.0 + Math.max(rest - movement, 0) / movement;
+    return ticksOnCell;
+}
 function determineMyLimits(creep, source) {
     var pathToSource = creep.room.findPath(creep.pos, source.pos);
     var creepBody = parseCreepBody(creep);
-    var step = creepBody.get('ALL') / creepBody.get('WORK');
-    var left = Math.floor(pathToSource.length * step);
+    var left = Math.floor(pathToSource.length * getMovingSpeed(creepBody.get('ALL'), creepBody.get('MOVE')));
     var right = Math.floor(left + (creepBody.get('CARRY') * 50 / creepBody.get('WORK')));
     return { first: left + Game.time, second: right + Game.time };
 }
 function parseCreepBody(creep) {
-    var ans = new Map([
-        ['ALL', 4],
-        ['WORK', 1],
-        ['CARRY', 1],
-        ['MOVE', 2]
-    ]);
+    var e_6, _a;
+    var ans = new Map();
+    ans.set('ALL', creep.body.length);
+    try {
+        for (var _b = __values(creep.body), _c = _b.next(); !_c.done; _c = _b.next()) {
+            var bodypart = _c.value;
+            var bodypartName = bodypart.type.toString();
+            if (!ans.get(bodypartName)) {
+                ans.set(bodypartName, 0);
+            }
+            ans.set(bodypartName, ans.get(bodypartName) + 1);
+        }
+    }
+    catch (e_6_1) { e_6 = { error: e_6_1 }; }
+    finally {
+        try {
+            if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+        }
+        finally { if (e_6) throw e_6.error; }
+    }
     return ans;
 }
 module.exports = sourcesQueue;
