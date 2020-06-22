@@ -52,9 +52,11 @@ var sourcesQueue = {
         var bestCoef = -1;
         var bestSource;
         var bestBorders = { first: -1, second: -1 };
+        console.log("starting to iterate over sources:");
         try {
             for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
                 var source = sources_3_1.value;
+                console.log(source);
                 var myBorders = determineMyLimits(creep, source);
                 var curCoef = checkIfGoTo(creep, source, myBorders);
                 if (curCoef > bestCoef) {
