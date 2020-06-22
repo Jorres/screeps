@@ -4,6 +4,9 @@ var config = {
     },
     terrain: function () {
         return terrainData;
+    },
+    reusePath: function () {
+        return 1;
     }
 };
 var terrainData = new Room.Terrain(config.roomName());

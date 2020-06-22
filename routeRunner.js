@@ -40,7 +40,7 @@ var routeRunner = {
         else if (action == 'harvest') {
             if (creep.harvest(bestDestination) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(bestDestination, {
-                    reusePath: 0,
+                    reusePath: config.reusePath(),
                     visualizePathStyle: { stroke: '#ffaa00' }
                 });
             }

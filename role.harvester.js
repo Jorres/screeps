@@ -1,3 +1,4 @@
+var config = require('config');
 var routePlanner = require('routeRunner');
 function extensionTowerSpawn(structure) {
     return (structure.structureType == STRUCTURE_EXTENSION ||
@@ -6,7 +7,7 @@ function extensionTowerSpawn(structure) {
 }
 var roleHarvester = {
     run: function (creep) {
-        if (creep.store.getFreeCapacity() > 0) {
+        if (creep.store.getUsedCapacity() < 50) {
             routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
         }
         else {
@@ -20,7 +21,7 @@ var roleHarvester = {
             });
             if (targets.length > 0) {
                 if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], { reusePath: 0, visualizePathStyle: { stroke: '#ffffff' } });
+                    creep.moveTo(targets[0], { reusePath: config.reusePath(), visualizePathStyle: { stroke: '#ffffff' } });
                 }
             }
             else {

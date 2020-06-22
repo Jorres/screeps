@@ -8,9 +8,9 @@ module.exports.loop = function () {
     checkGeneratePixel();
     cleanupDeadCreeps();
     try {
-        trySpawn('harvester', 5);
-        trySpawn('upgrader', 7);
-        trySpawn('builder', 3);
+        trySpawn('harvester', 4);
+        trySpawn('upgrader', 5);
+        trySpawn('builder', 4);
     }
     catch (e) {
         console.log(e);
