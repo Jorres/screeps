@@ -113,6 +113,7 @@ function checkIfGoTo(creep, source, myBorders) {
         for (var _b = __values(sourceToNames.get(source.toString())), _c = _b.next(); !_c.done; _c = _b.next()) {
             var competitor = _c.value;
             var anotherBorders = nameToDates.get(competitor);
+            console.log(myBorders.first, myBorders.second);
             var borders = [myBorders.first, myBorders.second];
             borders.push(anotherBorders.first);
             borders.push(anotherBorders.second);
