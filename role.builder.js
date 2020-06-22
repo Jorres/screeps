@@ -36,7 +36,7 @@ var roleBuilder = {
                 try {
                     for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
                         var target = structures_1_1.value;
-                        if (U.manhattanDist(target.pos, creep.pos) < 5 && (target.hitsMax - target.hits > 20)) {
+                        if (U.manhattanDist(target.pos, creep.pos) < 10 && (target.hitsMax - target.hits > 20)) {
                             U.moveAndRepair(creep, target);
                             return;
                         }
@@ -52,6 +52,7 @@ var roleBuilder = {
                 try {
                     for (var structures_2 = __values(structures), structures_2_1 = structures_2.next(); !structures_2_1.done; structures_2_1 = structures_2.next()) {
                         var target = structures_2_1.value;
+                        console.log(target.hitsMax - target.hits);
                         if (target.hitsMax - target.hits > 100) {
                             U.moveAndRepair(creep, target);
                         }
