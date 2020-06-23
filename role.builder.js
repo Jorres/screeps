@@ -29,15 +29,15 @@ var roleBuilder = {
                 if (creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ffffff' } });
                 }
-                return;
             }
             else {
                 var structures = creep.room.find(FIND_STRUCTURES);
                 try {
                     for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
                         var target = structures_1_1.value;
-                        if (U.manhattanDist(target.pos, creep.pos) < 5 && (target.hitsMax - target.hits > 200)) {
+                        if (U.manhattanDist(target.pos, creep.pos) < 3 && (target.hitsMax - target.hits > 200)) {
                             U.moveAndRepair(creep, target);
+                            console.log("repairing near");
                             return;
                         }
                     }
@@ -49,6 +49,7 @@ var roleBuilder = {
                     }
                     finally { if (e_1) throw e_1.error; }
                 }
+                console.log("repairing hard");
                 var bestTarget = void 0;
                 var bestDifference = -1;
                 try {
@@ -56,7 +57,7 @@ var roleBuilder = {
                         var target = structures_2_1.value;
                         var curDifference = target.hitsMax - target.hits;
                         if (curDifference > bestDifference) {
-                            bestTarget = target.id;
+                            bestTarget = target;
                             bestDifference = curDifference;
                         }
                     }
@@ -69,7 +70,7 @@ var roleBuilder = {
                     finally { if (e_2) throw e_2.error; }
                 }
                 if (bestDifference != -1) {
-                    U.moveAndRepair(creep, U.getById(bestTarget));
+                    U.moveAndRepair(creep, bestTarget);
                 }
                 else {
                     creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
