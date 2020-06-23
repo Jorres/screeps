@@ -12,7 +12,7 @@ var sourcesQueue = {
     selectSourceToRun: function(creep: Creep): Source {
         let sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
-        sourcesToNames.forEach(a => console.log(a));
+        freePlacesAtSource.forEach(a => console.log(a));
         let bestSourceId;
         let bestSourceFreePlaces = -100;
         for (let source of sources) {
@@ -28,6 +28,7 @@ var sourcesQueue = {
         }
 
         modifyFreePlaces(bestSourceId, -1);
+        sourcesToNames.get(bestSourceId).add(creep.name);
         return U.getById(bestSourceId);
     },
 

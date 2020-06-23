@@ -19,7 +19,7 @@ var sourcesQueue = {
         var e_1, _a;
         var sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
-        sourcesToNames.forEach(function (a) { return console.log(a); });
+        freePlacesAtSource.forEach(function (a) { return console.log(a); });
         var bestSourceId;
         var bestSourceFreePlaces = -100;
         try {
@@ -43,6 +43,7 @@ var sourcesQueue = {
             finally { if (e_1) throw e_1.error; }
         }
         modifyFreePlaces(bestSourceId, -1);
+        sourcesToNames.get(bestSourceId).add(creep.name);
         return U.getById(bestSourceId);
     },
     cleanIntentionForSource: function (creep) {
