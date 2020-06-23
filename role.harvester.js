@@ -20,31 +20,17 @@ function isPossibleEnergyContainer(structure) {
 }
 var roleHarvester = {
     run: function (creep) {
-        if (creep.memory.harvesting && creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
-            creep.memory.harvesting = false;
-            sourcesQueue.cleanIntentionForSource(creep);
-            creep.say('transfer');
+        if (!creep.memory.harvestingState) {
+            creep.memory.harvestingState = 'harvest';
         }
-        if (!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.harvesting = true;
-            creep.say('harvest');
+        if (creep.memory.harvestingState == 'harvest') {
+            harvestingState(creep);
         }
-        if (creep.memory.harvesting) {
-            U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+        else if (creep.memory.harvestingState == 'carry') {
+            carryingState(creep);
         }
-        else {
-            if (!creep.memory.currentActiveDestinationId) {
-                reselectDestination(creep);
-            }
-            if (creep.memory.currentActiveDestinationId) {
-                var error = U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
-                if (error == OK || error == ERR_FULL) {
-                    reselectDestination(creep);
-                }
-            }
-            else {
-                creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
-            }
+        else if (creep.memory.harvestingState == 'noop') {
+            noopState(creep);
         }
     }
 };
@@ -70,5 +56,49 @@ function reselectDestination(creep) {
     if (freeForStorage.length > 0) {
         creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
     }
+}
+function harvestingState(creep) {
+    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
+        creep.memory.harvestingState = 'carry';
+        sourcesQueue.cleanIntentionForSource(creep);
+        creep.say('carry');
+        carryingState(creep);
+    }
+    U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+}
+function carryingState(creep) {
+    if (creep.store[RESOURCE_ENERGY] == 0) {
+        creep.memory.harvestingState = 'harvest';
+        creep.say('harvest');
+        harvestingState(creep);
+        return;
+    }
+    if (!creep.memory.currentActiveDestinationId) {
+        reselectDestination(creep);
+    }
+    if (creep.memory.currentActiveDestinationId) {
+        var error = U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+        if (error == OK || error == ERR_FULL) {
+            reselectDestination(creep);
+        }
+    }
+    else {
+        creep.memory.harvestingState = 'noop';
+        noopState(creep);
+    }
+}
+function noopState(creep) {
+    reselectDestination(creep);
+    if (creep.memory.currentActiveDestinationId) {
+        creep.memory.harvestingState = 'carry';
+        carryingState(creep);
+        return;
+    }
+    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) >= 50) {
+        creep.memory.harvestingState = 'harvest';
+        harvestingState(creep);
+        return;
+    }
+    creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
 }
 module.exports = roleHarvester;
