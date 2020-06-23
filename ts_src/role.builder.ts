@@ -26,18 +26,6 @@ var roleBuilder = {
             } else {
                 let structures = creep.room.find(FIND_STRUCTURES);
 
-                // if exists near and damages sligtly
-                for (let target of structures) {
-                    if (U.manhattanDist(target.pos, creep.pos) < 3 && (target.hitsMax - target.hits > 200)) {
-                        U.moveAndRepair(creep, target);
-                        console.log("repairing near");
-                        return;
-                    }
-                }
-
-                console.log("repairing hard");
-
-                // then damaged hard
                 let bestTarget;
                 let bestDifference = -1;
                 for (let target of structures) {

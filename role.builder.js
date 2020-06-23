@@ -13,7 +13,7 @@ var U = require('U');
 var sourcesQueue = require('sourcesQueue');
 var roleBuilder = {
     run: function (creep) {
-        var e_1, _a, e_2, _b;
+        var e_1, _a;
         if (creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.building = false;
             creep.say('harvest');
@@ -32,13 +32,15 @@ var roleBuilder = {
             }
             else {
                 var structures = creep.room.find(FIND_STRUCTURES);
+                var bestTarget = void 0;
+                var bestDifference = -1;
                 try {
                     for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
                         var target = structures_1_1.value;
-                        if (U.manhattanDist(target.pos, creep.pos) < 3 && (target.hitsMax - target.hits > 200)) {
-                            U.moveAndRepair(creep, target);
-                            console.log("repairing near");
-                            return;
+                        var curDifference = target.hitsMax - target.hits;
+                        if (curDifference > bestDifference) {
+                            bestTarget = target;
+                            bestDifference = curDifference;
                         }
                     }
                 }
@@ -48,26 +50,6 @@ var roleBuilder = {
                         if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
                     }
                     finally { if (e_1) throw e_1.error; }
-                }
-                console.log("repairing hard");
-                var bestTarget = void 0;
-                var bestDifference = -1;
-                try {
-                    for (var structures_2 = __values(structures), structures_2_1 = structures_2.next(); !structures_2_1.done; structures_2_1 = structures_2.next()) {
-                        var target = structures_2_1.value;
-                        var curDifference = target.hitsMax - target.hits;
-                        if (curDifference > bestDifference) {
-                            bestTarget = target;
-                            bestDifference = curDifference;
-                        }
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
-                    try {
-                        if (structures_2_1 && !structures_2_1.done && (_b = structures_2["return"])) _b.call(structures_2);
-                    }
-                    finally { if (e_2) throw e_2.error; }
                 }
                 if (bestDifference != -1) {
                     U.moveAndRepair(creep, bestTarget);
