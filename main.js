@@ -102,7 +102,7 @@ function bestUniversalCreep() {
         ['TOUGH', TOUGH],
         ['CLAIM', CLAIM]
     ]);
-    var order = ['MOVE', 'WORK', 'CARRY'];
+    var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'CARRY'];
     var mapping = new Map([
         ['WORK', 100],
         ['MOVE', 50],

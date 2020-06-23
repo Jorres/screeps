@@ -103,7 +103,7 @@ function bestUniversalCreep(): BodyPartConstant[] {
         ['CLAIM', CLAIM]
     ]);
 
-    let order = ['MOVE', 'WORK', 'CARRY'];
+    let order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'CARRY'];
 
     let mapping: Map<string, number> = new Map([
         ['WORK', 100],
