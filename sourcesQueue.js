@@ -19,8 +19,9 @@ var sourcesQueue = {
         var e_1, _a;
         var sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
+        sourcesToNames.forEach(function (a) { return console.log(a); });
         var bestSourceId;
-        var bestSourceFreePlaces = -1;
+        var bestSourceFreePlaces = -100;
         try {
             for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
                 var source = sources_1_1.value;
@@ -51,9 +52,11 @@ var sourcesQueue = {
         try {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
-                if (sourcesToNames.get(source.id).has(creep.name)) {
+                var curCreepNames = sourcesToNames.get(source.id);
+                if (curCreepNames.has(creep.name)) {
                     modifyFreePlaces(source.id, +1);
                     freePlacesAtSource.set(source.id, freePlacesAtSource.get(source.id) + 1);
+                    curCreepNames["delete"](source.id);
                 }
             }
         }
