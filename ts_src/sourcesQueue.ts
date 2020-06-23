@@ -2,6 +2,9 @@
 var config = require('config');
 var terrain = config.terrain();
 
+// @ts-ignore
+var U = require('U');
+
 var sourcesToNames: Map<string, Set<string>> = new Map();
 var freePlacesAtSource: Map<string, number> = new Map();
 

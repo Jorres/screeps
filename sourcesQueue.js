@@ -11,6 +11,7 @@ var __values = (this && this.__values) || function(o) {
 };
 var config = require('config');
 var terrain = config.terrain();
+var U = require('U');
 var sourcesToNames = new Map();
 var freePlacesAtSource = new Map();
 var sourcesQueue = {
