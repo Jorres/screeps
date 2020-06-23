@@ -54,7 +54,9 @@ function reselectDestination(creep: Creep): void {
         }
     }
 
-    creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
+    if (freeForStorage.length > 0) {
+        creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
+    }
 }
 
 // @ts-ignore

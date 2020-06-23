@@ -67,6 +67,8 @@ function reselectDestination(creep) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
+    if (freeForStorage.length > 0) {
+        creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
+    }
 }
 module.exports = roleHarvester;
