@@ -26,6 +26,7 @@ var sourcesQueue = {
             }
         }
 
+        modifyFreePlaces(bestSourceId, -1);
         return U.getById(bestSourceId);
     },
 
@@ -34,6 +35,7 @@ var sourcesQueue = {
         initNewSources(sources);
         for (let source of sources) {
             if (sourcesToNames.get(source.id).has(creep.name)) {
+                modifyFreePlaces(source.id, +1);
                 freePlacesAtSource.set(source.id, freePlacesAtSource.get(source.id) + 1);
             }
         }
@@ -63,6 +65,10 @@ function initNewSources(sources: Source[]): void {
             freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
         }
     }
+}
+
+function modifyFreePlaces(source: string, value: number): void {
+    freePlacesAtSource.set(source, freePlacesAtSource.get(source) + value);
 }
 
 // @ts-ignore

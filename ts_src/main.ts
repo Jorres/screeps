@@ -117,6 +117,7 @@ function bestUniversalCreep(): BodyPartConstant[] {
     ]);
 
     let maxEnergy: number = firstSpawn.room.energyCapacityAvailable;
+    console.log(getCreepsAmount());
     if (getCreepsAmount() < 3) {
         maxEnergy = firstSpawn.room.energyAvailable;
     }

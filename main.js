@@ -114,6 +114,7 @@ function bestUniversalCreep() {
         ['CLAIM', 600]
     ]);
     var maxEnergy = firstSpawn.room.energyCapacityAvailable;
+    console.log(getCreepsAmount());
     if (getCreepsAmount() < 3) {
         maxEnergy = firstSpawn.room.energyAvailable;
     }

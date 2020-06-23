@@ -41,6 +41,7 @@ var sourcesQueue = {
             }
             finally { if (e_1) throw e_1.error; }
         }
+        modifyFreePlaces(bestSourceId, -1);
         return U.getById(bestSourceId);
     },
     cleanIntentionForSource: function (creep) {
@@ -51,6 +52,7 @@ var sourcesQueue = {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
                 if (sourcesToNames.get(source.id).has(creep.name)) {
+                    modifyFreePlaces(source.id, +1);
                     freePlacesAtSource.set(source.id, freePlacesAtSource.get(source.id) + 1);
                 }
             }
@@ -95,5 +97,8 @@ function initNewSources(sources) {
         }
         finally { if (e_3) throw e_3.error; }
     }
+}
+function modifyFreePlaces(source, value) {
+    freePlacesAtSource.set(source, freePlacesAtSource.get(source) + value);
 }
 module.exports = sourcesQueue;
