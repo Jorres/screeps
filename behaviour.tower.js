@@ -36,7 +36,7 @@ function findMostDamagedStructure(tower) {
         for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
             var structure = structures_1_1.value;
             var curDamage = structure.hitsMax - structure.hits;
-            if (curDamage > maxDamage && U.manhattanDist(structure.pos, tower.pos) < 10 && (structure.hits < 10000 || towerCapacity > 800)) {
+            if (curDamage > maxDamage && U.manhattanDist(structure.pos, tower.pos) < 22 && (structure.hits < 10000 || towerCapacity > 800)) {
                 mostDamaged = structure;
                 maxDamage = curDamage;
             }
