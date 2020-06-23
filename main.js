@@ -12,6 +12,7 @@ var __values = (this && this.__values) || function(o) {
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+var roleClaimer = require('role.claimer');
 var towerBehaviour = require('behaviour.tower');
 var MAX_BUCKET_SIZE = 10000;
 var firstSpawn = Game.spawns['Spawn1'];
@@ -36,11 +37,14 @@ module.exports.loop = function () {
         if (creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
-        if (creep.memory.role == 'upgrader') {
+        else if (creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
         }
-        if (creep.memory.role == 'builder') {
+        else if (creep.memory.role == 'builder') {
             roleBuilder.run(creep);
+        }
+        else if (creep.memory.role == 'claimer') {
+            roleClaimer.run(creep);
         }
     }
     var structures = firstSpawn.room.find(FIND_STRUCTURES);
@@ -82,7 +86,7 @@ function trySpawn(roleName, maxCreepsWithRoleAllowed) {
         var newName = roleName + Game.time;
         var spawningError = Game.spawns['Spawn1'].spawnCreep(bestUniversalCreep(), newName, { memory: { role: roleName } });
         if (!spawningError) {
-            throw ("yay,  spawning " + roleName);
+            throw ("yay, spawning " + roleName);
         }
         console.log("Error from spawning is " + spawningError);
     }
@@ -98,7 +102,7 @@ function bestUniversalCreep() {
         ['TOUGH', TOUGH],
         ['CLAIM', CLAIM]
     ]);
-    var order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'MOVE', 'CARRY'];
+    var order = ['MOVE', 'WORK', 'CARRY'];
     var mapping = new Map([
         ['WORK', 100],
         ['MOVE', 50],
@@ -110,6 +114,9 @@ function bestUniversalCreep() {
         ['CLAIM', 600]
     ]);
     var maxEnergy = firstSpawn.room.energyCapacityAvailable;
+    if (getCreepsAmount() < 3) {
+        maxEnergy = firstSpawn.room.energyAvailable;
+    }
     var i = 0;
     var ans = [];
     while (i < order.length) {
@@ -120,6 +127,14 @@ function bestUniversalCreep() {
         maxEnergy -= cost;
         ans.push(partToConstant.get(order[i]));
         i++;
+    }
+    return ans;
+}
+function getCreepsAmount() {
+    var ans = 0;
+    cleanupDeadCreeps();
+    for (var creep in Game.creeps) {
+        ans++;
     }
     return ans;
 }

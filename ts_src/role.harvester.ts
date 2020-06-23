@@ -1,38 +1,60 @@
 // @ts-ignore
 var config  = require('config');
 // @ts-ignore
-var routePlanner = require('routeRunner');
+var sourcesQueue = require('sourcesQueue');
+// @ts-ignore
+var U = require('U');
 
-function extensionTowerSpawn(structure: Structure): structure is StructureExtension | StructureTower | StructureSpawn {
+function isPossibleEnergyContainer(structure: Structure): structure is PossibleEnergyContainer {
     return (structure.structureType == STRUCTURE_EXTENSION ||
-            structure.structureType == STRUCTURE_SPAWN ||
-            structure.structureType == STRUCTURE_TOWER);
+            structure.structureType == STRUCTURE_SPAWN     ||
+            structure.structureType == STRUCTURE_TOWER     ||
+            structure.structureType == STRUCTURE_CONTAINER);
 }
 
 var roleHarvester = {
     run: function(creep: Creep) {
-        if(creep.store.getUsedCapacity() < 50) {
-            routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
-        } else {
-            var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure: Structure) => {
-                    if (extensionTowerSpawn(structure)) {
-                        return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                    }
-                    return false;
-                }
-            });
+        if (creep.memory.harvesting && creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
+            creep.memory.harvesting = false;
+            sourcesQueue.cleanIntentionForSource(creep);
+            creep.say('transfer');
+        }
 
-            if(targets.length > 0) {
-                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {reusePath: config.reusePath(), visualizePathStyle: {stroke: '#ffffff'}});
-                }
+        if (!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.harvesting = true;
+            creep.say('harvest');
+        }
+
+        if (creep.memory.harvesting) {
+            U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+        } else {
+            if (!creep.memory.currentActiveDestinationId) {
+                reselectDestination(creep);
+            }
+
+            if (creep.memory.currentActiveDestinationId) {
+                if (U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId)) == OK) {
+                    reselectDestination(creep);
+                } 
             } else {
                 creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
             }
         }
     }
 };
+
+function reselectDestination(creep: Creep): void {
+    let targets: AnyStructure[] = creep.room.find(FIND_STRUCTURES); // do not need to store them
+    let freeForStorage: PossibleEnergyContainer[] = [];
+    for (let target of targets) {
+        // @ts-ignore
+        if (isPossibleEnergyContainer(target) && target.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+            freeForStorage.push(target);
+        }
+    }
+
+    creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
+}
 
 // @ts-ignore
 module.exports = roleHarvester;

@@ -1,7 +1,7 @@
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
-var routePlanner = require('routeRunner');
+var sourcesQueue = require('sourcesQueue');
 
 var roleBuilder = {
     run: function(creep: Creep) {
@@ -13,6 +13,7 @@ var roleBuilder = {
 
         if(!creep.memory.building && creep.store.getFreeCapacity() == 0) {
             creep.memory.building = true;
+            sourcesQueue.cleanIntentionForSource(creep);
             creep.say('build');
         }
 
@@ -52,7 +53,7 @@ var roleBuilder = {
                 }
             }
         } else {
-            routePlanner.smartPlot(creep, FIND_SOURCES, 'harvest');
+            U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
         }
     }
 };

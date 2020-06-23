@@ -1,7 +1,7 @@
 // @ts-ignore
 var sourcesQueue = require('sourcesQueue');
 // @ts-ignore
-var routeRunner = require('routeRunner');
+var U = require('U');
 // @ts-ignore
 var config = require('config');
 
@@ -20,15 +20,9 @@ var roleUpgrader = {
         }
 
         if(creep.memory.upgrading) {
-            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {reusePath: config.reusePath(), visualizePathStyle: {stroke: '#ffffff'}});
-            }
+            U.moveAndUpgradeController(creep, creep.room.controller);
         } else {
-            // routeRunner.smartPlot(creep, FIND_SOURCES, 'harvest');
-            let source  = sourcesQueue.selectSourceToRun(creep);
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-               creep.moveTo(source, {visualizePathStyle: {stroke: '#ffffff'}});
-            }
+            U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
         }
     }
 };
