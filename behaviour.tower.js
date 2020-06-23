@@ -31,7 +31,7 @@ function findMostDamagedStructure(tower) {
     var structures = tower.room.find(FIND_STRUCTURES);
     var maxDamage = 0;
     var mostDamaged;
-    var towerCapacity = tower.store.getCapacity(RESOURCE_ENERGY);
+    var towerCapacity = tower.store.getUsedCapacity(RESOURCE_ENERGY);
     try {
         for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
             var structure = structures_1_1.value;
