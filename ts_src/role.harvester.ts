@@ -33,7 +33,8 @@ var roleHarvester = {
             }
 
             if (creep.memory.currentActiveDestinationId) {
-                if (U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId)) == OK) {
+                let error = U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+                if (error == OK || error == ERR_FULL) {
                     reselectDestination(creep);
                 } 
             } else {

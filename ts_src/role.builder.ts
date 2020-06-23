@@ -25,7 +25,6 @@ var roleBuilder = {
                 }
             } else {
                 let structures = creep.room.find(FIND_STRUCTURES);
-
                 let bestTarget;
                 let bestDifference = -1;
                 for (let target of structures) {
