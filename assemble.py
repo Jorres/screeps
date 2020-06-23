@@ -13,17 +13,16 @@ for fileName in os.listdir("."):
 
 os.system("tsc")
 
-print("Shall we continue? [Y\N]")
+print("Shall we continue? \"Y\" for Yes.")
 s = input()
-print(s)
 if s[0] != 'Y':
     sys.exit()
-
 
 for fileName in os.listdir("ts_src"):
     if fileName.endswith("js"):
         os.system("mv ts_src/" + fileName + " .")
 
 os.system("git add *.js")
+os.system("git add ts_src")
 os.system("git commit -m \"" + sys.argv[1] + "\"")
 os.system("git push")
