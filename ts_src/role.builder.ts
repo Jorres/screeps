@@ -34,6 +34,13 @@ function builderHarvestingState(creep: Creep): void {
 
 
 function tryBuildingState(creep: Creep): void {
+    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+        creep.memory.buildingState = 'harvest';
+        builderHarvestingState(creep);
+        creep.say('harvest');
+        return;
+    }
+
     reselectConstructingDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
         U.moveAndBuild(creep, U.getById(creep.memory.currentActiveDestinationId)); 
@@ -44,6 +51,13 @@ function tryBuildingState(creep: Creep): void {
 }
 
 function tryRepairingState(creep: Creep): void {
+    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+        creep.memory.buildingState = 'harvest';
+        builderHarvestingState(creep);
+        creep.say('harvest');
+        return;
+    }
+
     reselectRepairingDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
         U.moveAndRepair(creep, U.getById(creep.memory.currentActiveDestinationId));
