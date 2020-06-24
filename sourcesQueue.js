@@ -40,6 +40,7 @@ var sourcesQueue = {
             finally { if (e_1) throw e_1.error; }
         }
         modifyFreePlaces(bestSourceId, -1);
+        console.log(bestSourceId);
         data.sourcesToNames.get(bestSourceId).add(creep.name);
         return U.getById(bestSourceId);
     },

@@ -24,6 +24,7 @@ var sourcesQueue = {
         }
 
         modifyFreePlaces(bestSourceId, -1);
+        console.log(bestSourceId);
         data.sourcesToNames.get(bestSourceId).add(creep.name);
         return U.getById(bestSourceId);
     },

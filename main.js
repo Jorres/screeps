@@ -152,7 +152,6 @@ function initialize() {
     console.log("initialize");
     data.sourcesToNames = new Map();
     data.freePlacesAtSource = new Map();
-    sourcesQueue.initFreeSources(firstSpawn.room.find(FIND_SOURCES));
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         if (creep.memory.role == 'harvester') {
