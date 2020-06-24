@@ -12,6 +12,9 @@ var U = {
     moveAndTransfer: function (creep, target) {
         return this.defaultAction(creep, target, function () { return creep.transfer(target, RESOURCE_ENERGY); });
     },
+    moveAndBuild: function (creep, target) {
+        return this.defaultAction(creep, target, function () { return creep.build(target); });
+    },
     moveAndUpgradeController: function (creep, target) {
         return this.defaultAction(creep, target, function () { return creep.upgradeController(target); });
     },
@@ -27,6 +30,9 @@ var U = {
     },
     random: function (upTo) {
         return Math.floor(Math.random() * Math.floor(upTo));
+    },
+    atLeastHalfFull: function (creep) {
+        return creep.store.getFreeCapacity(RESOURCE_ENERGY) <= creep.store.getUsedCapacity(RESOURCE_ENERGY);
     }
 };
 function defaultMove(creep, target) {

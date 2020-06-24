@@ -27,10 +27,10 @@ module.exports.loop = function() {
     checkGeneratePixel();
     cleanupDeadCreeps();
 
-    for (let source of firstSpawn.room.find(FIND_SOURCES)) {
-        console.log(source.id + " " + data.freePlacesAtSource.get(source.id));
-    }
-    console.log();
+    // for (let source of firstSpawn.room.find(FIND_SOURCES)) {
+    //     console.log(source.id + " " + data.freePlacesAtSource.get(source.id));
+    // }
+    // console.log();
 
     if (!init) {
         init = true;
@@ -40,7 +40,7 @@ module.exports.loop = function() {
     try {
         trySpawn('harvester', 3);
         trySpawn('upgrader',  5);
-        trySpawn('builder',   2);
+        trySpawn('builder',   3);
         // trySpawn('claimer',   1);
     } catch (e) {
         console.log(e);

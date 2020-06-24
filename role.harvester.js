@@ -34,7 +34,7 @@ var roleHarvester = {
         }
     }
 };
-function reselectDestination(creep) {
+function reselectEnergyDestination(creep) {
     var e_1, _a;
     var targets = creep.room.find(FIND_STRUCTURES);
     var freeForStorage = [];
@@ -74,12 +74,12 @@ function carryingState(creep) {
         return;
     }
     if (!creep.memory.currentActiveDestinationId) {
-        reselectDestination(creep);
+        reselectEnergyDestination(creep);
     }
     if (creep.memory.currentActiveDestinationId) {
         var error = U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
         if (error == OK || error == ERR_FULL) {
-            reselectDestination(creep);
+            reselectEnergyDestination(creep);
         }
     }
     else {
@@ -88,13 +88,13 @@ function carryingState(creep) {
     }
 }
 function noopState(creep) {
-    reselectDestination(creep);
+    reselectEnergyDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
         creep.memory.harvestingState = 'carry';
         carryingState(creep);
         return;
     }
-    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) >= 50) {
+    if (U.atLeastHalfFull(creep)) {
         creep.memory.harvestingState = 'harvest';
         harvestingState(creep);
         return;

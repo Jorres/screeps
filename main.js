@@ -22,24 +22,10 @@ function isTower(structure) {
 }
 var init = false;
 module.exports.loop = function () {
-    var e_1, _a, e_2, _b;
+    var e_1, _a;
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
-    try {
-        for (var _c = __values(firstSpawn.room.find(FIND_SOURCES)), _d = _c.next(); !_d.done; _d = _c.next()) {
-            var source = _d.value;
-            console.log(source.id + " " + data.freePlacesAtSource.get(source.id));
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (_d && !_d.done && (_a = _c["return"])) _a.call(_c);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-    console.log();
     if (!init) {
         init = true;
         initialize();
@@ -47,7 +33,7 @@ module.exports.loop = function () {
     try {
         trySpawn('harvester', 3);
         trySpawn('upgrader', 5);
-        trySpawn('builder', 2);
+        trySpawn('builder', 3);
     }
     catch (e) {
         console.log(e);
@@ -76,12 +62,12 @@ module.exports.loop = function () {
             }
         }
     }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
     finally {
         try {
-            if (structures_1_1 && !structures_1_1.done && (_b = structures_1["return"])) _b.call(structures_1);
+            if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
         }
-        finally { if (e_2) throw e_2.error; }
+        finally { if (e_1) throw e_1.error; }
     }
 };
 function checkGeneratePixel() {

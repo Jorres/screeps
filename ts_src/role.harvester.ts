@@ -28,7 +28,7 @@ var roleHarvester = {
     }
 };
 
-function reselectDestination(creep: Creep): void {
+function reselectEnergyDestination(creep: Creep): void {
     let targets: AnyStructure[] = creep.room.find(FIND_STRUCTURES); // do not need to store them
     let freeForStorage: PossibleEnergyContainer[] = [];
     for (let target of targets) {
@@ -62,13 +62,13 @@ function carryingState(creep: Creep) {
     }
 
     if (!creep.memory.currentActiveDestinationId) {
-        reselectDestination(creep);
+        reselectEnergyDestination(creep);
     }
 
     if (creep.memory.currentActiveDestinationId) {
         let error = U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
         if (error == OK || error == ERR_FULL) {
-            reselectDestination(creep);
+            reselectEnergyDestination(creep);
         } 
     } else {
         creep.memory.harvestingState = 'noop';
@@ -77,14 +77,14 @@ function carryingState(creep: Creep) {
 }
 
 function noopState(creep: Creep) {
-    reselectDestination(creep);
+    reselectEnergyDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
         creep.memory.harvestingState = 'carry';
         carryingState(creep);
         return;
     }
 
-    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) >= 50) {
+    if (U.atLeastHalfFull(creep)) {
         creep.memory.harvestingState = 'harvest';
         harvestingState(creep);
         return;
