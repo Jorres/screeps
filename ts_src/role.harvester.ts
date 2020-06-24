@@ -32,7 +32,10 @@ function reselectEnergyDestination(creep: Creep): void {
     let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         filter: (structure) => {
             // @ts-ignore
-            return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            if (structure.store) {
+                return ((structure as AnyStoreStructure).store as GenericStoreBase).getFreeCapacity(RESOURCE_ENERGY) > 0;
+            }
+            return false;
         }
     });
     creep.memory.currentActiveDestinationId = target.id;

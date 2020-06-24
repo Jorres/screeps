@@ -26,7 +26,10 @@ var roleHarvester = {
 function reselectEnergyDestination(creep) {
     var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         filter: function (structure) {
-            return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            if (structure.store) {
+                return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            }
+            return false;
         }
     });
     creep.memory.currentActiveDestinationId = target.id;
