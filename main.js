@@ -45,9 +45,9 @@ module.exports.loop = function () {
         initialize();
     }
     try {
-        trySpawn('harvester', 4);
+        trySpawn('harvester', 3);
         trySpawn('upgrader', 5);
-        trySpawn('builder', 4);
+        trySpawn('builder', 2);
     }
     catch (e) {
         console.log(e);
