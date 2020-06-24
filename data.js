@@ -1,16 +1,10 @@
 var config = require('config');
 var terrainData = new Room.Terrain(config.roomName());
-var sourcesToNames = new Map();
-var freePlacesAtSource = new Map();
-var config = {
+var data = {
     terrain: function () {
         return terrainData;
     },
-    sourcesToNames: function () {
-        return sourcesToNames;
-    },
-    freePlacesAtSource: function () {
-        return freePlacesAtSource;
-    }
+    sourcesToNames: new Map(),
+    freePlacesAtSource: new Map()
 };
-module.exports = config;
+module.exports = data;

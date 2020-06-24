@@ -12,7 +12,7 @@ var sourcesQueue = {
         let bestSourceId;
         let bestSourceFreePlaces = -100;
         for (let source of sources) {
-            if (data.sourcesToNames().get(source.id).has(creep.name)) {
+            if (data.sourcesToNames.get(source.id).has(creep.name)) {
                 return U.getById(source.id);
             }
 

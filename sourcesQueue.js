@@ -22,7 +22,7 @@ var sourcesQueue = {
         try {
             for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
                 var source = sources_1_1.value;
-                if (data.sourcesToNames().get(source.id).has(creep.name)) {
+                if (data.sourcesToNames.get(source.id).has(creep.name)) {
                     return U.getById(source.id);
                 }
                 var curFreePlaces = data.freePlacesAtSource.get(source.id);
