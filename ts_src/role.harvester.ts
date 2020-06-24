@@ -43,17 +43,19 @@ function reselectEnergyDestination(creep: Creep): void {
             return false;
         }
     });
-    creep.memory.currentActiveDestinationId = target.id;
+    let result = target ? target.id : null;
+    creep.memory.currentActiveDestinationId = result;
 }
 
 function harvestingState(creep: Creep) {
     if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
         creep.memory.harvestingState = 'carry';
-        sourcesQueue.cleanIntentionForSource(creep);
         creep.say('carry');
+        sourcesQueue.cleanIntentionForSource(creep);
         carryingState(creep);
+    } else {
+        U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
     }
-    U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
 }
 
 function carryingState(creep: Creep) {
@@ -61,17 +63,16 @@ function carryingState(creep: Creep) {
         creep.memory.harvestingState = 'harvest';
         creep.say('harvest');
         harvestingState(creep);
-        return;
-    }
-
-    reselectEnergyDestination(creep);
-
-    if (creep.memory.currentActiveDestinationId) {
-        U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
-        reselectEnergyDestination(creep);
     } else {
-        creep.memory.harvestingState = 'noop';
-        noopState(creep);
+        reselectEnergyDestination(creep);
+        if (creep.memory.currentActiveDestinationId) {
+            U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+            reselectEnergyDestination(creep);
+        } else {
+            creep.memory.harvestingState = 'noop';
+            creep.say('noop');
+            noopState(creep);
+        }
     }
 }
 
@@ -79,17 +80,11 @@ function noopState(creep: Creep) {
     reselectEnergyDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
         creep.memory.harvestingState = 'carry';
-        carryingState(creep);
-        return;
-    }
-
-    if (U.atLeastHalfFull(creep)) {
+    } else if (U.atLeastHalfFull(creep)) {
         creep.memory.harvestingState = 'harvest';
-        harvestingState(creep);
-        return;
+    } else {
+        creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
     }
-
-    creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
 }
 
 // @ts-ignore

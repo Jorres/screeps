@@ -36,46 +36,49 @@ function reselectEnergyDestination(creep) {
             return false;
         }
     });
-    creep.memory.currentActiveDestinationId = target.id;
+    var result = target ? target.id : null;
+    creep.memory.currentActiveDestinationId = result;
 }
 function harvestingState(creep) {
     if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
         creep.memory.harvestingState = 'carry';
-        sourcesQueue.cleanIntentionForSource(creep);
         creep.say('carry');
+        sourcesQueue.cleanIntentionForSource(creep);
         carryingState(creep);
     }
-    U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+    else {
+        U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+    }
 }
 function carryingState(creep) {
     if (creep.store[RESOURCE_ENERGY] == 0) {
         creep.memory.harvestingState = 'harvest';
         creep.say('harvest');
         harvestingState(creep);
-        return;
-    }
-    reselectEnergyDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
-        reselectEnergyDestination(creep);
     }
     else {
-        creep.memory.harvestingState = 'noop';
-        noopState(creep);
+        reselectEnergyDestination(creep);
+        if (creep.memory.currentActiveDestinationId) {
+            U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+            reselectEnergyDestination(creep);
+        }
+        else {
+            creep.memory.harvestingState = 'noop';
+            creep.say('noop');
+            noopState(creep);
+        }
     }
 }
 function noopState(creep) {
     reselectEnergyDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
         creep.memory.harvestingState = 'carry';
-        carryingState(creep);
-        return;
     }
-    if (U.atLeastHalfFull(creep)) {
+    else if (U.atLeastHalfFull(creep)) {
         creep.memory.harvestingState = 'harvest';
-        harvestingState(creep);
-        return;
     }
-    creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
+    else {
+        creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
+    }
 }
 module.exports = roleHarvester;

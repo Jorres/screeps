@@ -20,4 +20,17 @@ var roleUpgrader = {
         }
     }
 };
+function upgradingHarvestingState(creep) {
+    if (creep.store.getFreeCapacity() == 0) {
+        creep.say("upgrading");
+        creep.memory.upgradingState = 'upgrading';
+        upgradingUpgradingState(creep);
+        return;
+    }
+    U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+}
+function upgradingUpgradingState(creep) {
+}
+function upgradingNoopState(creep) {
+}
 module.exports = roleUpgrader;

@@ -7,6 +7,17 @@ var config = require('config');
 
 var roleUpgrader = {
     run: function(creep: Creep) {
+        // if (!creep.memory.upgradingState) {
+        //     creep.memory.upgradingState = 'harvest';
+        // }
+        //
+        // if (creep.memory.upgradingState == 'harvest') {
+        //     upgradingHarvestingState(creep);
+        // } else if (creep.memory.upgradingState == 'upgrade') {
+        //     upgradingUpgradingState(creep);
+        // } else if (creep.memory.noopState == 'noop') {
+        //     upgradingNoopState(creep);
+        // } 
 
         if (creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.upgrading = false;
@@ -26,6 +37,24 @@ var roleUpgrader = {
         }
     }
 };
+
+function upgradingHarvestingState(creep: Creep): void {
+    if (creep.store.getFreeCapacity() == 0) {
+        creep.say("upgrading");
+        creep.memory.upgradingState = 'upgrading';
+        upgradingUpgradingState(creep);
+        return;
+    }
+    U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+}
+
+function upgradingUpgradingState(creep: Creep): void {
+
+}
+
+function upgradingNoopState(creep: Creep): void {
+
+}
 
 
 // @ts-ignore
