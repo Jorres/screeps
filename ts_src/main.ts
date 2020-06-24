@@ -27,6 +27,11 @@ module.exports.loop = function() {
     checkGeneratePixel();
     cleanupDeadCreeps();
 
+    for (let source of firstSpawn.room.find(FIND_SOURCES)) {
+        console.log(source.id + " " + data.freePlacesAtSource.get(source.id));
+    }
+    console.log();
+
     if (!init) {
         init = true;
         initialize();
