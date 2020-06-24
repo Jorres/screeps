@@ -24,6 +24,10 @@ var roleHarvester = {
     }
 };
 function reselectEnergyDestination(creep) {
+    var oldId = creep.memory.currentActiveDestinationId;
+    if (oldId && U.getById(oldId).getFreeCapacity(RESOURCE_ENERGY) > 0) {
+        return;
+    }
     var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         filter: function (structure) {
             if (structure.store) {
@@ -50,14 +54,10 @@ function carryingState(creep) {
         harvestingState(creep);
         return;
     }
-    if (!creep.memory.currentActiveDestinationId) {
-        reselectEnergyDestination(creep);
-    }
+    reselectEnergyDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
-        var error = U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
-        if (error == OK || error == ERR_FULL) {
-            reselectEnergyDestination(creep);
-        }
+        U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+        reselectEnergyDestination(creep);
     }
     else {
         creep.memory.harvestingState = 'noop';
