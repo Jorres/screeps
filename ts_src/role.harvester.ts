@@ -7,9 +7,9 @@ var U = require('U');
 
 function isPossibleEnergyContainer(structure: Structure): structure is PossibleEnergyContainer {
     return (structure.structureType == STRUCTURE_EXTENSION ||
-            structure.structureType == STRUCTURE_SPAWN     ||
-            structure.structureType == STRUCTURE_TOWER     ||
-            structure.structureType == STRUCTURE_CONTAINER);
+        structure.structureType == STRUCTURE_SPAWN     ||
+        structure.structureType == STRUCTURE_TOWER     ||
+        structure.structureType == STRUCTURE_CONTAINER);
 }
 
 var roleHarvester = {

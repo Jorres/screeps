@@ -8,6 +8,8 @@ var roleBuilder = require('role.builder');
 var roleClaimer = require('role.claimer');
 // @ts-ignore
 var towerBehaviour = require('behaviour.tower');
+// @ts-ignore
+var data = require('data');
 
 var MAX_BUCKET_SIZE: number = 10000;
 
@@ -153,4 +155,19 @@ function getCreepsAmount(): number {
 
 function initialize() {
     console.log("initialize");
+    data.sourcesToNames = new Map();
+    data.freePlacesAtSource = new Map();
+
+    for (var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        if (creep.memory.role == 'harvester') {
+            creep.memory.harvestingState = null;
+        } else if (creep.memory.role == 'upgrader') {
+            // roleUpgrader.run(creep);
+        } else if (creep.memory.role == 'builder') {
+            // roleBuilder.run(creep);
+        } else if (creep.memory.role == 'claimer') {
+            // roleClaimer.run(creep);
+        }
+    }
 }

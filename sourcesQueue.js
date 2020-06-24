@@ -9,26 +9,23 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var config = require('config');
-var terrain = config.terrain();
+var data = require('data');
 var U = require('U');
-var sourcesToNames = new Map();
-var freePlacesAtSource = new Map();
+var terrain = data.terrain();
 var sourcesQueue = {
     selectSourceToRun: function (creep) {
         var e_1, _a;
         var sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
-        freePlacesAtSource.forEach(function (a) { return console.log(a); });
         var bestSourceId;
         var bestSourceFreePlaces = -100;
         try {
             for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
                 var source = sources_1_1.value;
-                if (sourcesToNames.get(source.id).has(creep.name)) {
+                if (data.sourcesToNames().get(source.id).has(creep.name)) {
                     return U.getById(source.id);
                 }
-                var curFreePlaces = freePlacesAtSource.get(source.id);
+                var curFreePlaces = data.freePlacesAtSource.get(source.id);
                 if (curFreePlaces > bestSourceFreePlaces) {
                     bestSourceFreePlaces = curFreePlaces;
                     bestSourceId = source.id;
@@ -43,7 +40,7 @@ var sourcesQueue = {
             finally { if (e_1) throw e_1.error; }
         }
         modifyFreePlaces(bestSourceId, -1);
-        sourcesToNames.get(bestSourceId).add(creep.name);
+        data.sourcesToNames.get(bestSourceId).add(creep.name);
         return U.getById(bestSourceId);
     },
     cleanIntentionForSource: function (creep) {
@@ -53,10 +50,9 @@ var sourcesQueue = {
         try {
             for (var sources_2 = __values(sources), sources_2_1 = sources_2.next(); !sources_2_1.done; sources_2_1 = sources_2.next()) {
                 var source = sources_2_1.value;
-                var curCreepNames = sourcesToNames.get(source.id);
+                var curCreepNames = data.sourcesToNames.get(source.id);
                 if (curCreepNames.has(creep.name)) {
                     modifyFreePlaces(source.id, +1);
-                    freePlacesAtSource.set(source.id, freePlacesAtSource.get(source.id) + 1);
                     curCreepNames["delete"](source.id);
                 }
             }
@@ -89,8 +85,8 @@ function initNewSources(sources) {
         for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
             var source = sources_3_1.value;
             if (!sourcesToNames.get(source.id)) {
-                sourcesToNames.set(source.id, new Set());
-                freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
+                data.sourcesToNames.set(source.id, new Set());
+                data.freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
             }
         }
     }
@@ -103,6 +99,6 @@ function initNewSources(sources) {
     }
 }
 function modifyFreePlaces(source, value) {
-    freePlacesAtSource.set(source, freePlacesAtSource.get(source) + value);
+    data.freePlacesAtSource.set(source, data.freePlacesAtSource.get(source) + value);
 }
 module.exports = sourcesQueue;

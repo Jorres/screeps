@@ -1,26 +1,22 @@
 // @ts-ignore
-var config = require('config');
-var terrain = config.terrain();
-
+var data = require('data');
 // @ts-ignore
 var U = require('U');
 
-var sourcesToNames: Map<string, Set<string>> = new Map();
-var freePlacesAtSource: Map<string, number> = new Map();
+var terrain = data.terrain();
 
 var sourcesQueue = {
     selectSourceToRun: function(creep: Creep): Source {
         let sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
-        freePlacesAtSource.forEach(a => console.log(a));
         let bestSourceId;
         let bestSourceFreePlaces = -100;
         for (let source of sources) {
-            if (sourcesToNames.get(source.id).has(creep.name)) {
+            if (data.sourcesToNames().get(source.id).has(creep.name)) {
                 return U.getById(source.id);
             }
 
-            let curFreePlaces = freePlacesAtSource.get(source.id);
+            let curFreePlaces = data.freePlacesAtSource.get(source.id);
             if (curFreePlaces > bestSourceFreePlaces) {
                 bestSourceFreePlaces = curFreePlaces;
                 bestSourceId = source.id;
@@ -28,7 +24,7 @@ var sourcesQueue = {
         }
 
         modifyFreePlaces(bestSourceId, -1);
-        sourcesToNames.get(bestSourceId).add(creep.name);
+        data.sourcesToNames.get(bestSourceId).add(creep.name);
         return U.getById(bestSourceId);
     },
 
@@ -36,10 +32,9 @@ var sourcesQueue = {
         let sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
         for (let source of sources) {
-            let curCreepNames: Set<string> = sourcesToNames.get(source.id);
+            let curCreepNames: Set<string> = data.sourcesToNames.get(source.id);
             if (curCreepNames.has(creep.name)) {
                 modifyFreePlaces(source.id, +1);
-                freePlacesAtSource.set(source.id, freePlacesAtSource.get(source.id) + 1);
                 curCreepNames.delete(source.id);
             }
         }
@@ -65,14 +60,14 @@ function freeTilesNear(pos: RoomPosition): number {
 function initNewSources(sources: Source[]): void {
     for (let source of sources) {
         if (!sourcesToNames.get(source.id)) {
-            sourcesToNames.set(source.id, new Set());
-            freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
+            data.sourcesToNames.set(source.id, new Set());
+            data.freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
         }
     }
 }
 
 function modifyFreePlaces(source: string, value: number): void {
-    freePlacesAtSource.set(source, freePlacesAtSource.get(source) + value);
+    data.freePlacesAtSource.set(source, data.freePlacesAtSource.get(source) + value);
 }
 
 // @ts-ignore
