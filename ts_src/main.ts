@@ -17,11 +17,18 @@ function isTower(structure: Structure): structure is StructureTower {
     return structure.structureType == STRUCTURE_TOWER;
 }
 
+var init: boolean = false;
+
 // @ts-ignore
 module.exports.loop = function() {
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
+
+    if (!init) {
+        init = true;
+        initialize();
+    }
 
     try {
         trySpawn('harvester', 4);
@@ -46,9 +53,8 @@ module.exports.loop = function() {
     }
 
 
-
     let structures: AnyStructure[] = firstSpawn.room.find(FIND_STRUCTURES);
-    for (let structure of structures) {
+    for(let structure of structures) {
         if (isTower(structure)) {
             towerBehaviour.run(structure);
         }
@@ -143,4 +149,8 @@ function getCreepsAmount(): number {
         ans++;
     }
     return ans;
+}
+
+function initialize() {
+    console.log("initialize");
 }

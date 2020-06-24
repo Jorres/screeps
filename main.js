@@ -19,11 +19,16 @@ var firstSpawn = Game.spawns['Spawn1'];
 function isTower(structure) {
     return structure.structureType == STRUCTURE_TOWER;
 }
+var init = false;
 module.exports.loop = function () {
     var e_1, _a;
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
+    if (!init) {
+        init = true;
+        initialize();
+    }
     try {
         trySpawn('harvester', 4);
         trySpawn('upgrader', 5);
@@ -138,4 +143,7 @@ function getCreepsAmount() {
         ans++;
     }
     return ans;
+}
+function initialize() {
+    console.log("initialize");
 }
