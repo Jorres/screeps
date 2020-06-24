@@ -59,7 +59,7 @@ function freeTilesNear(pos: RoomPosition): number {
 
 function initNewSources(sources: Source[]): void {
     for (let source of sources) {
-        if (!sourcesToNames.get(source.id)) {
+        if (!data.sourcesToNames.get(source.id)) {
             data.sourcesToNames.set(source.id, new Set());
             data.freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
         }

@@ -84,7 +84,7 @@ function initNewSources(sources) {
     try {
         for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
             var source = sources_3_1.value;
-            if (!sourcesToNames.get(source.id)) {
+            if (!data.sourcesToNames.get(source.id)) {
                 data.sourcesToNames.set(source.id, new Set());
                 data.freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
             }
