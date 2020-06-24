@@ -30,7 +30,7 @@ var roleHarvester = {
 
 function reselectEnergyDestination(creep: Creep): void {
     let oldId: string = creep.memory.currentActiveDestinationId;
-    if (oldId && U.getById(oldId).getFreeCapacity(RESOURCE_ENERGY) > 0) {
+    if (oldId && U.getById(oldId).store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
         return;
     }
 
