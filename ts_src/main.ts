@@ -100,32 +100,20 @@ function trySpawn(roleName: CreepRoles, maxCreepsWithRoleAllowed: number) {
 }
 
 function bestUniversalCreep(): BodyPartConstant[] {
-    let partToConstant: Map<string, BodyPartConstant> = new Map([
-        ['WORK', WORK],
-        ['MOVE', MOVE],
-        ['CARRY', CARRY],
-        ['ATTACK', ATTACK],
-        ['HEAL', HEAL],
-        ['RANGED_ATTACK', RANGED_ATTACK],
-        ['TOUGH', TOUGH],
-        ['CLAIM', CLAIM]
-    ]);
+    let order = [MOVE, WORK, CARRY, MOVE, WORK, CARRY];
 
-    let order = ['MOVE', 'WORK', 'CARRY', 'MOVE', 'WORK', 'CARRY'];
-
-    let mapping: Map<string, number> = new Map([
-        ['WORK', 100],
-        ['MOVE', 50],
-        ['CARRY', 50],
-        ['ATTACK', 80],
-        ['HEAL', 250],
-        ['RANGED_ATTACK', 150],
-        ['TOUGH', 10],
-        ['CLAIM', 600]
+    let bodyPartCost: Map<BodyPartConstant, number> = new Map([
+        [WORK, 100],
+        [MOVE, 50],
+        [CARRY, 50],
+        [ATTACK, 80],
+        [HEAL, 250],
+        [RANGED_ATTACK, 150],
+        [TOUGH, 10],
+        [CLAIM, 600]
     ]);
 
     let maxEnergy: number = firstSpawn.room.energyCapacityAvailable;
-    console.log(getCreepsAmount());
     if (getCreepsAmount() < 3) {
         maxEnergy = firstSpawn.room.energyAvailable;
     }
@@ -133,12 +121,12 @@ function bestUniversalCreep(): BodyPartConstant[] {
     let i = 0;
     let ans: BodyPartConstant[] = [];
     while (i < order.length) {
-        let cost: number = mapping.get(order[i]);
+        let cost: number = bodyPartCost.get(order[i]);
         if (maxEnergy < cost) {
             break;
         }
         maxEnergy -= cost;
-        ans.push(partToConstant.get(order[i]));
+        ans.push(order[i]);
         i++;
     }
     return ans;
