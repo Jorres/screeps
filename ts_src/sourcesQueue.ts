@@ -36,7 +36,7 @@ var sourcesQueue = {
             let curCreepNames: Set<string> = data.sourcesToNames.get(source.id);
             if (curCreepNames.has(creep.name)) {
                 modifyFreePlaces(source.id, +1);
-                curCreepNames.delete(source.id);
+                curCreepNames.delete(creep.name);
             }
         }
     }
