@@ -32,7 +32,7 @@ module.exports.loop = function () {
     }
     try {
         trySpawn('harvester', 3);
-        trySpawn('upgrader', 5);
+        trySpawn('upgrader', 6);
         trySpawn('builder', 3);
     }
     catch (e) {

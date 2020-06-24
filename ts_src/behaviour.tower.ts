@@ -28,7 +28,7 @@ function findMostDamagedStructure(tower: StructureTower) {
     let towerCapacity = tower.store.getUsedCapacity(RESOURCE_ENERGY);
     for (let structure of structures) {
         let curDamage: number = structure.hitsMax - structure.hits;
-        if (curDamage > maxDamage && U.manhattanDist(structure.pos, tower.pos) < 22 && (structure.hits < 10000 /*|| towerCapacity >  800 */)) {
+        if (curDamage > maxDamage && (structure.hits < 10000 /*|| towerCapacity >  800 */)) {
             mostDamaged = structure;
             maxDamage = curDamage;
         }
