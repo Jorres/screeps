@@ -29,18 +29,13 @@ var roleHarvester = {
 };
 
 function reselectEnergyDestination(creep: Creep): void {
-    let targets: AnyStructure[] = creep.room.find(FIND_STRUCTURES); // do not need to store them
-    let freeForStorage: PossibleEnergyContainer[] = [];
-    for (let target of targets) {
-        // @ts-ignore
-        if (isPossibleEnergyContainer(target) && target.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-            freeForStorage.push(target);
+    let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (structure) => {
+            // @ts-ignore
+            return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
         }
-    }
-
-    if (freeForStorage.length > 0) {
-        creep.memory.currentActiveDestinationId = freeForStorage[U.random(freeForStorage.length)].id;
-    }
+    });
+    creep.memory.currentActiveDestinationId = target.id;
 }
 
 function harvestingState(creep: Creep) {
