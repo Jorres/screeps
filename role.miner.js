@@ -60,7 +60,7 @@ function getDesignatedMineId(creep) {
         for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
             var source = sources_1_1.value;
             var previousName = data.minesReservationMap.get(source.id);
-            if (Game.creeps[previousName]) {
+            if (!Game.creeps[previousName]) {
                 data.minesReservationMap.set(source.id, null);
             }
             if (!data.minesReservationMap.get(source.id)) {

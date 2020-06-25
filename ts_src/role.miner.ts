@@ -52,7 +52,7 @@ function getDesignatedMineId(creep: Creep) {
     let sources = creep.room.find(FIND_SOURCES);
     for (let source of sources) {
         let previousName = data.minesReservationMap.get(source.id);
-        if (Game.creeps[previousName]) {
+        if (!Game.creeps[previousName]) {
             data.minesReservationMap.set(source.id, null);
         }
 
