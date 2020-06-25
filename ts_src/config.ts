@@ -14,7 +14,12 @@ var config = {
         [RANGED_ATTACK, 150],
         [TOUGH, 10],
         [CLAIM, 600]
-    ])
+    ]),
+    spawningConfig: [
+        {roleName: 'harvester', maxAmount: 3},
+        {roleName: 'upgrader', maxAmount: 6},
+        {roleName: 'builder', maxAmount: 3}
+    ]
 };
 
 // @ts-ignore

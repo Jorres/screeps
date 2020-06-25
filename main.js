@@ -27,13 +27,8 @@ module.exports.loop = function () {
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
-    try {
-        trySpawn('harvester', 3);
-        trySpawn('upgrader', 6);
-        trySpawn('builder', 3);
-    }
-    catch (e) {
-        console.log(e);
+    for (var spawnName in Game.spawns) {
+        Game.spawns[spawnName].trySpawningProcess();
     }
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -79,45 +74,4 @@ function cleanupDeadCreeps() {
             console.log('Clearing non-existing creep memory:', name_1);
         }
     }
-}
-function trySpawn(roleName, maxCreepsWithRoleAllowed) {
-    var roleSpecificCreeps = _.filter(Game.creeps, function (creep) { return creep.memory.role == roleName; });
-    if (roleSpecificCreeps.length < maxCreepsWithRoleAllowed) {
-        if (Game.spawns['Spawn1'].spawning) {
-            return;
-        }
-        var newName = roleName + Game.time;
-        var spawningError = Game.spawns['Spawn1'].spawnCreep(bestUniversalCreep(), newName, { memory: { role: roleName } });
-        if (!spawningError) {
-            throw ("yay, spawning " + roleName);
-        }
-        console.log("Error from spawning is " + spawningError);
-    }
-}
-function bestUniversalCreep() {
-    var order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
-    var maxEnergy = firstSpawn.room.energyCapacityAvailable;
-    if (getCreepsAmount() < 3) {
-        maxEnergy = firstSpawn.room.energyAvailable;
-    }
-    var i = 0;
-    var ans = [];
-    while (i < order.length) {
-        var cost = config.bodyPartCost.get(order[i]);
-        if (maxEnergy < cost) {
-            break;
-        }
-        maxEnergy -= cost;
-        ans.push(order[i]);
-        i++;
-    }
-    return ans;
-}
-function getCreepsAmount() {
-    var ans = 0;
-    cleanupDeadCreeps();
-    for (var creep in Game.creeps) {
-        ans++;
-    }
-    return ans;
 }

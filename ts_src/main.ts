@@ -29,13 +29,8 @@ module.exports.loop = function() {
     checkGeneratePixel();
     cleanupDeadCreeps();
 
-    try {
-        trySpawn('harvester', 3);
-        trySpawn('upgrader',  6);
-        trySpawn('builder',   3);
-        // trySpawn('claimer',   1);
-    } catch (e) {
-        console.log(e);
+    for (let spawnName in Game.spawns) {
+        Game.spawns[spawnName].trySpawningProcess();
     }
 
     for (var name in Game.creeps) {
@@ -60,7 +55,6 @@ module.exports.loop = function() {
     }
 }
 
-
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {
         // @ts-ignore
@@ -75,54 +69,4 @@ function cleanupDeadCreeps() {
             console.log('Clearing non-existing creep memory:', name);
         }
     }
-}
-
-function trySpawn(roleName: CreepRoles, maxCreepsWithRoleAllowed: number) {
-    // @ts-ignore
-    var roleSpecificCreeps = _.filter(Game.creeps, (creep: Creep) => creep.memory.role == roleName);
-    if (roleSpecificCreeps.length < maxCreepsWithRoleAllowed) {
-        if (Game.spawns['Spawn1'].spawning) {
-            return;
-        }
-
-        let newName = roleName + Game.time;
-        let spawningError = Game.spawns['Spawn1'].spawnCreep(bestUniversalCreep(), newName,
-            {memory: {role: roleName}} );
-        if (!spawningError) {
-            throw ("yay, spawning " + roleName);
-        }
-
-        console.log("Error from spawning is " + spawningError);
-    }
-}
-
-function bestUniversalCreep(): BodyPartConstant[] {
-    let order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
-
-    let maxEnergy: number = firstSpawn.room.energyCapacityAvailable;
-    if (getCreepsAmount() < 3) {
-        maxEnergy = firstSpawn.room.energyAvailable;
-    }
-
-    let i = 0;
-    let ans: BodyPartConstant[] = [];
-    while (i < order.length) {
-        let cost: number = config.bodyPartCost.get(order[i]);
-        if (maxEnergy < cost) {
-            break;
-        }
-        maxEnergy -= cost;
-        ans.push(order[i]);
-        i++;
-    }
-    return ans;
-}
-
-function getCreepsAmount(): number {
-    let ans = 0;
-    cleanupDeadCreeps();
-    for (let creep in Game.creeps) {
-        ans++;
-    }
-    return ans;
 }
