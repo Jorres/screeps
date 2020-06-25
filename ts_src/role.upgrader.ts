@@ -40,7 +40,7 @@ function upgradingUpgradingState(creep: Creep): void {
         U.changeState(creep, 'harvest');
         upgradingHarvestingState(creep);
     } else {
-        U.moveAndUpgradeController(creep, creep.room.controller);
+        U.moveAndUpgradeController(creep, creep.room.controller); 
     }
 }
 
