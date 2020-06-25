@@ -2,6 +2,7 @@ var storageSelector = {
     selectStorageId: function (creep) {
         var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: function (structure) {
+                return;
                 (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 200) ||
                     (structure.structureType == STRUCTURE_STORAGE && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 200);
             }
