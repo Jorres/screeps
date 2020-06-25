@@ -34,6 +34,12 @@ function minerMineState(creep: Creep) {
 }
 
 function minerDropState(creep: Creep) {
+    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+        U.changeState(creep, 'mine');
+        minerMineState(creep);
+        return;
+    }
+
     let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
         filter: (structure) => {
             return structure.structureType == STRUCTURE_CONTAINER;
