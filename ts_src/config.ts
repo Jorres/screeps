@@ -28,7 +28,7 @@ var config = {
         {roleName: 'simpleHarvester', maxAmount: 3}
     ],
     simpleHarvesterConfig: [WORK, CARRY, MOVE],
-    defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
+    defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
     defaultCarrierConfig: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
     defaultUniversalConfig: [MOVE, WORK, CARRY, WORK, CARRY, WORK, CARRY, MOVE, CARRY],
     minimumEnergyToKickstart: 1100
