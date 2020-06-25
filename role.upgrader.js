@@ -3,24 +3,23 @@ var U = require('U');
 var config = require('config');
 var roleUpgrader = {
     run: function (creep) {
-        if (!creep.memory.upgradingState) {
-            creep.memory.upgradingState = 'harvest';
+        if (!creep.memory.autoState) {
+            creep.memory.autoState = 'harvest';
         }
-        if (creep.memory.upgradingState == 'harvest') {
+        if (creep.memory.autoState == 'harvest') {
             upgradingHarvestingState(creep);
         }
-        else if (creep.memory.upgradingState == 'upgrade') {
+        else if (creep.memory.autoState == 'upgrade') {
             upgradingUpgradingState(creep);
         }
-        else if (creep.memory.upgradingState == 'noop') {
+        else if (creep.memory.autoState == 'noop') {
             upgradingNoopState(creep);
         }
     }
 };
 function upgradingHarvestingState(creep) {
     if (creep.store.getFreeCapacity() == 0) {
-        creep.memory.upgradingState = 'upgrade';
-        creep.say("upgrade");
+        U.changeState(creep, 'upgrade');
         upgradingUpgradingState(creep);
     }
     else {
@@ -29,15 +28,13 @@ function upgradingHarvestingState(creep) {
             U.moveAndHarvest(creep, source);
         }
         else {
-            creep.memory.upgradingState = 'noop';
-            creep.say('noop');
+            U.changeState(creep, 'noop');
         }
     }
 }
 function upgradingUpgradingState(creep) {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.upgradingState = 'harvest';
-        creep.say('harvest');
+        U.changeState(creep, 'harvest');
         upgradingHarvestingState(creep);
     }
     else {
@@ -47,8 +44,7 @@ function upgradingUpgradingState(creep) {
 function upgradingNoopState(creep) {
     var source = sourcesQueue.selectSourceToRun(creep);
     if (source) {
-        creep.memory.upgradingState = 'harvest';
-        creep.say('harvest');
+        U.changeState(creep, 'harvest');
         upgradingHarvestingState(creep);
     }
 }

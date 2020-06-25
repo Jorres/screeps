@@ -152,15 +152,6 @@ function initialize() {
     data.freePlacesAtSource = new Map();
 
     for (var name in Game.creeps) {
-        var creep = Game.creeps[name];
-        if (creep.memory.role == 'harvester') {
-            creep.memory.harvestingState = null;
-        } else if (creep.memory.role == 'upgrader') {
-            // roleUpgrader.run(creep);
-        } else if (creep.memory.role == 'builder') {
-            // roleBuilder.run(creep);
-        } else if (creep.memory.role == 'claimer') {
-            // roleClaimer.run(creep);
-        }
+        Game.creeps[name].memory.autoState = null;
     }
 }

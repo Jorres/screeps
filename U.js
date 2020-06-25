@@ -1,5 +1,12 @@
 var config = require('config');
+var structuresWithEnergyStore = new Set([
+    STRUCTURE_SPAWN, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_TOWER, STRUCTURE_STORAGE
+]);
 var U = {
+    changeState: function (creep, state) {
+        creep.memory.autoState = state;
+        creep.say(state);
+    },
     manhattanDist: function (a, b) {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     },
@@ -33,6 +40,9 @@ var U = {
     },
     atLeastHalfFull: function (creep) {
         return creep.store.getFreeCapacity(RESOURCE_ENERGY) <= creep.store.getUsedCapacity(RESOURCE_ENERGY);
+    },
+    hasEnergyStore: function (structure) {
+        return structuresWithEnergyStore.has(structure.structureType);
     }
 };
 function defaultMove(creep, target) {

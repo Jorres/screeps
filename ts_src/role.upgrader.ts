@@ -7,15 +7,15 @@ var config = require('config');
 
 var roleUpgrader = {
     run: function(creep: Creep) {
-        if (!creep.memory.upgradingState) {
-            creep.memory.upgradingState = 'harvest';
+        if (!creep.memory.autoState) {
+            creep.memory.autoState = 'harvest';
         }
 
-        if (creep.memory.upgradingState == 'harvest') {
+        if (creep.memory.autoState == 'harvest') {
             upgradingHarvestingState(creep);
-        } else if (creep.memory.upgradingState == 'upgrade') {
+        } else if (creep.memory.autoState == 'upgrade') {
             upgradingUpgradingState(creep);
-        } else if (creep.memory.upgradingState == 'noop') {
+        } else if (creep.memory.autoState == 'noop') {
             upgradingNoopState(creep);
         } 
     }
@@ -23,24 +23,21 @@ var roleUpgrader = {
 
 function upgradingHarvestingState(creep: Creep): void {
     if (creep.store.getFreeCapacity() == 0) {
-        creep.memory.upgradingState = 'upgrade';
-        creep.say("upgrade");
+        U.changeState(creep, 'upgrade');
         upgradingUpgradingState(creep);
     } else {
         let source: Source = sourcesQueue.selectSourceToRun(creep);
         if (source) {
             U.moveAndHarvest(creep, source);
         } else {
-            creep.memory.upgradingState = 'noop';
-            creep.say('noop');
+            U.changeState(creep, 'noop');
         }
     }
 }
 
 function upgradingUpgradingState(creep: Creep): void {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.upgradingState = 'harvest';
-        creep.say('harvest');
+        U.changeState(creep, 'harvest');
         upgradingHarvestingState(creep);
     } else {
         U.moveAndUpgradeController(creep, creep.room.controller);
@@ -50,12 +47,10 @@ function upgradingUpgradingState(creep: Creep): void {
 function upgradingNoopState(creep: Creep): void {
     let source: Source = sourcesQueue.selectSourceToRun(creep);  
     if (source) {
-        creep.memory.upgradingState = 'harvest';
-        creep.say('harvest');
+        U.changeState(creep, 'harvest');
         upgradingHarvestingState(creep);
     }
 }
-
 
 // @ts-ignore
 module.exports = roleUpgrader;

@@ -5,17 +5,17 @@ var sourcesQueue = require('sourcesQueue');
 
 var roleBuilder = {
     run: function(creep: Creep) {
-        if (!creep.memory.buildingState) {
-            creep.memory.buildingState = 'harvest';
+        if (!creep.memory.autoState) {
+            creep.memory.autoState = 'harvest';
         }
 
-        if (creep.memory.buildingState == 'harvest') {
+        if (creep.memory.autoState == 'harvest') {
             builderHarvestingState(creep);
-        } else if (creep.memory.buildingState == 'tryBuild') {
+        } else if (creep.memory.autoState == 'tryBuild') {
             tryBuildingState(creep);
-        } else if (creep.memory.buildingState == 'tryRepair') {
+        } else if (creep.memory.autoState == 'tryRepair') {
             tryRepairingState(creep);
-        } else if (creep.memory.buildingState == 'noop') {
+        } else if (creep.memory.autoState == 'noop') {
             builderNoopState(creep);
         } 
     }
@@ -23,7 +23,7 @@ var roleBuilder = {
 
 function builderHarvestingState(creep: Creep): void {
     if (creep.store.getFreeCapacity() == 0) {
-        creep.memory.buildingState = 'tryBuild';
+        creep.memory.autoState = 'tryBuild';
         sourcesQueue.cleanIntentionForSource(creep);
         creep.say('tryBuild');
         tryBuildingState(creep);
@@ -35,7 +35,7 @@ function builderHarvestingState(creep: Creep): void {
 
 function tryBuildingState(creep: Creep): void {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.buildingState = 'harvest';
+        creep.memory.autoState = 'harvest';
         builderHarvestingState(creep);
         creep.say('harvest');
         return;
@@ -45,14 +45,14 @@ function tryBuildingState(creep: Creep): void {
     if (creep.memory.currentActiveDestinationId) {
         U.moveAndBuild(creep, U.getById(creep.memory.currentActiveDestinationId)); 
     } else {
-        creep.memory.buildingState = 'tryRepair';
+        creep.memory.autoState = 'tryRepair';
         tryRepairingState(creep);
     }
 }
 
 function tryRepairingState(creep: Creep): void {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.buildingState = 'harvest';
+        creep.memory.autoState = 'harvest';
         builderHarvestingState(creep);
         creep.say('harvest');
         return;
@@ -62,7 +62,7 @@ function tryRepairingState(creep: Creep): void {
     if (creep.memory.currentActiveDestinationId) {
         U.moveAndRepair(creep, U.getById(creep.memory.currentActiveDestinationId));
     } else {
-        creep.memory.buildingState = 'noop';
+        creep.memory.autoState = 'noop';
         builderNoopState(creep);
     }
 }
@@ -82,7 +82,7 @@ function reselectRepairingDestination(creep: Creep): void {
     }
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
         creep.memory.currentActiveDestinationId = null;
-        creep.memory.buildingState = 'harvest';
+        creep.memory.autoState = 'harvest';
         builderHarvestingState(creep);
         return;
     }
@@ -103,14 +103,14 @@ function reselectRepairingDestination(creep: Creep): void {
 function builderNoopState(creep: Creep): void {
     reselectConstructingDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
-        creep.memory.buildingState = 'tryBuild';
+        creep.memory.autoState = 'tryBuild';
         tryBuildingState(creep);
         return;
     }
 
     reselectRepairingDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
-        creep.memory.buildingState = 'tryRepair';
+        creep.memory.autoState = 'tryRepair';
         tryRepairingState(creep);
         return;
     }
@@ -118,7 +118,7 @@ function builderNoopState(creep: Creep): void {
     if (U.atLeastHalfFull(creep)) {
         creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
     } else {
-        creep.memory.buildingState = 'harvest';
+        creep.memory.autoState = 'harvest';
         creep.say('harvest');
         builderHarvestingState(creep);
     }

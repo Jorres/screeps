@@ -1,3 +1,14 @@
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var config = require('config');
 var sourcesQueue = require('sourcesQueue');
 var U = require('U');
@@ -9,40 +20,71 @@ function isPossibleEnergyContainer(structure) {
 }
 var roleHarvester = {
     run: function (creep) {
-        if (!creep.memory.harvestingState) {
-            creep.memory.harvestingState = 'harvest';
+        if (!creep.memory.autoState) {
+            creep.memory.autoState = 'harvest';
         }
-        if (creep.memory.harvestingState == 'harvest') {
+        if (creep.memory.autoState == 'harvest') {
             harvestingState(creep);
         }
-        else if (creep.memory.harvestingState == 'carry') {
+        else if (creep.memory.autoState == 'carry') {
             carryingState(creep);
         }
-        else if (creep.memory.harvestingState == 'noop') {
+        else if (creep.memory.autoState == 'noop') {
             noopState(creep);
         }
     }
 };
 function reselectEnergyDestination(creep) {
+    var e_1, _a;
     var oldId = creep.memory.currentActiveDestinationId;
     if (oldId && U.getById(oldId).store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
         return;
     }
-    var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-        filter: function (structure) {
-            if (structure.store) {
-                return structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+    var structures = creep.room.find(FIND_STRUCTURES);
+    var possible = [];
+    try {
+        for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
+            var structure = structures_1_1.value;
+            if (U.hasEnergyStore(structure)) {
+                var freeCapacity = structure.store.getFreeCapacity(RESOURCE_ENERGY);
+                var usedCapacity = structure.store.getUsedCapacity(RESOURCE_ENERGY);
+                var totalCapacity = freeCapacity + usedCapacity;
+                if (totalCapacity * 0.9 < usedCapacity) {
+                    continue;
+                }
+                possible.push({ cap: totalCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });
             }
-            return false;
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    possible.sort(function (a, b) {
+        if (a.cap == b.cap) {
+            return dealWithSortResurnValue(a.length, b.length);
+        }
+        else {
+            return dealWithSortResurnValue(a.cap, b.cap);
         }
     });
-    var result = target ? target.id : null;
-    creep.memory.currentActiveDestinationId = result;
+    creep.memory.currentActiveDestinationId = possible.length > 0 ? possible[0].id : null;
+}
+function dealWithSortResurnValue(a, b) {
+    if (a < b) {
+        return -1;
+    }
+    else if (a > b) {
+        return 1;
+    }
+    return 0;
 }
 function harvestingState(creep) {
     if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.harvestingState = 'carry';
-        creep.say('carry');
+        U.changeState(creep, 'carry');
         sourcesQueue.cleanIntentionForSource(creep);
         carryingState(creep);
     }
@@ -52,8 +94,7 @@ function harvestingState(creep) {
 }
 function carryingState(creep) {
     if (creep.store[RESOURCE_ENERGY] == 0) {
-        creep.memory.harvestingState = 'harvest';
-        creep.say('harvest');
+        U.changeState(creep, 'harvest');
         harvestingState(creep);
     }
     else {
@@ -63,19 +104,19 @@ function carryingState(creep) {
             reselectEnergyDestination(creep);
         }
         else {
-            creep.memory.harvestingState = 'noop';
-            creep.say('noop');
+            U.changeState(creep, 'noop');
             noopState(creep);
         }
     }
 }
 function noopState(creep) {
+    creep.memory.currentActiveDestinationId = null;
     reselectEnergyDestination(creep);
     if (creep.memory.currentActiveDestinationId) {
-        creep.memory.harvestingState = 'carry';
+        U.changeState(creep, 'carry');
     }
     else if (U.atLeastHalfFull(creep)) {
-        creep.memory.harvestingState = 'harvest';
+        U.changeState(creep, 'harvest');
     }
     else {
         creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });

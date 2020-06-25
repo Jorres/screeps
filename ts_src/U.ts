@@ -1,7 +1,15 @@
 // @ts-ignore
 var config = require('config');
 
+const structuresWithEnergyStore: Set<StructureConstant> = new Set([
+    STRUCTURE_SPAWN, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_TOWER, STRUCTURE_STORAGE
+])
+
 var U = {
+    changeState: function(creep: Creep, state: AutomataState): void {
+        creep.memory.autoState = state;
+        creep.say(state);
+    },
     manhattanDist: function(a: RoomPosition, b: RoomPosition): number {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     },
@@ -35,7 +43,11 @@ var U = {
     },
     atLeastHalfFull: function(creep: Creep): boolean {
         return creep.store.getFreeCapacity(RESOURCE_ENERGY) <= creep.store.getUsedCapacity(RESOURCE_ENERGY);
+    },
+    hasEnergyStore: function(structure: AnyStructure): structure is PossibleEnergyContainer {
+        return structuresWithEnergyStore.has(structure.structureType);
     }
+
 };
 
 function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {

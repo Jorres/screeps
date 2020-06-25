@@ -1,6 +1,8 @@
 type CreepRoles = 'upgrader'|'harvester'|'builder';
 
-type PossibleEnergyContainer = StructureSpawn | StructureExtension | StructureTower | StructureContainer;
+type AutomataState = 'noop'|'carry'|'tryBuild'|'tryRepair'|'upgrade'|'harvest';
+
+type PossibleEnergyContainer = StructureSpawn | StructureExtension | StructureTower | StructureContainer | StructureStorage;
 
 type StringHashMap<V> = {
     [key: string]: V
