@@ -36,9 +36,9 @@ function builderCollectingState(creep) {
         tryBuildingState(creep);
     }
     else {
-        var target = storageSelector.selectStorage(creep);
-        if (target) {
-            U.moveAndHarvest(creep, target);
+        var targetId = storageSelector.selectStorageId(creep);
+        if (targetId) {
+            U.moveAndHarvest(creep, U.getById(targetId));
         }
     }
 }

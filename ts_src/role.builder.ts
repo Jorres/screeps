@@ -26,9 +26,9 @@ function builderCollectingState(creep: Creep): void {
         U.changeState(creep, 'tryBuild');
         tryBuildingState(creep);
     } else {
-        let target = storageSelector.selectStorage(creep);
-        if (target) {
-            U.moveAndHarvest(creep, target);
+        let targetId = storageSelector.selectStorageId(creep);
+        if (targetId) {
+            U.moveAndHarvest(creep, U.getById(targetId));
         }
     }
 }

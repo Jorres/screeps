@@ -23,9 +23,9 @@ function upgradingCollectingState(creep) {
         upgradingUpgradingState(creep);
     }
     else {
-        var target = storageSelector.selectStorage(creep);
-        if (target) {
-            U.moveAndWithdraw(creep, target, RESOURCE_ENERGY);
+        var targetId = storageSelector.selectStorageId(creep);
+        if (targetId) {
+            U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
         }
         else {
             U.changeState(creep, 'noop');
@@ -42,8 +42,7 @@ function upgradingUpgradingState(creep) {
     }
 }
 function upgradingNoopState(creep) {
-    var target = storageSelector.selectStorage(creep);
-    if (target) {
+    if (storageSelector.selectStorageId(creep)) {
         U.changeState(creep, 'collect');
         upgradingCollectingState(creep);
     }
