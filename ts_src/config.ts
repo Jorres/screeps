@@ -19,8 +19,8 @@ var config = {
         {roleName: 'miner', maxAmount: 1},
         {roleName: 'carrier', maxAmount: 2},
         {roleName: 'miner', maxAmount: 2}, // 1 + 1
-        {roleName: 'carrier', maxAmount: 5}, // 2 + 3
-        {roleName: 'upgrader', maxAmount: 3},
+        {roleName: 'carrier', maxAmount: 4}, // 2 + 2
+        {roleName: 'upgrader', maxAmount: 4},
         {roleName: 'builder', maxAmount: 0}
     ],
     simpleHarvestersAmount: 3,
