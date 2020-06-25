@@ -24,6 +24,9 @@ var roleCarrier = {
     }
 };
 function reselectPickup(creep) {
+    if (creep.memory.carryingId && U.getById(creep.memory.carryingId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+        return;
+    }
     var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         filter: function (structure) {
             return structure.structureType == STRUCTURE_CONTAINER
