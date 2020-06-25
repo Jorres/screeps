@@ -57,6 +57,7 @@ function getDesignatedMineId(creep: Creep) {
         }
 
         if (!data.minesReservationMap.get(source.id)) {
+            data.minesReservationMap.set(source.id, creep.name);
             return source.id;
         }
     }
