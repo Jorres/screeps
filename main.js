@@ -9,6 +9,7 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
+require('initialize')();
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
@@ -20,16 +21,11 @@ var firstSpawn = Game.spawns['Spawn1'];
 function isTower(structure) {
     return structure.structureType == STRUCTURE_TOWER;
 }
-var init = false;
 module.exports.loop = function () {
     var e_1, _a;
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
-    if (!init) {
-        init = true;
-        initialize();
-    }
     try {
         trySpawn('harvester', 3);
         trySpawn('upgrader', 6);
@@ -98,17 +94,7 @@ function trySpawn(roleName, maxCreepsWithRoleAllowed) {
     }
 }
 function bestUniversalCreep() {
-    var order = [MOVE, WORK, CARRY, MOVE, WORK, CARRY];
-    var bodyPartCost = new Map([
-        [WORK, 100],
-        [MOVE, 50],
-        [CARRY, 50],
-        [ATTACK, 80],
-        [HEAL, 250],
-        [RANGED_ATTACK, 150],
-        [TOUGH, 10],
-        [CLAIM, 600]
-    ]);
+    var order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
     var maxEnergy = firstSpawn.room.energyCapacityAvailable;
     if (getCreepsAmount() < 3) {
         maxEnergy = firstSpawn.room.energyAvailable;
@@ -116,7 +102,7 @@ function bestUniversalCreep() {
     var i = 0;
     var ans = [];
     while (i < order.length) {
-        var cost = bodyPartCost.get(order[i]);
+        var cost = config.bodyPartCost.get(order[i]);
         if (maxEnergy < cost) {
             break;
         }
@@ -133,12 +119,4 @@ function getCreepsAmount() {
         ans++;
     }
     return ans;
-}
-function initialize() {
-    console.log("initialize");
-    data.sourcesToNames = new Map();
-    data.freePlacesAtSource = new Map();
-    for (var name in Game.creeps) {
-        Game.creeps[name].memory.autoState = null;
-    }
 }

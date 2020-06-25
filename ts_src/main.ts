@@ -1,4 +1,6 @@
 // @ts-ignore
+require('initialize')();
+// @ts-ignore
 var roleHarvester = require('role.harvester');
 // @ts-ignore
 var roleUpgrader = require('role.upgrader');
@@ -19,23 +21,11 @@ function isTower(structure: Structure): structure is StructureTower {
     return structure.structureType == STRUCTURE_TOWER;
 }
 
-var init: boolean = false;
-
 // @ts-ignore
 module.exports.loop = function() {
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
-
-    // for (let source of firstSpawn.room.find(FIND_SOURCES)) {
-    //     console.log(source.id + " " + data.freePlacesAtSource.get(source.id));
-    // }
-    // console.log();
-
-    if (!init) {
-        init = true;
-        initialize();
-    }
 
     try {
         trySpawn('harvester', 3);
@@ -105,18 +95,8 @@ function trySpawn(roleName: CreepRoles, maxCreepsWithRoleAllowed: number) {
 }
 
 function bestUniversalCreep(): BodyPartConstant[] {
-    let order = [MOVE, WORK, CARRY, MOVE, WORK, CARRY];
+    let order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
 
-    let bodyPartCost: Map<BodyPartConstant, number> = new Map([
-        [WORK, 100],
-        [MOVE, 50],
-        [CARRY, 50],
-        [ATTACK, 80],
-        [HEAL, 250],
-        [RANGED_ATTACK, 150],
-        [TOUGH, 10],
-        [CLAIM, 600]
-    ]);
 
     let maxEnergy: number = firstSpawn.room.energyCapacityAvailable;
     if (getCreepsAmount() < 3) {
@@ -126,7 +106,7 @@ function bestUniversalCreep(): BodyPartConstant[] {
     let i = 0;
     let ans: BodyPartConstant[] = [];
     while (i < order.length) {
-        let cost: number = bodyPartCost.get(order[i]);
+        let cost: number = config.bodyPartCost.get(order[i]);
         if (maxEnergy < cost) {
             break;
         }
@@ -144,14 +124,4 @@ function getCreepsAmount(): number {
         ans++;
     }
     return ans;
-}
-
-function initialize() {
-    console.log("initialize");
-    data.sourcesToNames = new Map();
-    data.freePlacesAtSource = new Map();
-
-    for (var name in Game.creeps) {
-        Game.creeps[name].memory.autoState = null;
-    }
 }
