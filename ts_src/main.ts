@@ -1,6 +1,8 @@
 // @ts-ignore
 require('initialize')();
 // @ts-ignore
+require('behaviour.spawn')();
+// @ts-ignore
 var roleHarvester = require('role.harvester');
 // @ts-ignore
 var roleUpgrader = require('role.upgrader');
