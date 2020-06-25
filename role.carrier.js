@@ -55,6 +55,11 @@ function carrierCarryingFrom(creep) {
     }
 }
 function carrierCarryingTo(creep) {
+    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == creep.store.getCapacity(RESOURCE_ENERGY)) {
+        U.changeState(creep, 'carryingFrom');
+        creep.memory.carryingId = null;
+        return;
+    }
     reselectStore(creep);
     if (creep.memory.carryingId) {
         var err = U.moveAndTransfer(creep, U.getById(creep.memory.carryingId));

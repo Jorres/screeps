@@ -49,6 +49,12 @@ function carrierCarryingFrom(creep: Creep): void {
 }
 
 function carrierCarryingTo(creep: Creep): void {
+    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == creep.store.getCapacity(RESOURCE_ENERGY)) {
+        U.changeState(creep, 'carryingFrom');
+        creep.memory.carryingId = null;
+        return;
+    }
+
     reselectStore(creep);    
     if (creep.memory.carryingId) {
         let err = U.moveAndTransfer(creep, U.getById(creep.memory.carryingId))
