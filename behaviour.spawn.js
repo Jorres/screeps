@@ -26,6 +26,9 @@ module.exports = function () {
                     console.log("Spawning " + spawningType.roleName);
                     break;
                 }
+                else if (err == ERR_NOT_ENOUGH_RESOURCES) {
+                    break;
+                }
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
