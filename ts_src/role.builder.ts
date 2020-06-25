@@ -70,7 +70,8 @@ function reselectConstructingDestination(creep: Creep): void {
     if (id && U.getById(id)) {
         return;
     }
-    creep.memory.currentActiveDestinationId = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES).id;
+    let target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    creep.memory.currentActiveDestinationId = target ? target.id : null;
 }
 
 function reselectRepairingDestination(creep: Creep): void {
@@ -86,7 +87,7 @@ function reselectRepairingDestination(creep: Creep): void {
     }
 
     let bestDiff = -1;
-    let bestDestinationId;
+    let bestDestinationId = null;
     let structures = creep.room.find(FIND_STRUCTURES);
     for (let structure of structures) {
         let curDiff = structure.hitsMax - structure.hits;

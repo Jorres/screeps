@@ -77,7 +77,8 @@ function reselectConstructingDestination(creep) {
     if (id && U.getById(id)) {
         return;
     }
-    creep.memory.currentActiveDestinationId = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES).id;
+    var target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    creep.memory.currentActiveDestinationId = target ? target.id : null;
 }
 function reselectRepairingDestination(creep) {
     var e_1, _a;
@@ -92,7 +93,7 @@ function reselectRepairingDestination(creep) {
         return;
     }
     var bestDiff = -1;
-    var bestDestinationId;
+    var bestDestinationId = null;
     var structures = creep.room.find(FIND_STRUCTURES);
     try {
         for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
