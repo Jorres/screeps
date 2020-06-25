@@ -43,7 +43,9 @@ function carrierCarryingTo(creep: Creep): void {
     if (creep.memory.carryingId) {
         let err = U.moveAndTransfer(creep, U.getById(creep.memory.carryingId))
         if (err == OK) {                
-            U.changeState(creep, 'carryingTo');
+            if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+                U.changeState(creep, 'carryingFrom');
+            }
             creep.memory.carryingId = null;
         } else if (err == ERR_NOT_ENOUGH_RESOURCES) {
             throw "AAAA";
