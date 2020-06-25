@@ -28,8 +28,29 @@ module.exports.loop = function () {
     console.log(Game.time);
     checkGeneratePixel();
     cleanupDeadCreeps();
+    var visited = new Set();
     for (var spawnName in Game.spawns) {
-        Game.spawns[spawnName].trySpawningProcess();
+        var spawn = Game.spawns[spawnName];
+        spawn.trySpawningProcess();
+        if (!visited.has(spawn.room.name)) {
+            var structures = spawn.room.find(FIND_STRUCTURES);
+            try {
+                for (var structures_1 = (e_1 = void 0, __values(structures)), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
+                    var structure = structures_1_1.value;
+                    if (isTower(structure)) {
+                        towerBehaviour.run(structure);
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            visited.add(spawn.room.name);
+        }
     }
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -45,22 +66,6 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'claimer') {
             roleClaimer.run(creep);
         }
-    }
-    var structures = firstSpawn.room.find(FIND_STRUCTURES);
-    try {
-        for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
-            var structure = structures_1_1.value;
-            if (isTower(structure)) {
-                towerBehaviour.run(structure);
-            }
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
-        }
-        finally { if (e_1) throw e_1.error; }
     }
 };
 function checkGeneratePixel() {

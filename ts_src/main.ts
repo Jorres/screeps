@@ -31,8 +31,21 @@ module.exports.loop = function() {
     checkGeneratePixel();
     cleanupDeadCreeps();
 
+    let visited: Set<string> = new Set();
     for (let spawnName in Game.spawns) {
-        Game.spawns[spawnName].trySpawningProcess();
+        let spawn: StructureSpawn = Game.spawns[spawnName];
+
+        spawn.trySpawningProcess();
+        if (!visited.has(spawn.room.name)) {
+            let structures = spawn.room.find(FIND_STRUCTURES);
+
+            for (let structure of structures) {
+                if (isTower(structure)) {
+                    towerBehaviour.run(structure);
+                }
+            }
+            visited.add(spawn.room.name);
+        }
     }
 
     for (var name in Game.creeps) {
@@ -49,12 +62,6 @@ module.exports.loop = function() {
     }
 
 
-    let structures: AnyStructure[] = firstSpawn.room.find(FIND_STRUCTURES);
-    for(let structure of structures) {
-        if (isTower(structure)) {
-            towerBehaviour.run(structure);
-        }
-    }
 }
 
 function checkGeneratePixel() {
