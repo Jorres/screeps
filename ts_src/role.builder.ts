@@ -28,11 +28,10 @@ function builderCollectingState(creep: Creep): void {
     } else {
         let targetId = storageSelector.selectStorageId(creep);
         if (targetId) {
-            U.moveAndHarvest(creep, U.getById(targetId));
+            U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
         }
     }
 }
-
 
 function tryBuildingState(creep: Creep): void {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {

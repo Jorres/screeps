@@ -38,7 +38,7 @@ function builderCollectingState(creep) {
     else {
         var targetId = storageSelector.selectStorageId(creep);
         if (targetId) {
-            U.moveAndHarvest(creep, U.getById(targetId));
+            U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
         }
     }
 }
