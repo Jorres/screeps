@@ -43,6 +43,14 @@ var U = {
     },
     hasEnergyStore: function (structure) {
         return structuresWithEnergyStore.has(structure.structureType);
+    },
+    cleanupDeadCreeps: function () {
+        for (var name_1 in Memory.creeps) {
+            if (!Game.creeps[name_1]) {
+                delete Memory.creeps[name_1];
+                console.log('Cleared non-existing creep memory: ' + name_1);
+            }
+        }
     }
 };
 function defaultMove(creep, target) {

@@ -27,7 +27,7 @@ module.exports.loop = function () {
     var e_1, _a;
     console.log(Game.time);
     checkGeneratePixel();
-    cleanupDeadCreeps();
+    U.cleanupDeadCreeps();
     var visited = new Set();
     for (var spawnName in Game.spawns) {
         var spawn = Game.spawns[spawnName];
@@ -71,13 +71,5 @@ module.exports.loop = function () {
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {
         Game.cpu.generatePixel();
-    }
-}
-function cleanupDeadCreeps() {
-    for (var name_1 in Memory.creeps) {
-        if (!Game.creeps[name_1]) {
-            delete Memory.creeps[name_1];
-            console.log('Clearing non-existing creep memory:', name_1);
-        }
     }
 }

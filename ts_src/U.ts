@@ -46,9 +46,18 @@ var U = {
     },
     hasEnergyStore: function(structure: AnyStructure): structure is PossibleEnergyContainer {
         return structuresWithEnergyStore.has(structure.structureType);
+    },
+    cleanupDeadCreeps: function() {
+        for (let name in Memory.creeps) {
+            if (!Game.creeps[name]) {
+                delete Memory.creeps[name];
+                console.log('Cleared non-existing creep memory: ' + name);
+            }
+        }
     }
 
 };
+
 
 function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {
     creep.moveTo(target, {reusePath: config.reusePath(), visualizePathStyle: {stroke: '#ffffff'}});

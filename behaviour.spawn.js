@@ -11,6 +11,7 @@ var __values = (this && this.__values) || function(o) {
 };
 var config = require('config');
 var data = require('data');
+var U = require('U');
 module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
         var e_1, _a;
@@ -69,7 +70,7 @@ function bestUniversalCreep(spawn) {
 }
 function getCreepsAmount() {
     var ans = 0;
-    cleanupDeadCreeps();
+    U.cleanupDeadCreeps();
     for (var creep in Game.creeps) {
         ans++;
     }

@@ -29,7 +29,7 @@ function isTower(structure: Structure): structure is StructureTower {
 module.exports.loop = function() {
     console.log(Game.time);
     checkGeneratePixel();
-    cleanupDeadCreeps();
+    U.cleanupDeadCreeps();
 
     let visited: Set<string> = new Set();
     for (let spawnName in Game.spawns) {
@@ -71,11 +71,3 @@ function checkGeneratePixel() {
     }
 }
 
-function cleanupDeadCreeps() {
-    for(let name in Memory.creeps) {
-        if(!Game.creeps[name]) {
-            delete Memory.creeps[name];
-            console.log('Clearing non-existing creep memory:', name);
-        }
-    }
-}

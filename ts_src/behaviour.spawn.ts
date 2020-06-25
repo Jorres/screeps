@@ -2,6 +2,8 @@
 var config = require('config');
 // @ts-ignore
 var data = require('data');
+// @ts-ignore
+var U = require('U');
 
 // @ts-ignore
 module.exports = function() {
@@ -59,7 +61,7 @@ function bestUniversalCreep(spawn: StructureSpawn): BodyPartConstant[] {
 
 function getCreepsAmount(): number {
     let ans = 0;
-    cleanupDeadCreeps();
+    U.cleanupDeadCreeps();
     for (let creep in Game.creeps) {
         ans++;
     }
