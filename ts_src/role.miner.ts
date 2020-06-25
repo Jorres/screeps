@@ -62,6 +62,7 @@ function getDesignatedMineId(creep: Creep) {
             data.minesReservationMap.set(source.id, null);
         }
 
+        console.log("miner selecting " + source.id + "; old one is " + data.minesReservationMap.get(source.id));
         if (!data.minesReservationMap.get(source.id)) {
             data.minesReservationMap.set(source.id, creep.name);
             return source.id;
