@@ -45,14 +45,14 @@ function trySpawn(spawn, roleName, maxCreepsWithRoleAllowed) {
             return;
         }
         var newName = roleName + Game.time;
-        return spawn.spawnCreep(bestUniversalCreep(), newName, { memory: { role: roleName } });
+        return spawn.spawnCreep(bestUniversalCreep(spawn), newName, { memory: { role: roleName } });
     }
 }
-function bestUniversalCreep() {
+function bestUniversalCreep(spawn) {
     var order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
-    var maxEnergy = firstSpawn.room.energyCapacityAvailable;
+    var maxEnergy = spawn.room.energyCapacityAvailable;
     if (getCreepsAmount() < 3) {
-        maxEnergy = firstSpawn.room.energyAvailable;
+        maxEnergy = spawn.room.energyAvailable;
     }
     var i = 0;
     var ans = [];

@@ -30,17 +30,17 @@ function trySpawn(spawn: StructureSpawn, roleName: CreepRoles, maxCreepsWithRole
         }
 
         let newName = roleName + Game.time;
-        return spawn.spawnCreep(bestUniversalCreep(), newName,
+        return spawn.spawnCreep(bestUniversalCreep(spawn), newName,
             {memory: {role: roleName}} );
     }
 }
 
-function bestUniversalCreep(): BodyPartConstant[] {
+function bestUniversalCreep(spawn: StructureSpawn): BodyPartConstant[] {
     let order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
 
-    let maxEnergy: number = firstSpawn.room.energyCapacityAvailable;
+    let maxEnergy: number = spawn.room.energyCapacityAvailable;
     if (getCreepsAmount() < 3) {
-        maxEnergy = firstSpawn.room.energyAvailable;
+        maxEnergy = spawn.room.energyAvailable;
     }
 
     let i = 0;
