@@ -65,6 +65,12 @@ function reselectEnergyDestination(creep: Creep): void {
         }
     })
 
+    let s: string = "";
+    for (let a of possible) {
+        s += a.cap + " ";
+    }
+    console.log(s);
+
     creep.memory.currentActiveDestinationId = possible.length > 0 ? possible[0].id : null;
 }
 
