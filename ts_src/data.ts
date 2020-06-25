@@ -10,7 +10,9 @@ var data = {
 
     sourcesToNames: new Map(),
 
-    freePlacesAtSource: new Map()
+    freePlacesAtSource: new Map(),
+
+    freeTilesNearSource: new Map()
 };
 
 

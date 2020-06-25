@@ -39,7 +39,7 @@ var sourcesQueue = {
                 if (data.sourcesToNames.get(source.id).has(creep.name)) {
                     return U.getById(source.id);
                 }
-                var curFreePlaces = data.freePlacesAtSource.get(source.id);
+                var curFreePlaces = data.freePlacesAtSource.get(source.id) + data.freeTilesNearSource.get(source.id);
                 if (curFreePlaces > bestSourceFreePlaces) {
                     bestSourceFreePlaces = curFreePlaces;
                     bestSourceId = source.id;
@@ -101,7 +101,8 @@ function initNewSources(sources) {
             var source = sources_4_1.value;
             if (!data.sourcesToNames.get(source.id)) {
                 data.sourcesToNames.set(source.id, new Set());
-                data.freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
+                data.freeTilesNearSource.set(source.id, freeTilesNear(source.pos));
+                data.freePlacesAtSource.set(source.id, data.freeTilesNearSource.get(source.id));
             }
         }
     }

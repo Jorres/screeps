@@ -22,7 +22,7 @@ var sourcesQueue = {
                 return U.getById(source.id);
             }
 
-            let curFreePlaces = data.freePlacesAtSource.get(source.id);
+            let curFreePlaces = data.freePlacesAtSource.get(source.id) + data.freeTilesNearSource.get(source.id);
             if (curFreePlaces > bestSourceFreePlaces) {
                 bestSourceFreePlaces = curFreePlaces;
                 bestSourceId = source.id;
@@ -68,7 +68,8 @@ function initNewSources(sources: Source[]): void {
     for (let source of sources) {
         if (!data.sourcesToNames.get(source.id)) {
             data.sourcesToNames.set(source.id, new Set());
-            data.freePlacesAtSource.set(source.id, freeTilesNear(source.pos));
+            data.freeTilesNearSource.set(source.id, freeTilesNear(source.pos));
+            data.freePlacesAtSource.set(source.id, data.freeTilesNearSource.get(source.id));
         }
     }
 }
