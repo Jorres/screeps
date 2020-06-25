@@ -12,6 +12,8 @@ var roleClaimer = require('role.claimer');
 var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
 var data = require('data');
+// @ts-ignore
+var config = require('config');
 
 var MAX_BUCKET_SIZE: number = 10000;
 
@@ -96,7 +98,6 @@ function trySpawn(roleName: CreepRoles, maxCreepsWithRoleAllowed: number) {
 
 function bestUniversalCreep(): BodyPartConstant[] {
     let order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
-
 
     let maxEnergy: number = firstSpawn.room.energyCapacityAvailable;
     if (getCreepsAmount() < 3) {

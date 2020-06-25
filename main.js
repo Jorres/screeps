@@ -16,6 +16,7 @@ var roleBuilder = require('role.builder');
 var roleClaimer = require('role.claimer');
 var towerBehaviour = require('behaviour.tower');
 var data = require('data');
+var config = require('config');
 var MAX_BUCKET_SIZE = 10000;
 var firstSpawn = Game.spawns['Spawn1'];
 function isTower(structure) {
