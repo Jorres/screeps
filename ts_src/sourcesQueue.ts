@@ -11,8 +11,8 @@ var sourcesQueue = {
         initNewSources(sources);
 
         console.log();
-        for (let source of data.sourcesToNames) {
-            console.log(source + " " + data.freePlacesAtSource.get(source));
+        for (let source of sources) {
+            console.log(source + " " + data.freePlacesAtSource.get(source.id));
         }
 
         let bestSourceId;
