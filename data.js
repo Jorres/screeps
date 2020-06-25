@@ -4,8 +4,7 @@ var data = {
     terrain: function () {
         return terrainData;
     },
-    sourcesToNames: new Map(),
-    freePlacesAtSource: new Map(),
-    freeTilesNearSource: new Map()
+    freeTilesNearSource: new Map(),
+    minesReservationMap: new Map()
 };
 module.exports = data;

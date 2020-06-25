@@ -47,7 +47,7 @@ function carrierCarryingTo(creep: Creep): void {
                 U.changeState(creep, 'carryingFrom');
             }
             creep.memory.carryingId = null;
-        } else if (err == ERR_NOT_ENOUGH_RESOURCES) {
+        } else if (err == ERR_NOT_ENOUGH_RESOURCES) { // TODO ERR_FULL probably you meant?
             throw "AAAA";
         }
     }

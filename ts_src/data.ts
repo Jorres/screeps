@@ -8,11 +8,9 @@ var data = {
         return terrainData;
     },
 
-    sourcesToNames: new Map(),
+    freeTilesNearSource: new Map(),
 
-    freePlacesAtSource: new Map(),
-
-    freeTilesNearSource: new Map()
+    minesReservationMap: new Map()
 };
 
 
