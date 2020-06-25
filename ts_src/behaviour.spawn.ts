@@ -5,10 +5,16 @@ var data = require('data');
 // @ts-ignore
 var U = require('U');
 
+
+
 // @ts-ignore
 module.exports = function() {
     StructureSpawn.prototype.trySpawningProcess = function() {
-        for (let spawningType of config.spawningConfig) {
+        let currentConfig = emergency(this) ? 
+             config.emergencySpawningConfig :
+             config.spawningConfig;
+
+        for (let spawningType of currentConfig) {
             let err = trySpawn(this, spawningType.roleName, spawningType.maxAmount);
             if (err == OK) {
                 console.log("Spawning " + spawningType.roleName);
@@ -19,12 +25,7 @@ module.exports = function() {
 }
 
 function trySpawn(spawn: StructureSpawn, roleName: CreepRoles, maxCreepsWithRoleAllowed: number): number {
-    var roleSpecificCreeps = 0;
-    for (let creepName in Game.creeps) {
-        if (Game.creeps[creepName].memory.role == roleName) {
-            roleSpecificCreeps++;
-        }
-    }
+    let roleSpecificCreeps = U.getRoleSpecificCreeps(roleName);
 
     if (roleSpecificCreeps < maxCreepsWithRoleAllowed) {
         if (spawn.spawning) {
@@ -32,31 +33,33 @@ function trySpawn(spawn: StructureSpawn, roleName: CreepRoles, maxCreepsWithRole
         }
 
         let newName = roleName + Game.time;
-        return spawn.spawnCreep(bestUniversalCreep(spawn), newName,
+        return spawn.spawnCreep(getCreepConfiguration(roleName, spawn.room.energyCapacityAvailable), newName,
             {memory: {role: roleName}} );
     }
 }
 
-function bestUniversalCreep(spawn: StructureSpawn): BodyPartConstant[] {
-    let order = [MOVE, WORK, CARRY, WORK, CARRY, MOVE];
-
-    let maxEnergy: number = spawn.room.energyCapacityAvailable;
-    if (getCreepsAmount() < 3) {
-        maxEnergy = spawn.room.energyAvailable;
+function getCreepConfiguration(roleName: string, maxEnergy: number): BodyPartConstant[] {
+    if (roleName == 'miner') {
+        return config.defaultMinerConfig;
+    } else if (roleName == 'carrier') {
+        return config.defaultCarrierConfig;
+    } else if (roleName == 'simpleHarvester') {
+        return config.simpleHarvesterConfig;
+    } else {
+        return config.defaultUniversalConfig;
     }
+}
 
-    let i = 0;
-    let ans: BodyPartConstant[] = [];
-    while (i < order.length) {
-        let cost: number = config.bodyPartCost.get(order[i]);
-        if (maxEnergy < cost) {
-            break;
-        }
-        maxEnergy -= cost;
-        ans.push(order[i]);
-        i++;
+function emergency(spawn: StructureSpawn): boolean {
+    if (U.getRoleSpecificCreeps('simpleHarvester') >= config.simpleHarvestersAmount) {
+        return false;
     }
-    return ans;
+    let miners = U.getRoleSpecificCreeps('miner');
+    let carriers = U.getRoleSpecificCreeps('carrier');
+    if (miners == 0 && carriers == 0 && spawn.room.energyAvailable < config.minimumEnergyToKickstart) { // TODO properly
+        return true;
+    }
+    return false;
 }
 
 function getCreepsAmount(): number {

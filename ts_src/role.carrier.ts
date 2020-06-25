@@ -18,7 +18,7 @@ function reselectPickup(creep: Creep): void {
     let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         filter: (structure) => {
             return structure.structureType == STRUCTURE_CONTAINER 
-                && structure.store.getUsedCapacity(RESOURCE_ENERGY) > 
+                && 4 * structure.store.getUsedCapacity(RESOURCE_ENERGY) > 
                    structure.store.getCapacity(RESOURCE_ENERGY);
         }
     });

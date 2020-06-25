@@ -10,14 +10,14 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
-var sourcesQueue = require('sourcesQueue');
+var storageSelector = require('storageSelector');
 var roleBuilder = {
     run: function (creep) {
         if (!creep.memory.autoState) {
-            creep.memory.autoState = 'harvest';
+            creep.memory.autoState = 'collect';
         }
-        if (creep.memory.autoState == 'harvest') {
-            builderHarvestingState(creep);
+        if (creep.memory.autoState == 'collect') {
+            builderCollectingState(creep);
         }
         else if (creep.memory.autoState == 'tryBuild') {
             tryBuildingState(creep);
@@ -30,21 +30,22 @@ var roleBuilder = {
         }
     }
 };
-function builderHarvestingState(creep) {
+function builderCollectingState(creep) {
     if (creep.store.getFreeCapacity() == 0) {
-        creep.memory.autoState = 'tryBuild';
-        sourcesQueue.cleanIntentionForSource(creep);
-        creep.say('tryBuild');
+        U.changeState(creep, 'tryBuild');
         tryBuildingState(creep);
-        return;
     }
-    U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+    else {
+        var target = storageSelector.selectStorage(creep);
+        if (target) {
+            U.moveAndHarvest(creep, target);
+        }
+    }
 }
 function tryBuildingState(creep) {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.autoState = 'harvest';
-        builderHarvestingState(creep);
-        creep.say('harvest');
+        U.changeState(creep, 'collect');
+        builderCollectingState(creep);
         return;
     }
     reselectConstructingDestination(creep);
@@ -58,9 +59,8 @@ function tryBuildingState(creep) {
 }
 function tryRepairingState(creep) {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.autoState = 'harvest';
-        builderHarvestingState(creep);
-        creep.say('harvest');
+        U.changeState(creep, 'collect');
+        builderCollectingState(creep);
         return;
     }
     reselectRepairingDestination(creep);
@@ -88,7 +88,7 @@ function reselectRepairingDestination(creep) {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
         creep.memory.currentActiveDestinationId = null;
         creep.memory.autoState = 'harvest';
-        builderHarvestingState(creep);
+        builderCollectingState(creep);
         return;
     }
     var bestDiff = -1;
@@ -127,12 +127,11 @@ function builderNoopState(creep) {
         return;
     }
     if (U.atLeastHalfFull(creep)) {
-        creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
+        creep.moveTo(creep.room.find(FIND_STRUCTURES)[0], { visualizePathStyle: { stroke: '#ffffff' } });
     }
     else {
-        creep.memory.autoState = 'harvest';
-        creep.say('harvest');
-        builderHarvestingState(creep);
+        U.changeState(creep, 'collect');
+        builderCollectingState(creep);
     }
 }
 module.exports = roleBuilder;

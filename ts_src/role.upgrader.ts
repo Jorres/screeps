@@ -1,5 +1,5 @@
 // @ts-ignore
-var sourcesQueue = require('sourcesQueue');
+var storageSelector = require('storageSelector');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
@@ -8,11 +8,11 @@ var config = require('config');
 var roleUpgrader = {
     run: function(creep: Creep) {
         if (!creep.memory.autoState) {
-            creep.memory.autoState = 'harvest';
+            creep.memory.autoState = 'collect';
         }
 
-        if (creep.memory.autoState == 'harvest') {
-            upgradingHarvestingState(creep);
+        if (creep.memory.autoState == 'collect') {
+            upgradingCollectingState(creep);
         } else if (creep.memory.autoState == 'upgrade') {
             upgradingUpgradingState(creep);
         } else if (creep.memory.autoState == 'noop') {
@@ -21,14 +21,14 @@ var roleUpgrader = {
     }
 };
 
-function upgradingHarvestingState(creep: Creep): void {
+function upgradingCollectingState(creep: Creep): void {
     if (creep.store.getFreeCapacity() == 0) {
         U.changeState(creep, 'upgrade');
         upgradingUpgradingState(creep);
     } else {
-        let source: Source = sourcesQueue.selectSourceToRun(creep);
-        if (source) {
-            U.moveAndHarvest(creep, source);
+        let target = storageSelector.selectStorage(creep);
+        if (target) {
+            U.moveAndWithdraw(creep, target, RESOURCE_ENERGY);
         } else {
             U.changeState(creep, 'noop');
         }
@@ -37,18 +37,18 @@ function upgradingHarvestingState(creep: Creep): void {
 
 function upgradingUpgradingState(creep: Creep): void {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        U.changeState(creep, 'harvest');
-        upgradingHarvestingState(creep);
+        U.changeState(creep, 'collect');
+        upgradingCollectingState(creep);
     } else {
         U.moveAndUpgradeController(creep, creep.room.controller);
     }
 }
 
 function upgradingNoopState(creep: Creep): void {
-    let source: Source = sourcesQueue.selectSourceToRun(creep);  
-    if (source) {
-        U.changeState(creep, 'harvest');
-        upgradingHarvestingState(creep);
+    let target = storageSelector.selectStorage(creep);
+    if (target) {
+        U.changeState(creep, 'collect');
+        upgradingCollectingState(creep);
     }
 }
 

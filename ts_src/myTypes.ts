@@ -1,6 +1,6 @@
 type CreepRoles = 'upgrader'|'harvester'|'builder';
 
-type AutomataState = 'noop'|'carry'|'tryBuild'|'tryRepair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop';
+type AutomataState = 'noop'|'carry'|'tryBuild'|'tryRepair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop'|'collect';
 
 type PossibleEnergyContainer = StructureSpawn | StructureExtension | StructureTower | StructureContainer | StructureStorage;
 

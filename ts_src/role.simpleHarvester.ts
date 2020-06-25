@@ -1,8 +1,6 @@
 // @ts-ignore
 var config  = require('config');
 // @ts-ignore
-var sourcesQueue = require('sourcesQueue');
-// @ts-ignore
 var U = require('U');
 
 var roleHarvester = {
@@ -59,10 +57,10 @@ function reselectEnergyDestination(creep: Creep): void {
 function harvestingState(creep: Creep) {
     if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
         U.changeState(creep, 'carry');
-        sourcesQueue.cleanIntentionForSource(creep);
         carryingState(creep);
     } else {
-        U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+        let target = creep.pos.findClosestByRange(FIND_SOURCES);
+        U.moveAndHarvest(creep, target);
     }
 }
 

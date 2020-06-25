@@ -3,6 +3,15 @@ var structuresWithEnergyStore = new Set([
     STRUCTURE_SPAWN, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_TOWER, STRUCTURE_STORAGE
 ]);
 var U = {
+    getRoleSpecificCreeps: function (roleName) {
+        var roleSpecificCreeps = 0;
+        for (var creepName in Game.creeps) {
+            if (Game.creeps[creepName].memory.role == roleName) {
+                roleSpecificCreeps++;
+            }
+        }
+        return roleSpecificCreeps;
+    },
     changeState: function (creep, state) {
         creep.memory.autoState = state;
         creep.say(state);

@@ -3,13 +3,17 @@ require('initialize')();
 // @ts-ignore
 require('behaviour.spawn')();
 // @ts-ignore
-var roleHarvester = require('role.harvester');
-// @ts-ignore
 var roleUpgrader = require('role.upgrader');
 // @ts-ignore
 var roleBuilder = require('role.builder');
 // @ts-ignore
+var roleMiner = require('role.miner');
+// @ts-ignore
+var roleCarrier = require('role.carrier');
+// @ts-ignore
 var roleClaimer = require('role.claimer');
+// @ts-ignore
+var roleSimpleHarvester = require('role.simpleHarvester');
 // @ts-ignore
 var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
@@ -51,18 +55,20 @@ module.exports.loop = function() {
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
-        if (creep.memory.role == 'harvester') {
-            roleHarvester.run(creep);
-        } else if (creep.memory.role == 'upgrader') {
+        if (creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
         } else if (creep.memory.role == 'builder') {
             roleBuilder.run(creep);
         } else if (creep.memory.role == 'claimer') {
             roleClaimer.run(creep);
+        } else if (creep.memory.role == 'miner') {
+            roleMiner.run(creep);
+        } else if (creep.memory.role == 'carrier') {
+            roleCarrier.run(creep);
+        } else if (creep.memory.role == 'simpleHarvester') {
+            roleSimpleHarvester.run(creep);
         }
     }
-
-
 }
 
 function checkGeneratePixel() {

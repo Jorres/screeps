@@ -6,6 +6,15 @@ const structuresWithEnergyStore: Set<StructureConstant> = new Set([
 ])
 
 var U = {
+    getRoleSpecificCreeps: function(roleName: string): number {
+        let roleSpecificCreeps = 0;
+        for (let creepName in Game.creeps) {
+            if (Game.creeps[creepName].memory.role == roleName) {
+                roleSpecificCreeps++;
+            }
+        }
+        return roleSpecificCreeps;
+    },
     changeState: function(creep: Creep, state: AutomataState): void {
         creep.memory.autoState = state;
         creep.say(state);
