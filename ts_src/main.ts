@@ -16,6 +16,8 @@ var towerBehaviour = require('behaviour.tower');
 var data = require('data');
 // @ts-ignore
 var config = require('config');
+// @ts-ignore
+var U = require('U');
 
 var MAX_BUCKET_SIZE: number = 10000;
 
