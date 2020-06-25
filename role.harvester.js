@@ -35,7 +35,7 @@ var roleHarvester = {
     }
 };
 function reselectEnergyDestination(creep) {
-    var e_1, _a, e_2, _b;
+    var e_1, _a;
     var oldId = creep.memory.currentActiveDestinationId;
     if (oldId && U.getById(oldId).store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
         return;
@@ -71,21 +71,6 @@ function reselectEnergyDestination(creep) {
             return dealWithSortResurnValue(a.cap, b.cap);
         }
     });
-    var s = "";
-    try {
-        for (var possible_1 = __values(possible), possible_1_1 = possible_1.next(); !possible_1_1.done; possible_1_1 = possible_1.next()) {
-            var a = possible_1_1.value;
-            s += a.cap + " ";
-        }
-    }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-    finally {
-        try {
-            if (possible_1_1 && !possible_1_1.done && (_b = possible_1["return"])) _b.call(possible_1);
-        }
-        finally { if (e_2) throw e_2.error; }
-    }
-    console.log(s);
     creep.memory.currentActiveDestinationId = possible.length > 0 ? possible[0].id : null;
 }
 function dealWithSortResurnValue(a, b) {

@@ -14,9 +14,23 @@ var U = require('U');
 var terrain = data.terrain();
 var sourcesQueue = {
     selectSourceToRun: function (creep) {
-        var e_1, _a;
+        var e_1, _a, e_2, _b;
         var sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
+        console.log();
+        try {
+            for (var _c = __values(data.sourcesToNames), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var source = _d.value;
+                console.log(source + " " + data.freePlacesAtSource.get(source));
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_a = _c["return"])) _a.call(_c);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
         var bestSourceId;
         var bestSourceFreePlaces = -100;
         try {
@@ -32,12 +46,12 @@ var sourcesQueue = {
                 }
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
-                if (sources_1_1 && !sources_1_1.done && (_a = sources_1["return"])) _a.call(sources_1);
+                if (sources_1_1 && !sources_1_1.done && (_b = sources_1["return"])) _b.call(sources_1);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
         modifyFreePlaces(bestSourceId, -1);
         console.log(bestSourceId);
@@ -45,7 +59,7 @@ var sourcesQueue = {
         return U.getById(bestSourceId);
     },
     cleanIntentionForSource: function (creep) {
-        var e_2, _a;
+        var e_3, _a;
         var sources = creep.room.find(FIND_SOURCES);
         initNewSources(sources);
         try {
@@ -58,12 +72,12 @@ var sourcesQueue = {
                 }
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
                 if (sources_2_1 && !sources_2_1.done && (_a = sources_2["return"])) _a.call(sources_2);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_3) throw e_3.error; }
         }
     }
 };
@@ -81,7 +95,7 @@ function freeTilesNear(pos) {
     return ans;
 }
 function initNewSources(sources) {
-    var e_3, _a;
+    var e_4, _a;
     try {
         for (var sources_3 = __values(sources), sources_3_1 = sources_3.next(); !sources_3_1.done; sources_3_1 = sources_3.next()) {
             var source = sources_3_1.value;
@@ -91,12 +105,12 @@ function initNewSources(sources) {
             }
         }
     }
-    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+    catch (e_4_1) { e_4 = { error: e_4_1 }; }
     finally {
         try {
             if (sources_3_1 && !sources_3_1.done && (_a = sources_3["return"])) _a.call(sources_3);
         }
-        finally { if (e_3) throw e_3.error; }
+        finally { if (e_4) throw e_4.error; }
     }
 }
 function modifyFreePlaces(source, value) {
