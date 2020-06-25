@@ -19,11 +19,10 @@ var towerBehaviour = require('behaviour.tower');
 var data = require('data');
 var config = require('config');
 var U = require('U');
-var MAX_BUCKET_SIZE = 10000;
-var firstSpawn = Game.spawns['Spawn1'];
 function isTower(structure) {
     return structure.structureType == STRUCTURE_TOWER;
 }
+var MAX_BUCKET_SIZE = 10000;
 module.exports.loop = function () {
     var e_1, _a;
     console.log(Game.time);

@@ -9,28 +9,59 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var config = require('config');
-var sourcesQueue = require('sourcesQueue');
 var U = require('U');
-var roleHarvester = {
+var roleCarrier = {
     run: function (creep) {
         if (!creep.memory.autoState) {
-            creep.memory.autoState = 'harvest';
+            creep.memory.autoState = 'carryingFrom';
         }
-        if (creep.memory.autoState == 'harvest') {
-            harvestingState(creep);
+        if (creep.memory.autoState == 'carryingFrom') {
+            carrierCarryingFrom(creep);
         }
-        else if (creep.memory.autoState == 'carry') {
-            carryingState(creep);
-        }
-        else if (creep.memory.autoState == 'noop') {
-            noopState(creep);
+        else if (creep.memory.autoState == 'carryingTo') {
+            carrierCarryingTo(creep);
         }
     }
 };
-function reselectEnergyDestination(creep) {
+function reselectPickup(creep) {
+    var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: function (structure) {
+            return structure.structureType == STRUCTURE_CONTAINER
+                && structure.store.getUsedCapacity(RESOURCE_ENERGY) >
+                    structure.store.getCapacity(RESOURCE_ENERGY);
+        }
+    });
+    creep.memory.carryingId = target ? target.id : null;
+}
+function carrierCarryingFrom(creep) {
+    reselectPickup(creep);
+    if (creep.memory.carryingId) {
+        var err = U.moveAndWithdraw(creep, U.getById(creep.memory.carryingId), RESOURCE_ENERGY);
+        if (err == OK) {
+            U.changeState(creep, 'carryingTo');
+            creep.memory.carryingId = null;
+        }
+        else if (err == ERR_NOT_ENOUGH_RESOURCES) {
+            throw "AAAA";
+        }
+    }
+}
+function carrierCarryingTo(creep) {
+    reselectStore(creep);
+    if (creep.memory.carryingId) {
+        var err = U.moveAndTransfer(creep, U.getById(creep.memory.carryingId));
+        if (err == OK) {
+            U.changeState(creep, 'carryingTo');
+            creep.memory.carryingId = null;
+        }
+        else if (err == ERR_NOT_ENOUGH_RESOURCES) {
+            throw "AAAA";
+        }
+    }
+}
+function reselectStore(creep) {
     var e_1, _a;
-    var oldId = creep.memory.currentActiveDestinationId;
+    var oldId = creep.memory.carryingId;
     if (oldId && U.getById(oldId).store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
         return;
     }
@@ -44,6 +75,9 @@ function reselectEnergyDestination(creep) {
                 var usedCapacity = structure.store.getUsedCapacity(RESOURCE_ENERGY);
                 var totalCapacity = freeCapacity + usedCapacity;
                 if (totalCapacity * 0.9 < usedCapacity) {
+                    continue;
+                }
+                if (structure.structureType == STRUCTURE_CONTAINER) {
                     continue;
                 }
                 possible.push({ cap: totalCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });
@@ -65,46 +99,15 @@ function reselectEnergyDestination(creep) {
             return U.dealWithSortResurnValue(a.cap, b.cap);
         }
     });
-    creep.memory.currentActiveDestinationId = possible.length > 0 ? possible[0].id : null;
+    creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
 }
-function harvestingState(creep) {
-    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
-        U.changeState(creep, 'carry');
-        sourcesQueue.cleanIntentionForSource(creep);
-        carryingState(creep);
+function dealWithSortResurnValue(a, b) {
+    if (a < b) {
+        return -1;
     }
-    else {
-        U.moveAndHarvest(creep, sourcesQueue.selectSourceToRun(creep));
+    else if (a > b) {
+        return 1;
     }
+    return 0;
 }
-function carryingState(creep) {
-    if (creep.store[RESOURCE_ENERGY] == 0) {
-        U.changeState(creep, 'harvest');
-        harvestingState(creep);
-    }
-    else {
-        reselectEnergyDestination(creep);
-        if (creep.memory.currentActiveDestinationId) {
-            U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
-            reselectEnergyDestination(creep);
-        }
-        else {
-            U.changeState(creep, 'noop');
-            noopState(creep);
-        }
-    }
-}
-function noopState(creep) {
-    creep.memory.currentActiveDestinationId = null;
-    reselectEnergyDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        U.changeState(creep, 'carry');
-    }
-    else if (U.atLeastHalfFull(creep)) {
-        U.changeState(creep, 'harvest');
-    }
-    else {
-        creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
-    }
-}
-module.exports = roleHarvester;
+module.exports = roleCarrier;

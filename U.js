@@ -25,6 +25,9 @@ var U = {
     moveAndUpgradeController: function (creep, target) {
         return this.defaultAction(creep, target, function () { return creep.upgradeController(target); });
     },
+    moveAndWithdraw: function (creep, target, resourceType) {
+        return this.defaultAction(creep, target, function () { return creep.withdraw(target, resourceType); });
+    },
     defaultAction: function (creep, target, action) {
         var error = action();
         if (error == ERR_NOT_IN_RANGE) {
@@ -51,9 +54,21 @@ var U = {
                 console.log('Cleared non-existing creep memory: ' + name_1);
             }
         }
+    },
+    dealWithSortResurnValue: function (a, b) {
+        if (a < b) {
+            return -1;
+        }
+        else if (a > b) {
+            return 1;
+        }
+        return 0;
     }
 };
 function defaultMove(creep, target) {
-    creep.moveTo(target, { reusePath: config.reusePath(), visualizePathStyle: { stroke: '#ffffff' } });
+    creep.moveTo(target, {
+        reusePath: config.reusePath(),
+        visualizePathStyle: { stroke: '#ffffff' }
+    });
 }
 module.exports = U;

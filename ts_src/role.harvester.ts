@@ -5,19 +5,6 @@ var sourcesQueue = require('sourcesQueue');
 // @ts-ignore
 var U = require('U');
 
-type EnergySelectionInfo = {
-    id: string, 
-    cap: number,
-    length: number
-};
-
-function isPossibleEnergyContainer(structure: Structure): structure is PossibleEnergyContainer {
-    return (structure.structureType == STRUCTURE_EXTENSION ||
-        structure.structureType == STRUCTURE_SPAWN     ||
-        structure.structureType == STRUCTURE_TOWER     ||
-        structure.structureType == STRUCTURE_CONTAINER);
-}
-
 var roleHarvester = {
     run: function(creep: Creep) {
         if (!creep.memory.autoState) {
@@ -59,23 +46,15 @@ function reselectEnergyDestination(creep: Creep): void {
 
     possible.sort((a: EnergySelectionInfo, b: EnergySelectionInfo) => {
         if (a.cap == b.cap) {
-            return dealWithSortResurnValue(a.length, b.length);
+            return U.dealWithSortResurnValue(a.length, b.length);
         } else {
-            return dealWithSortResurnValue(a.cap, b.cap);
+            return U.dealWithSortResurnValue(a.cap, b.cap);
         }
     })
 
     creep.memory.currentActiveDestinationId = possible.length > 0 ? possible[0].id : null;
 }
 
-function dealWithSortResurnValue(a: number, b: number): number {
-    if (a < b) {
-        return -1;
-    } else if (a > b) {
-        return 1;
-    }
-    return 0;
-}
 
 function harvestingState(creep: Creep) {
     if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {

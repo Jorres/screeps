@@ -19,13 +19,11 @@ var config = require('config');
 // @ts-ignore
 var U = require('U');
 
-var MAX_BUCKET_SIZE: number = 10000;
-
-var firstSpawn = Game.spawns['Spawn1'];
-
 function isTower(structure: Structure): structure is StructureTower {
     return structure.structureType == STRUCTURE_TOWER;
 }
+
+const MAX_BUCKET_SIZE = 10000;
 
 // @ts-ignore
 module.exports.loop = function() {
@@ -38,6 +36,7 @@ module.exports.loop = function() {
         let spawn: StructureSpawn = Game.spawns[spawnName];
 
         spawn.trySpawningProcess();
+
         if (!visited.has(spawn.room.name)) {
             let structures = spawn.room.find(FIND_STRUCTURES);
 
@@ -72,4 +71,3 @@ function checkGeneratePixel() {
         Game.cpu.generatePixel();
     }
 }
-

@@ -28,6 +28,9 @@ var U = {
     moveAndUpgradeController: function(creep: Creep, target: StructureController) {
         return this.defaultAction(creep, target, () => creep.upgradeController(target));
     },
+    moveAndWithdraw: function(creep: Creep, target: PossibleEnergyContainer, resourceType: ResourceConstant) {
+        return this.defaultAction(creep, target, () => creep.withdraw(target, resourceType));
+    },
     defaultAction: function(creep: Creep, target: Structure | StructureController | Source | Mineral | Deposit, action: any) {
         let error = action();
         if (error == ERR_NOT_IN_RANGE) {
@@ -54,13 +57,24 @@ var U = {
                 console.log('Cleared non-existing creep memory: ' + name);
             }
         }
+    },
+    dealWithSortResurnValue: function(a: number, b: number): number {
+        if (a < b) {
+            return -1;
+        } else if (a > b) {
+            return 1;
+        }
+        return 0;
     }
 
 };
 
 
 function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {
-    creep.moveTo(target, {reusePath: config.reusePath(), visualizePathStyle: {stroke: '#ffffff'}});
+    creep.moveTo(target, {
+        reusePath: config.reusePath(), 
+        visualizePathStyle: {stroke: '#ffffff'}
+    });
 }
 
 // @ts-ignore

@@ -1,6 +1,6 @@
 type CreepRoles = 'upgrader'|'harvester'|'builder';
 
-type AutomataState = 'noop'|'carry'|'tryBuild'|'tryRepair'|'upgrade'|'harvest';
+type AutomataState = 'noop'|'carry'|'tryBuild'|'tryRepair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop';
 
 type PossibleEnergyContainer = StructureSpawn | StructureExtension | StructureTower | StructureContainer | StructureStorage;
 
@@ -13,3 +13,8 @@ type Pair<F, S> = {
     second: S
 };
 
+type EnergySelectionInfo = {
+    id: string, 
+    cap: number,
+    length: number
+};
