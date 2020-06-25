@@ -30,6 +30,12 @@ function reselectPickup(creep: Creep): void {
 }
 
 function carrierCarryingFrom(creep: Creep): void {
+    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == creep.store.getCapacity(RESOURCE_ENERGY)) {
+        U.changeState(creep, 'carryingTo');
+        creep.memory.carryingId = null;
+        return;
+    }
+
     reselectPickup(creep);
     if (creep.memory.carryingId) {
         let err = U.moveAndWithdraw(creep, U.getById(creep.memory.carryingId), RESOURCE_ENERGY);
