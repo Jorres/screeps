@@ -3,12 +3,8 @@ var U = require('U');
 
 var towerBehaviour = {
     run: function(tower: StructureTower) {
-        let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => structure.hits < structure.hitsMax
-        });
-
         var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (closestHostile && U.manhattanDist(closestHostile.pos, tower.pos) < 10) {
+        if (closestHostile) {
             tower.attack(closestHostile);
             return;
         }
@@ -16,7 +12,6 @@ var towerBehaviour = {
         let mostDamagedStructure = findMostDamagedStructure(tower);
         if (mostDamagedStructure) {
             tower.repair(mostDamagedStructure);
-
         }
     }
 };
