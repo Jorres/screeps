@@ -21,7 +21,7 @@ var config = {
         {roleName: 'miner', maxAmount: 2}, // 1 + 1
         {roleName: 'carrier', maxAmount: 4}, // 2 + 2
         {roleName: 'upgrader', maxAmount: 4},
-        {roleName: 'builder', maxAmount: 0}
+        {roleName: 'builder', maxAmount: 1}
     ],
     simpleHarvestersAmount: 3,
     emergencySpawningConfig: [
