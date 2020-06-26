@@ -56,6 +56,8 @@ function minerDropState(creep: Creep) {
 
 function getDesignatedMineId(creep: Creep) {
     let sources = creep.room.find(FIND_SOURCES);
+    let bestDistance = 1000;
+    let bestSourceId = null;
     for (let source of sources) {
         let previousName = data.minesReservationMap.get(source.id);
         if (!Game.creeps[previousName]) {
@@ -63,12 +65,15 @@ function getDesignatedMineId(creep: Creep) {
         }
 
         console.log("miner selecting " + source.id + "; old one is " + data.minesReservationMap.get(source.id));
-        if (!data.minesReservationMap.get(source.id)) {
-            data.minesReservationMap.set(source.id, creep.name);
-            return source.id;
+        if (!data.minesReservationMap.get(source.id) && U.manhattanDist(creep.pos, source.pos) < bestDistance) {
+            bestDistance = U.manhattanDist(creep.pos, source.pos);
+            bestSourceId = source.id;
         }
     }
-    return null;
+    if (bestSourceId) {
+        data.minesReservationMap.set(bestSourceId, creep.name);
+    }
+    return bestSourceId;
 }
 
 // @ts-ignore

@@ -61,6 +61,8 @@ function minerDropState(creep) {
 function getDesignatedMineId(creep) {
     var e_1, _a;
     var sources = creep.room.find(FIND_SOURCES);
+    var bestDistance = 1000;
+    var bestSourceId = null;
     try {
         for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
             var source = sources_1_1.value;
@@ -69,9 +71,9 @@ function getDesignatedMineId(creep) {
                 data.minesReservationMap.set(source.id, null);
             }
             console.log("miner selecting " + source.id + "; old one is " + data.minesReservationMap.get(source.id));
-            if (!data.minesReservationMap.get(source.id)) {
-                data.minesReservationMap.set(source.id, creep.name);
-                return source.id;
+            if (!data.minesReservationMap.get(source.id) && U.manhattanDist(creep.pos, source.pos) < bestDistance) {
+                bestDistance = U.manhattanDist(creep.pos, source.pos);
+                bestSourceId = source.id;
             }
         }
     }
@@ -82,6 +84,9 @@ function getDesignatedMineId(creep) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    return null;
+    if (bestSourceId) {
+        data.minesReservationMap.set(bestSourceId, creep.name);
+    }
+    return bestSourceId;
 }
 module.exports = roleMiner;
