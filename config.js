@@ -21,7 +21,7 @@ var config = {
         { roleName: 'miner', maxAmount: 2 },
         { roleName: 'carrier', maxAmount: 4 },
         { roleName: 'upgrader', maxAmount: 4 },
-        { roleName: 'builder', maxAmount: 1 }
+        { roleName: 'builder', maxAmount: 0 }
     ],
     simpleHarvestersAmount: 3,
     emergencySpawningConfig: [
@@ -30,7 +30,7 @@ var config = {
     simpleHarvesterConfig: [WORK, CARRY, MOVE],
     defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
     defaultCarrierConfig: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-    defaultUniversalConfig: [MOVE, WORK, CARRY, WORK, CARRY, WORK, CARRY, MOVE, CARRY, MOVE],
+    defaultUniversalConfig: [MOVE, WORK, CARRY, WORK, CARRY, WORK, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE],
     minimumEnergyToKickstart: 1100
 };
 module.exports = config;
