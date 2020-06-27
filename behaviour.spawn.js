@@ -65,6 +65,15 @@ function getCreepConfiguration(roleName, maxEnergy) {
     }
 }
 function emergency(spawn) {
+    var containers = spawn.room.find(FIND_STRUCTURES, {
+        filter: function (structure) {
+            structure.structureType == STRUCTURE_CONTAINER;
+        }
+    });
+    var sources = spawn.room.find(FIND_SOURCES);
+    if (containers.length == 0) {
+        return true;
+    }
     if (U.getRoleSpecificCreeps('simpleHarvester') >= config.simpleHarvestersAmount) {
         return false;
     }

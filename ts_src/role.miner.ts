@@ -64,7 +64,6 @@ function getDesignatedMineId(creep: Creep) {
             data.minesReservationMap.set(source.id, null);
         }
 
-        console.log("miner selecting " + source.id + "; old one is " + data.minesReservationMap.get(source.id));
         if (!data.minesReservationMap.get(source.id) && U.manhattanDist(creep.pos, source.pos) < bestDistance) {
             bestDistance = U.manhattanDist(creep.pos, source.pos);
             bestSourceId = source.id;

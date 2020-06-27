@@ -5,8 +5,6 @@ var data = require('data');
 // @ts-ignore
 var U = require('U');
 
-
-
 // @ts-ignore
 module.exports = function() {
     StructureSpawn.prototype.trySpawningProcess = function() {
@@ -53,6 +51,17 @@ function getCreepConfiguration(roleName: string, maxEnergy: number): BodyPartCon
 }
 
 function emergency(spawn: StructureSpawn): boolean {
+    let containers = spawn.room.find(FIND_STRUCTURES, {
+        filter: (structure) => { 
+            structure.structureType == STRUCTURE_CONTAINER ;
+        }
+    });
+
+    let sources = spawn.room.find(FIND_SOURCES);
+    if (containers.length == 0) {
+        return true;
+    }
+
     if (U.getRoleSpecificCreeps('simpleHarvester') >= config.simpleHarvestersAmount) {
         return false;
     }
