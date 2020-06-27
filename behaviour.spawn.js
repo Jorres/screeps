@@ -71,12 +71,7 @@ function getCreepConfiguration(roleName, maxEnergy) {
     }
 }
 function emergency(spawn) {
-    var containers = spawn.room.find(FIND_STRUCTURES, {
-        filter: function (structure) {
-            structure.structureType == STRUCTURE_CONTAINER;
-        }
-    });
-    var sources = spawn.room.find(FIND_SOURCES);
+    var containers = spawn.room.find(FIND_STRUCTURES, U.containerFilter);
     if (containers.length == 0) {
         return true;
     }
