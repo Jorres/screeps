@@ -43,8 +43,12 @@ function getCreepConfiguration(roleName: string, maxEnergy: number): BodyPartCon
         return config.defaultMinerConfig;
     } else if (roleName == 'carrier') {
         return config.defaultCarrierConfig;
-    } else if (roleName == 'simpleHarvester') {
+    } else if (roleName == 'simple.harvester') {
         return config.simpleHarvesterConfig;
+    } else if (roleName == 'simple.upgrader') {
+        return config.simpleUpgraderConfig;
+    } else if (roleName == 'simple.builder') {
+        return config.simpleBuilderConfig;
     } else {
         return config.defaultUniversalConfig;
     }
@@ -62,7 +66,7 @@ function emergency(spawn: StructureSpawn): boolean {
         return true;
     }
 
-    if (U.getRoleSpecificCreeps('simpleHarvester') >= config.simpleHarvestersAmount) {
+    if (U.getRoleSpecificCreeps('simple.harvester') >= config.simpleHarvestersAmount) {
         return false;
     }
     let miners = U.getRoleSpecificCreeps('miner');

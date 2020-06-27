@@ -13,7 +13,11 @@ var roleCarrier = require('role.carrier');
 // @ts-ignore
 var roleClaimer = require('role.claimer');
 // @ts-ignore
-var roleSimpleHarvester = require('role.simpleHarvester');
+var roleSimpleHarvester = require('role.simple.harvester');
+// @ts-ignore
+var roleSimpleUpgrader = require('role.simple.upgrader');
+// @ts-ignore
+var roleSimpleBuilder = require('role.simple.builder');
 // @ts-ignore
 var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
@@ -67,12 +71,16 @@ module.exports.loop = function() {
             roleMiner.run(creep);
         } else if (creep.memory.role == 'carrier') {
             roleCarrier.run(creep);
-        } else if (creep.memory.role == 'simpleHarvester') {
+        } else if (creep.memory.role == 'simple.harvester') {
             roleSimpleHarvester.run(creep);
+        } else if (creep.memory.role == 'simple.upgrader') {
+            roleSimpleUpgrader.run(creep);
+        } else if (creep.memory.role == 'simple.builder') {
+            roleSimpleBuilder.run(creep);
         }
     }
        
-    architectContainers.run();
+    architectGeneral.run();
 }
 
 function checkGeneratePixel() {

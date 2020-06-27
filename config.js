@@ -25,9 +25,13 @@ var config = {
     ],
     simpleHarvestersAmount: 3,
     emergencySpawningConfig: [
-        { roleName: 'simpleHarvester', maxAmount: 3 }
+        { roleName: 'simpleHarvester', maxAmount: 3 },
+        { roleName: 'simpleUpgrader', maxAmount: 1 },
+        { roleName: 'simpleBuilder', maxAmount: 1 }
     ],
     simpleHarvesterConfig: [WORK, CARRY, MOVE],
+    simpleUpgraderConfig: [WORK, CARRY, MOVE],
+    simpleBuilderConfig: [WORK, CARRY, MOVE],
     defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
     defaultCarrierConfig: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
     defaultUniversalConfig: [MOVE, WORK, CARRY, WORK, CARRY, WORK, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE],

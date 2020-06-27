@@ -16,7 +16,9 @@ var roleBuilder = require('role.builder');
 var roleMiner = require('role.miner');
 var roleCarrier = require('role.carrier');
 var roleClaimer = require('role.claimer');
-var roleSimpleHarvester = require('role.simpleHarvester');
+var roleSimpleHarvester = require('role.simple.harvester');
+var roleSimpleUpgrader = require('role.simple.upgrader');
+var roleSimpleBuilder = require('role.simple.builder');
 var towerBehaviour = require('behaviour.tower');
 var data = require('data');
 var config = require('config');
@@ -72,11 +74,17 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'carrier') {
             roleCarrier.run(creep);
         }
-        else if (creep.memory.role == 'simpleHarvester') {
+        else if (creep.memory.role == 'simple.harvester') {
             roleSimpleHarvester.run(creep);
         }
+        else if (creep.memory.role == 'simple.upgrader') {
+            roleSimpleUpgrader.run(creep);
+        }
+        else if (creep.memory.role == 'simple.builder') {
+            roleSimpleBuilder.run(creep);
+        }
     }
-    architectContainers.run();
+    architectGeneral.run();
 };
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {
