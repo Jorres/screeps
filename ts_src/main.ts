@@ -27,7 +27,7 @@ var config = require('config');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
-var architectContainers = require('architect.containers');
+var architectGeneral = require('architect.general');
 
 function isTower(structure: Structure): structure is StructureTower {
     return structure.structureType == STRUCTURE_TOWER;
