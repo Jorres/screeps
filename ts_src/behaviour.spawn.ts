@@ -69,6 +69,7 @@ function emergency(spawn: StructureSpawn): boolean {
     if (U.getRoleSpecificCreeps('simple.harvester') >= config.simpleHarvestersAmount) {
         return false;
     }
+
     let miners = U.getRoleSpecificCreeps('miner');
     let carriers = U.getRoleSpecificCreeps('carrier');
     if (miners == 0 && carriers == 0 && spawn.room.energyAvailable < config.minimumEnergyToKickstart) { // TODO properly
