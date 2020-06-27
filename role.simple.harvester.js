@@ -11,7 +11,7 @@ var __values = (this && this.__values) || function(o) {
 };
 var config = require('config');
 var U = require('U');
-var roleHarvester = {
+var roleSimpleHarvester = {
     run: function (creep) {
         if (!creep.memory.autoState) {
             creep.memory.autoState = 'harvest';
@@ -106,4 +106,4 @@ function noopState(creep) {
         creep.moveTo(Game.spawns['Spawn1'], { visualizePathStyle: { stroke: '#ffffff' } });
     }
 }
-module.exports = roleHarvester;
+module.exports = roleSimpleHarvester;

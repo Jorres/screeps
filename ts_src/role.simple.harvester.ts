@@ -3,7 +3,7 @@ var config  = require('config');
 // @ts-ignore
 var U = require('U');
 
-var roleHarvester = {
+var roleSimpleHarvester = {
     run: function(creep: Creep) {
         if (!creep.memory.autoState) {
             creep.memory.autoState = 'harvest';
@@ -94,4 +94,4 @@ function noopState(creep: Creep) {
 
 
 // @ts-ignore
-module.exports = roleHarvester;
+module.exports = roleSimpleHarvester;
