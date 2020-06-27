@@ -1,13 +1,8 @@
 // @ts-ignore
 var config = require('config');
 
-let terrainData: Map<string, RoomTerrain>;
-
 var data = {
-    terrain: function(): Map<string, RoomTerrain> {
-        return terrainData;
-    },
-
+    terrainData: new Map(),
     minesReservationMap: new Map()
 };
 

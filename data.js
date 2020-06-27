@@ -1,9 +1,6 @@
 var config = require('config');
-var terrainData;
 var data = {
-    terrain: function () {
-        return terrainData;
-    },
+    terrainData: new Map(),
     minesReservationMap: new Map()
 };
 module.exports = data;
