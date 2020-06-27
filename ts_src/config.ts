@@ -29,9 +29,10 @@ var config = {
         {roleName: 'simple.upgrader', maxAmount: 1},
         {roleName: 'simple.builder', maxAmount: 1}
     ],
-    simpleHarvesterConfig: [WORK, CARRY, MOVE],
-    simpleUpgraderConfig: [WORK, CARRY, MOVE],
-    simpleBuilderConfig: [WORK, CARRY, MOVE],
+    simpleHarvesterConfig: [WORK, CARRY, MOVE, WORK, CARRY, MOVE],
+    simpleUpgraderConfig: [WORK, CARRY, MOVE, WORK, CARRY, MOVE],
+    simpleBuilderConfig: [WORK, CARRY, MOVE, WORK, CARRY, MOVE],
+
     defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
     defaultCarrierConfig: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
     defaultUniversalConfig: [MOVE, WORK, CARRY, WORK, CARRY, WORK, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE],
