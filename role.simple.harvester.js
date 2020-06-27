@@ -84,7 +84,10 @@ function carryingState(creep) {
     else {
         reselectEnergyDestination(creep);
         if (creep.memory.currentActiveDestinationId) {
-            U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+            var err = U.moveAndTransfer(creep, U.getById(creep.memory.currentActiveDestinationId));
+            if (err == OK) {
+                creep.memory.currentActiveDestinationId = null;
+            }
             reselectEnergyDestination(creep);
         }
         else {

@@ -75,9 +75,9 @@ module.exports.loop = function() {
             roleMiner.run(creep);
         } else if (creep.memory.role == 'carrier') {
             roleCarrier.run(creep);
-        } else if (creep.memory.role == 'simple.harvester') {
+        } else if (creep.memory.role == 'simple.harvester' || creep.memory.role == 'simpleHarvester') {
             roleSimpleHarvester.run(creep);
-        } else if (creep.memory.role == 'simple.upgrader') {
+        } else if (creep.memory.role == 'simple.upgrader' || creep.memory.role == 'simpleUpgrader') {
             roleSimpleUpgrader.run(creep);
         } else if (creep.memory.role == 'simple.builder') {
             roleSimpleBuilder.run(creep);
