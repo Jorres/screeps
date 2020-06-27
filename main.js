@@ -21,7 +21,7 @@ var towerBehaviour = require('behaviour.tower');
 var data = require('data');
 var config = require('config');
 var U = require('U');
-var architectContainers = require('architectContainers');
+var architectContainers = require('architect.containers');
 function isTower(structure) {
     return structure.structureType == STRUCTURE_TOWER;
 }
