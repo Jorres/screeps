@@ -56,6 +56,7 @@ function minerDropState(creep: Creep) {
 
 function getDesignatedMineId(creep: Creep) {
     let sources = creep.room.find(FIND_SOURCES);
+    let containers = creep.room.find(FIND_STRUCTURES, U.containerFilter);
     let bestDistance = 1000;
     let bestSourceId = null;
     for (let source of sources) {
@@ -64,7 +65,9 @@ function getDesignatedMineId(creep: Creep) {
             data.minesReservationMap.set(source.id, null);
         }
 
-        if (!data.minesReservationMap.get(source.id) && U.manhattanDist(creep.pos, source.pos) < bestDistance) {
+        if (!data.minesReservationMap.get(source.id) 
+            && U.manhattanDist(creep.pos, source.pos) < bestDistance
+            && hasContainerNearby(containers, source.pos)) {
             bestDistance = U.manhattanDist(creep.pos, source.pos);
             bestSourceId = source.id;
         }
@@ -74,6 +77,16 @@ function getDesignatedMineId(creep: Creep) {
     }
     return bestSourceId;
 }
+
+function hasContainerNearby(containers: AnyStructure[], pos: RoomPosition): boolean {
+    for (let container of containers) {
+        if (U.manhattanDist(pos, container.pos) <= 2)  {
+            return true;
+        }
+    }   
+    return false;
+}
+
 
 // @ts-ignore
 module.exports = roleMiner;
