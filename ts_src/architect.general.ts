@@ -5,7 +5,7 @@ var config = require('config');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
-var architectContainers = require('architectContainers');
+var architectContainers = require('architect.containers');
 
 var architectGeneral = {
     run: function() {
