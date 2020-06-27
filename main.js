@@ -21,6 +21,7 @@ var towerBehaviour = require('behaviour.tower');
 var data = require('data');
 var config = require('config');
 var U = require('U');
+var architectContainers = require('architectContainers');
 function isTower(structure) {
     return structure.structureType == STRUCTURE_TOWER;
 }
@@ -75,6 +76,7 @@ module.exports.loop = function () {
             roleSimpleHarvester.run(creep);
         }
     }
+    architectContainers.run();
 };
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {

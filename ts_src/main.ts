@@ -22,6 +22,8 @@ var data = require('data');
 var config = require('config');
 // @ts-ignore
 var U = require('U');
+// @ts-ignore
+var architectContainers = require('architectContainers');
 
 function isTower(structure: Structure): structure is StructureTower {
     return structure.structureType == STRUCTURE_TOWER;
@@ -69,6 +71,8 @@ module.exports.loop = function() {
             roleSimpleHarvester.run(creep);
         }
     }
+       
+    architectContainers.run();
 }
 
 function checkGeneratePixel() {
