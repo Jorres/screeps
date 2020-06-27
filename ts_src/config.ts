@@ -27,11 +27,11 @@ var config = {
     emergencySpawningConfig: [
         {roleName: 'simple.harvester', maxAmount: 3},
         {roleName: 'simple.upgrader', maxAmount: 1},
-        {roleName: 'simple.builder', maxAmount: 1}
+        {roleName: 'simple.builder', maxAmount: 2}
     ],
-    simpleHarvesterConfig: [WORK, CARRY, MOVE, WORK, CARRY, MOVE],
-    simpleUpgraderConfig: [WORK, CARRY, MOVE, WORK, CARRY, MOVE],
-    simpleBuilderConfig: [WORK, CARRY, MOVE, WORK, CARRY, MOVE],
+    simpleHarvesterConfig: [WORK, CARRY, MOVE],
+    simpleUpgraderConfig: [WORK, CARRY, MOVE, WORK, CARRY],
+    simpleBuilderConfig: [WORK, CARRY, MOVE, WORK, CARRY],
 
     defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
     defaultCarrierConfig: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
