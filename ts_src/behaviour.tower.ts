@@ -9,6 +9,10 @@ var towerBehaviour = {
             return;
         }
 
+        if (tower.store.getUsedCapacity(RESOURCE_ENERGY) < 300) {
+            return;
+        }
+
         let mostDamagedStructure = findMostDamagedStructure(tower);
         if (mostDamagedStructure) {
             tower.repair(mostDamagedStructure);

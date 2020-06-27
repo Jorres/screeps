@@ -17,6 +17,9 @@ var towerBehaviour = {
             tower.attack(closestHostile);
             return;
         }
+        if (tower.store.getUsedCapacity(RESOURCE_ENERGY) < 300) {
+            return;
+        }
         var mostDamagedStructure = findMostDamagedStructure(tower);
         if (mostDamagedStructure) {
             tower.repair(mostDamagedStructure);
