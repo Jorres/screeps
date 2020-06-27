@@ -1,5 +1,6 @@
 var U = require('U');
 var data = require('data');
+var config = require('config');
 module.exports = function () {
     console.log("initialize");
     data.minesReservationMap = new Map();

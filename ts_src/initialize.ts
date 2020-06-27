@@ -2,6 +2,8 @@
 var U = require('U');
 // @ts-ignore
 var data = require('data');
+// @ts-ignore
+var config = require('config');
 
 // @ts-ignore
 module.exports = function() {
