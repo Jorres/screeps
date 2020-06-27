@@ -1,10 +1,10 @@
 // @ts-ignore
 var config = require('config');
 
-const terrainData = new Room.Terrain(config.roomName());
+let terrainData: Map<string, RoomTerrain>;
 
 var data = {
-    terrain: function(): RoomTerrain {
+    terrain: function(): Map<string, RoomTerrain> {
         return terrainData;
     },
 

@@ -74,8 +74,20 @@ var U = {
             return 1;
         }
         return 0;
-    }
+    },
+    oncePerTicks: function(range: number) {
+        return Game.time % range == 0;
+    },
 
+
+
+
+
+    containerFilter: {
+        filter: (structure: AnyStructure) => {
+            return structure.structureType == STRUCTURE_CONTAINER;
+        }
+    },
 };
 
 

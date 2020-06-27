@@ -7,6 +7,8 @@ var data = require('data');
 module.exports = function() {
     console.log("initialize");
     data.minesReservationMap = new Map();
+    data.terrainData = new Map();
+    data.terrainData.set(config.roomName(), new Room.Terrain(config.roomName));
 
     for (var name in Game.creeps) {
         Game.creeps[name].memory.autoState = null;

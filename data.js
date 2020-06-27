@@ -1,5 +1,5 @@
 var config = require('config');
-var terrainData = new Room.Terrain(config.roomName());
+var terrainData;
 var data = {
     terrain: function () {
         return terrainData;

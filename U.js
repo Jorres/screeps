@@ -72,6 +72,14 @@ var U = {
             return 1;
         }
         return 0;
+    },
+    oncePerTicks: function (range) {
+        return Game.time % range == 0;
+    },
+    containerFilter: {
+        filter: function (structure) {
+            return structure.structureType == STRUCTURE_CONTAINER;
+        }
     }
 };
 function defaultMove(creep, target) {

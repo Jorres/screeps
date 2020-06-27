@@ -49,12 +49,16 @@ module.exports.loop = function() {
 
         if (!visited.has(spawn.room.name)) {
             let structures = spawn.room.find(FIND_STRUCTURES);
-
             for (let structure of structures) {
                 if (isTower(structure)) {
                     towerBehaviour.run(structure);
                 }
             }
+
+            if (U.oncePerTicks(5)) {
+                architectGeneral.run(spawn);
+            }
+
             visited.add(spawn.room.name);
         }
     }
@@ -80,7 +84,6 @@ module.exports.loop = function() {
         }
     }
        
-    architectGeneral.run();
 }
 
 function checkGeneratePixel() {

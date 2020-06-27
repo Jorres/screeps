@@ -3,9 +3,9 @@ var config = require('config');
 var U = require('U');
 var architectContainers = require('architect.containers');
 var architectGeneral = {
-    run: function () {
+    run: function (spawn) {
         console.log("general running...");
-        architectContainers.run();
+        architectContainers.run(spawn);
         adjustBuildersAmount();
     }
 };

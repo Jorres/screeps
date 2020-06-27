@@ -54,6 +54,9 @@ module.exports.loop = function () {
                 }
                 finally { if (e_1) throw e_1.error; }
             }
+            if (U.oncePerTicks(5)) {
+                architectGeneral.run(spawn);
+            }
             visited.add(spawn.room.name);
         }
     }
@@ -84,7 +87,6 @@ module.exports.loop = function () {
             roleSimpleBuilder.run(creep);
         }
     }
-    architectGeneral.run();
 };
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {
