@@ -73,9 +73,23 @@ function tryRepairingState(creep) {
     }
 }
 function reselectConstructingDestination(creep) {
+    var e_1, _a;
     var id = creep.memory.currentActiveDestinationId;
-    if (id && U.getById(id)) {
-        return;
+    var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
+    try {
+        for (var sites_1 = __values(sites), sites_1_1 = sites_1.next(); !sites_1_1.done; sites_1_1 = sites_1.next()) {
+            var site = sites_1_1.value;
+            if (id && id == site.id) {
+                return;
+            }
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (sites_1_1 && !sites_1_1.done && (_a = sites_1["return"])) _a.call(sites_1);
+        }
+        finally { if (e_1) throw e_1.error; }
     }
     var target = creep.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter)[0];
     if (!target) {
@@ -84,7 +98,7 @@ function reselectConstructingDestination(creep) {
     creep.memory.currentActiveDestinationId = target ? target.id : null;
 }
 function reselectRepairingDestination(creep) {
-    var e_1, _a;
+    var e_2, _a;
     var id = creep.memory.currentActiveDestinationId;
     if (id && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
         return;
@@ -108,12 +122,12 @@ function reselectRepairingDestination(creep) {
             }
         }
     }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
     finally {
         try {
             if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
         }
-        finally { if (e_1) throw e_1.error; }
+        finally { if (e_2) throw e_2.error; }
     }
     creep.memory.currentActiveDestinationId = bestDestinationId;
 }

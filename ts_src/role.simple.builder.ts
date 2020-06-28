@@ -65,8 +65,11 @@ function simpleTryRepairingState(creep: Creep): void {
 
 function simpleReselectConstructingDestination(creep: Creep): void {
     let id: string = creep.memory.currentActiveDestinationId;
-    if (id && U.getById(id)) {
-        return;
+    let sites = creep.room.find(FIND_CONSTRUCTION_SITES);
+    for (let site of sites) {
+        if (id && id == site.id) {
+            return;
+        }
     }
 
     let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter)[0]; 
