@@ -68,7 +68,11 @@ function simpleReselectConstructingDestination(creep: Creep): void {
     if (id && U.getById(id)) {
         return;
     }
-    let target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+
+    let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter)[0]; 
+    if (!target) {
+        target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    }
     creep.memory.currentActiveDestinationId = target ? target.id : null;
 }
 

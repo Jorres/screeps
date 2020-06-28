@@ -76,7 +76,10 @@ function simpleReselectConstructingDestination(creep) {
     if (id && U.getById(id)) {
         return;
     }
-    var target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    var target = creep.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter)[0];
+    if (!target) {
+        target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    }
     creep.memory.currentActiveDestinationId = target ? target.id : null;
 }
 function simpleReselectRepairingDestination(creep) {
