@@ -8,6 +8,8 @@ var U = require('U');
 // @ts-ignore
 module.exports = function() {
     StructureSpawn.prototype.trySpawningProcess = function() {
+        let em_state = emergency(this);
+        console.log(Game.time + " " + em_state);
         let currentConfig = emergency(this) ? 
              config.emergencySpawningConfig :
              config.spawningConfig;
