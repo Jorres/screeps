@@ -1,5 +1,7 @@
 // @ts-ignore
 var U = require('U');
+// @ts-ignore
+var storageSelector = require('storageSelector');
 
 var roleCarrier = {
     run: function(creep: Creep): void {
@@ -14,19 +16,12 @@ var roleCarrier = {
     }
 }
 
-function reselectPickup(creep: Creep): void {
+function tryReselectPickup(creep: Creep): void {
     if (creep.memory.carryingId && U.getById(creep.memory.carryingId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
         return;
     }
 
-    let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-        filter: (structure) => {
-            return structure.structureType == STRUCTURE_CONTAINER 
-                && 4 * structure.store.getUsedCapacity(RESOURCE_ENERGY) > 
-                   structure.store.getCapacity(RESOURCE_ENERGY);
-        }
-    });
-    creep.memory.carryingId = target ? target.id : null;
+    creep.memory.carryingId = storageSelector.selectStorageId(creep);
 }
 
 function carrierCarryingFrom(creep: Creep): void {
@@ -36,7 +31,7 @@ function carrierCarryingFrom(creep: Creep): void {
         return;
     }
 
-    reselectPickup(creep);
+    tryReselectPickup(creep);
     if (creep.memory.carryingId) {
         let err = U.moveAndWithdraw(creep, U.getById(creep.memory.carryingId), RESOURCE_ENERGY);
         if (err == OK) {                

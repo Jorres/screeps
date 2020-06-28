@@ -10,6 +10,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
+var storageSelector = require('storageSelector');
 var roleCarrier = {
     run: function (creep) {
         if (!creep.memory.autoState) {
@@ -23,18 +24,11 @@ var roleCarrier = {
         }
     }
 };
-function reselectPickup(creep) {
+function tryReselectPickup(creep) {
     if (creep.memory.carryingId && U.getById(creep.memory.carryingId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
         return;
     }
-    var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-        filter: function (structure) {
-            return structure.structureType == STRUCTURE_CONTAINER
-                && 4 * structure.store.getUsedCapacity(RESOURCE_ENERGY) >
-                    structure.store.getCapacity(RESOURCE_ENERGY);
-        }
-    });
-    creep.memory.carryingId = target ? target.id : null;
+    creep.memory.carryingId = storageSelector.selectStorageId(creep);
 }
 function carrierCarryingFrom(creep) {
     if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == creep.store.getCapacity(RESOURCE_ENERGY)) {
@@ -42,7 +36,7 @@ function carrierCarryingFrom(creep) {
         creep.memory.carryingId = null;
         return;
     }
-    reselectPickup(creep);
+    tryReselectPickup(creep);
     if (creep.memory.carryingId) {
         var err = U.moveAndWithdraw(creep, U.getById(creep.memory.carryingId), RESOURCE_ENERGY);
         if (err == OK) {

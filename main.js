@@ -77,10 +77,10 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'carrier') {
             roleCarrier.run(creep);
         }
-        else if (creep.memory.role == 'simple.harvester' || creep.memory.role == 'simpleHarvester') {
+        else if (creep.memory.role == 'simple.harvester') {
             roleSimpleHarvester.run(creep);
         }
-        else if (creep.memory.role == 'simple.upgrader' || creep.memory.role == 'simpleUpgrader') {
+        else if (creep.memory.role == 'simple.upgrader') {
             roleSimpleUpgrader.run(creep);
         }
         else if (creep.memory.role == 'simple.builder') {
