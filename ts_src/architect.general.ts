@@ -23,7 +23,9 @@ function adjustBuildersAmount(spawn: StructureSpawn) {
         buildingScore += site.progressTotal - site.progress;
     }
     let buildersAmount;
-    if (buildingScore < 5000) {
+    if (buildingScore == 0) {
+        buildersAmount = 0;
+    } else if (buildingScore < 5000) {
         buildersAmount = 1;
     } else if (buildingScore < 10000) {
         buildersAmount = 2;
