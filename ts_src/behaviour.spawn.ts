@@ -68,7 +68,7 @@ function emergency(spawn: StructureSpawn): boolean {
 
     let miners = U.getRoleSpecificCreeps('miner');
     let carriers = U.getRoleSpecificCreeps('carrier');
-    if (miners == 0 && carriers == 0 && spawn.room.energyAvailable < config.minimumEnergyToKickstart) { // TODO properly
+    if (miners == 0 && spawn.room.energyAvailable < config.minimumEnergyToKickstart) { // TODO properly
         return true;
     }
     return false;

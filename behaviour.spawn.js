@@ -82,7 +82,7 @@ function emergency(spawn) {
     }
     var miners = U.getRoleSpecificCreeps('miner');
     var carriers = U.getRoleSpecificCreeps('carrier');
-    if (miners == 0 && carriers == 0 && spawn.room.energyAvailable < config.minimumEnergyToKickstart) {
+    if (miners == 0 && spawn.room.energyAvailable < config.minimumEnergyToKickstart) {
         return true;
     }
     return false;
