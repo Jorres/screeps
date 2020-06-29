@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "downlevelIteration": true,
+        "lib": ["es2015","dom"],
+        "outDir": "compiled"
+    }, 
+    "include": [
+        "typed-screeps/src/*.ts",
+        "ts_src/*.ts"
+    ]
+}

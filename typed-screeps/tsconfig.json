@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "es2017",
+        "sourceMap": false,
+        "declaration": true,
+        "strict": true,
+        "noEmit": true,
+        "newLine": "LF",
+        "removeComments": false
+    },
+    "include": ["./src/**/*.ts"],
+    "exclude": ["node_modules", "dist"]
+}
