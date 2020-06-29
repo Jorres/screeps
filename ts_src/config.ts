@@ -1,6 +1,6 @@
 var config = {
     roomName: function(): string {
-        return "W8S24"
+        return "W37N36"
     },
     reusePath: function(): number {
         return 1; // re-plot every second route
@@ -26,12 +26,12 @@ var config = {
     simpleHarvestersAmount: 3,
     emergencySpawningConfig: [
         {roleName: 'simple.harvester', maxAmount: 3},
-        {roleName: 'simple.upgrader', maxAmount: 1},
-        {roleName: 'simple.builder', maxAmount: 2}
+        {roleName: 'simple.upgrader', maxAmount: 2},
+        {roleName: 'simple.builder', maxAmount: 1}
     ],
     simpleHarvesterConfig: [WORK, CARRY, MOVE],
-    simpleUpgraderConfig: [WORK, CARRY, MOVE, WORK, CARRY],
-    simpleBuilderConfig: [WORK, CARRY, MOVE, WORK, CARRY],
+    simpleUpgraderConfig: [WORK, CARRY, MOVE],
+    simpleBuilderConfig: [WORK, CARRY, MOVE],
 
     defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
     defaultCarrierConfig: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
