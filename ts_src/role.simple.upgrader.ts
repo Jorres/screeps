@@ -6,7 +6,7 @@ var config = require('config');
 var roleSimpleUpgrader: RoleSimpleUpgrader = {
     run: function(creep: Creep, newState ?: (creep: Creep) => void) {
         if (newState) {
-            creep.memory.autoFunc = this.harvestingState;
+            creep.memory.autoFunc = newState;
         } else {
             creep.memory.autoFunc = this.harvestingState;
         }

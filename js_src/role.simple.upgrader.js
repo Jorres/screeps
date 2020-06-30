@@ -3,7 +3,7 @@ var config = require('config');
 var roleSimpleUpgrader = {
     run: function (creep, newState) {
         if (newState) {
-            creep.memory.autoFunc = this.harvestingState;
+            creep.memory.autoFunc = newState;
         }
         else {
             creep.memory.autoFunc = this.harvestingState;
