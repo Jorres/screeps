@@ -19,6 +19,13 @@ var roleSimpleUpgrader = {
             this.run(creep, this.upgradingState);
         }
         else {
+            if (!creep.memory.sourceDestId) {
+                var target = creep.pos.findClosestByPath(FIND_SOURCES);
+                creep.memory.sourceDestId = target ? target.id : null;
+            }
+            if (creep.memory.sourceDestId) {
+                U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
+            }
         }
     },
     upgradingState: function (creep) {
