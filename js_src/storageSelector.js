@@ -11,7 +11,7 @@ var storageSelector = {
                 }
             });
         }
-        else if (role == 'builder' || role == 'upgrader') {
+        else if (/upgrader|builder/.test(role)) {
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: function (structure) {
                     return (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 800) ||

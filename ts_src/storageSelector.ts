@@ -10,7 +10,7 @@ var storageSelector = {
                            structure.store.getCapacity(RESOURCE_ENERGY);
                 }
             });
-        } else if (role == 'builder' || role == 'upgrader') {
+        } else if (/upgrader|builder/.test(role)) {
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => {
                     // @ts-ignore
