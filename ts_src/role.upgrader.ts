@@ -10,22 +10,22 @@ var roleUpgrader: RoleUpgrader = {
         if (newState) {
             creep.memory.autoState = newState;
         } else if (!creep.memory.autoState) {
-            creep.memory.autoState = 'harvest';
+            creep.memory.autoState = 'gather';
         }
 
         if (creep.memory.actionTaken) {
             return;
         }
 
-        if (creep.memory.autoState == 'harvest') {
-            this.harvestingState(creep);
+        if (creep.memory.autoState == 'gather') {
+            this.gatheringState(creep);
         } else if (creep.memory.autoState == 'upgrade') {
             this.upgradingState(creep);
         }
     },
 
     // creep.memory.sourceDestId
-    harvestingState: function(creep: Creep) {
+    gatheringState: function(creep: Creep): void {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
             this.run(creep, 'upgrade');
@@ -47,7 +47,7 @@ var roleUpgrader: RoleUpgrader = {
 
     upgradingState: function(creep: Creep) {
         if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-            this.run(creep, 'harvest');
+            this.run(creep, 'gather');
         } else {
             U.moveAndUpgradeController(creep, creep.room.controller);
         }

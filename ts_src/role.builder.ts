@@ -17,6 +17,8 @@ var roleBuilder: RoleBuilder = {
 
         if (creep.memory.autoState == 'gather') {
             this.gatheringState(creep);
+        } else if (creep.memory.autoState == 'important') {
+            this.importantState(creep);
         } else if (creep.memory.autoState == 'build') {
             this.buildingState(creep);
         } else if (creep.memory.autoState == 'repair') {
@@ -35,6 +37,28 @@ var roleBuilder: RoleBuilder = {
                 let target = creep.pos.findClosestByPath(FIND_SOURCES);
                 if (target) {
                     U.moveAndHarvest(creep, target);
+                }
+            }
+        }
+    },
+
+    // importantDestId
+    importantState: function(creep: Creep): void {
+        let usedCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+        let freeCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+
+        if (usedCapacity == 0) {
+            this.run(creep, 'gather');
+        } else {
+            this.reselectImportantDst(creep);
+            if (creep.memory.importantDestId) {
+                U.moveAndRepair(creep, U.getById(creep.memory.importantDestId));
+            } else {
+                // no clear! so repairs fully
+                if (freeCapacity > 0) {
+                    this.run(creep, 'gather');
+                } else {
+                    this.run(creep, 'build');
                 }
             }
         }
@@ -102,6 +126,27 @@ var roleBuilder: RoleBuilder = {
 
         let structures = creep.room.find(FIND_STRUCTURES);
         creep.memory.repairingDestId = U.findBiggest(structures, 
+            (structure) => {
+                return structure.hitsMax - structure.hits;
+            });
+    },
+
+    // importantDestId, PERSISTENT
+    reselectImportantDst: function(creep: Creep): void {
+        if (creep.memory.importantDestId) {
+            return;
+        }
+
+        let structures = creep.room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return structure.structureType != STRUCTURE_WALL &&
+                       structure.structureType != STRUCTURE_RAMPART &&
+                    structure.structureType != STRUCTURE_ROAD &&
+                    structure.hitsMax * 0.25 > structure.hits;
+            }
+        });
+
+        creep.memory.importantDestId = U.findBiggest(structures, 
             (structure) => {
                 return structure.hitsMax - structure.hits;
             });

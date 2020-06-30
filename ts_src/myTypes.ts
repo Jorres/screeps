@@ -1,6 +1,8 @@
 type CreepRoles = 'upgrader'|'harvester'|'builder';
 
-type AutomataState = 'noop'|'carry'|'build'|'repair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop'|'collect'|'gather';
+type AutomataState = 'noop'|'carry'|'build'|'repair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop'|'collect'|'gather'|'important';
+// type AutomataBuilderState = 'build'|'repair'|'gather'|'important';
+// type AutomataUpgraderState = 'upgrade'|'gather';
 
 type PossibleEnergyContainer = StructureSpawn | StructureExtension | StructureTower | StructureContainer | StructureStorage;
 
@@ -21,7 +23,7 @@ type EnergySelectionInfo = {
 
 type RoleUpgrader = {
     run: (creep: Creep, newState ?: AutomataState) => void;
-    harvestingState: (creep: Creep) => void;
+    gatheringState: (creep: Creep) => void;
     upgradingState: (creep: Creep) => void;
 };
 
@@ -30,6 +32,8 @@ type RoleBuilder = {
     gatheringState: (creep: Creep) => void;
     buildingState: (creep: Creep) => void;
     repairingState: (creep: Creep) => void;
+    importantState: (creep: Creep) => void;
     reselectBuildingDst: (creep: Creep) => void;
     reselectRepairingDst: (creep: Creep) => void;
+    reselectImportantDst: (creep: Creep) => void;
 };
