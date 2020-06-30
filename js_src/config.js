@@ -26,8 +26,8 @@ var config = {
     simpleHarvestersAmount: 3,
     emergencySpawningConfig: [
         { roleName: 'simple.harvester', maxAmount: 3 },
-        { roleName: 'simple.upgrader', maxAmount: 2 },
-        { roleName: 'simple.builder', maxAmount: 1 }
+        { roleName: 'simple.upgrader', maxAmount: 3 },
+        { roleName: 'simple.builder', maxAmount: 3 }
     ],
     simpleHarvesterConfig: [WORK, CARRY, MOVE],
     simpleUpgraderConfig: [WORK, CARRY, MOVE],
