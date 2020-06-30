@@ -20,7 +20,7 @@ var roleSimpleUpgrader = {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
             console.log("harvesting to upgrading");
-            this.run(creep, this.upgradingState);
+            creep.memory.autoFunc = this.upgradingState;
         }
         else {
             if (!creep.memory.sourceDestId) {
@@ -34,6 +34,7 @@ var roleSimpleUpgrader = {
     },
     upgradingState: function (creep) {
         if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+            console.log("upgrading to harvesting");
             this.run(creep, this.harvestingState);
         }
         else {

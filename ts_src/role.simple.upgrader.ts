@@ -28,8 +28,8 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
             console.log("harvesting to upgrading");
-
-            this.run(creep, this.upgradingState);
+            creep.memory.autoFunc = this.upgradingState;
+            // this.run(creep, this.upgradingState);
         } else {
             if (!creep.memory.sourceDestId) {
                 let target = creep.pos.findClosestByPath(FIND_SOURCES);
@@ -43,6 +43,7 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
 
     upgradingState: function(creep: Creep) {
         if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+            console.log("upgrading to harvesting");
             this.run(creep, this.harvestingState);
         } else {
             U.moveAndUpgradeController(creep, creep.room.controller);
