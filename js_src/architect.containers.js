@@ -41,7 +41,7 @@ var architectContainers = {
 function findFreeTileNear(room, pos) {
     for (var i = pos.x - 1; i <= pos.x + 1; i++) {
         for (var j = pos.y - 1; j <= pos.y + 1; j++) {
-            if (data.terrainData.get(room.name).get(i, j) == 0) {
+            if (data.terrainData.get(room.name).get(i, j) != TERRAIN_MASK_WALL) {
                 return new RoomPosition(i, j, room.name);
             }
         }
