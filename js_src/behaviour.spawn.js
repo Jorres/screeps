@@ -67,7 +67,7 @@ function getCreepConfiguration(roleName, maxEnergy) {
             ans.push(WORK);
             ans.push(MOVE);
             ans.push(CARRY);
-            maxEnergy -= universalPartcost;
+            maxEnergy -= universalPartCost;
         }
         return ans;
     }

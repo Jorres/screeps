@@ -55,7 +55,7 @@ function getCreepConfiguration(roleName: string, maxEnergy: number): BodyPartCon
             ans.push(WORK);
             ans.push(MOVE);
             ans.push(CARRY);
-            maxEnergy -= universalPartcost;
+            maxEnergy -= universalPartCost;
         }
         return ans;
     } else {
