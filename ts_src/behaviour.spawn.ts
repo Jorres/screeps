@@ -50,10 +50,8 @@ function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartCon
         return assembleMiner(curEnergy);
     } else if (roleName == 'carrier') {
         return assembleCarrier(curEnergy);
-    } else if (/simple/.test(roleName)) {
-        return bestEmergencyCreep(curEnergy);
     } else {
-        return config.defaultUniversalConfig;
+        return bestEmergencyCreep(curEnergy);
     }
 }
 

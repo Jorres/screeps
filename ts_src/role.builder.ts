@@ -3,131 +3,110 @@ var U = require('U');
 // @ts-ignore
 var storageSelector = require('storageSelector');
 
-var roleBuilder = {
-    run: function(creep: Creep) {
-        if (!creep.memory.autoState) {
-            creep.memory.autoState = 'collect';
+var roleBuilder: RoleBuilder = {
+    run: function(creep: Creep, newState ?: AutomataState) {
+        if (newState) {
+            creep.memory.autoState = newState;
+        } else if (!creep.memory.autoState) {
+            creep.memory.autoState = 'gather';
         }
 
-        if (creep.memory.autoState == 'collect') {
-            builderCollectingState(creep);
-        } else if (creep.memory.autoState == 'tryBuild') {
-            tryBuildingState(creep);
-        } else if (creep.memory.autoState == 'tryRepair') {
-            tryRepairingState(creep);
-        } else if (creep.memory.autoState == 'noop') {
-            builderNoopState(creep);
-        } 
-    }
-};
-
-function builderCollectingState(creep: Creep): void {
-    if (creep.store.getFreeCapacity() == 0) {
-        U.changeState(creep, 'tryBuild');
-        tryBuildingState(creep);
-    } else {
-        let targetId = storageSelector.selectStorageId(creep);
-        if (targetId) {
-            U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
-        }
-    }
-}
-
-function tryBuildingState(creep: Creep): void {
-    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        U.changeState(creep, 'collect');
-        builderCollectingState(creep);
-        return;
-    }
-
-    reselectConstructingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        U.moveAndBuild(creep, U.getById(creep.memory.currentActiveDestinationId)); 
-    } else {
-        creep.memory.autoState = 'tryRepair';
-        tryRepairingState(creep);
-    }
-}
-
-function tryRepairingState(creep: Creep): void {
-    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        U.changeState(creep, 'collect');
-        builderCollectingState(creep);
-        return;
-    }
-
-    reselectRepairingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        U.moveAndRepair(creep, U.getById(creep.memory.currentActiveDestinationId));
-    } else {
-        creep.memory.autoState = 'noop';
-        builderNoopState(creep);
-    }
-}
-
-function reselectConstructingDestination(creep: Creep): void {
-    let id: string = creep.memory.currentActiveDestinationId;
-    let sites = creep.room.find(FIND_CONSTRUCTION_SITES);
-    for (let site of sites) {
-        if (id && id == site.id) {
+        if (creep.memory.actionTaken) {
             return;
         }
-    }
 
-    let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER))[0]; 
-    if (!target) {
-        target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-    }
-    creep.memory.currentActiveDestinationId = target ? target.id : null;
-}
+        if (creep.memory.autoState == 'gather') {
+            this.gatheringState(creep);
+        } else if (creep.memory.autoState == 'build') {
+            this.buildingState(creep);
+        } else if (creep.memory.autoState == 'repair') {
+            this.repairingState(creep);
+        } 
+    },
 
-function reselectRepairingDestination(creep: Creep): void {
-    let id: string = creep.memory.currentActiveDestinationId;
-    if (id && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
-        return;
-    }
-    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        creep.memory.currentActiveDestinationId = null;
-        creep.memory.autoState = 'harvest';
-        builderCollectingState(creep);
-        return;
-    }
-
-    let bestDiff = -1;
-    let bestDestinationId = null;
-    let structures = creep.room.find(FIND_STRUCTURES);
-    for (let structure of structures) {
-        let curDiff = structure.hitsMax - structure.hits;
-        if (curDiff > bestDiff) {
-            bestDiff = curDiff;
-            bestDestinationId = structure.id;
+    gatheringState: function(creep: Creep): void {
+        if (creep.store.getFreeCapacity() == 0) {
+            this.run(creep, 'build');
+        } else {
+            let targetId = storageSelector.selectStorageId(creep);
+            if (targetId) {
+                U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
+            } else {
+                let target = creep.pos.findClosestByPath(FIND_SOURCES);
+                if (target) {
+                    U.moveAndHarvest(creep, target);
+                }
+            }
         }
-    }
-    creep.memory.currentActiveDestinationId = bestDestinationId;
-}
+    },
 
-function builderNoopState(creep: Creep): void {
-    reselectConstructingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        creep.memory.autoState = 'tryBuild';
-        tryBuildingState(creep);
-        return;
-    }
+    // buildingDestId
+    buildingState: function(creep: Creep): void {
+        if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+            this.run(creep, 'gather');
+        } else {
+            this.reselectBuildingDst(creep);
+            if (creep.memory.buildingDestId) {
+                U.moveAndBuild(creep, U.getById(creep.memory.buildingDestId)); 
+            } else {
+                creep.memory.buildingDestId = null;
+                this.run(creep, 'repair');
+            }
+        }
+    },
 
-    reselectRepairingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        creep.memory.autoState = 'tryRepair';
-        tryRepairingState(creep);
-        return;
-    }
+    // repairingDestId
+    repairingState: function(creep: Creep): void {
+        let usedCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+        let freeCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
 
-    if (U.atLeastHalfFull(creep)) {
-        creep.moveTo(creep.room.find(FIND_STRUCTURES)[0], {visualizePathStyle: {stroke: '#ffffff'}});
-    } else {
-        U.changeState(creep, 'collect');
-        builderCollectingState(creep);
+        if (usedCapacity == 0) {
+            this.run(creep, 'gather');
+        } else {
+            this.reselectRepairingDst(creep);
+            if (creep.memory.repairingDestId) {
+                U.moveAndRepair(creep, U.getById(creep.memory.repairingDestId));
+            } else {
+                creep.memory.repairingDestId = null;
+                if (freeCapacity > 0) {
+                    this.run(creep, 'gather');
+                } else {
+                    this.run(creep, 'build');
+                }
+            }
+        }
+    },
+
+    // constructionDestId
+    reselectBuildingDst: function(creep: Creep): void {
+        let id: string = creep.memory.buildingDestId;
+        let sites = creep.room.find(FIND_CONSTRUCTION_SITES);
+        for (let site of sites) {
+            if (id && id == site.id) {
+                return;
+            }
+        }
+
+        let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER))[0]; 
+        if (!target) {
+            target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+        }
+        creep.memory.buildingDestId = target ? target.id : null;
+    },
+
+    // repairingDestId
+    reselectRepairingDst: function(creep: Creep): void {
+        if (creep.memory.repairingDestId) {
+            return;
+        }
+
+        let structures = creep.room.find(FIND_STRUCTURES);
+        creep.memory.repairingDestId = U.findBiggest(structures, 
+            (structure) => {
+                return structure.hitsMax - structure.hits;
+            });
     }
-}
+};
 
 // @ts-ignore
 module.exports = roleBuilder;

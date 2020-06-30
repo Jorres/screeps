@@ -93,6 +93,19 @@ var U = {
         return false;
     },
 
+    findBiggest: function(structures: AnyStructure[], comparator: (structure: AnyStructure) => number): string {
+        let bestDiff = -1;
+        let bestId = null;
+        for (let structure of structures) {
+            let curDiff = comparator(structure);
+            if (curDiff > bestDiff) {
+                bestDiff = curDiff;
+                bestId = structure.id;
+            }
+        }
+        return bestId;
+    },
+
     filterBy: function(neededType: string): AnyStructure[] {
         // @ts-ignore
         return { filter: { structureType: neededType } };

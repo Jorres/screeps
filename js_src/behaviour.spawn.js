@@ -63,11 +63,8 @@ function getCreepConfiguration(roleName, curEnergy) {
     else if (roleName == 'carrier') {
         return assembleCarrier(curEnergy);
     }
-    else if (/simple/.test(roleName)) {
-        return bestEmergencyCreep(curEnergy);
-    }
     else {
-        return config.defaultUniversalConfig;
+        return bestEmergencyCreep(curEnergy);
     }
 }
 function assembleCarrier(curEnergy) {

@@ -56,4 +56,3 @@ var roleUpgrader: RoleUpgrader = {
 
 // @ts-ignore
 module.exports = roleUpgrader;
-

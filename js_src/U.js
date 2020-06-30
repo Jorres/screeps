@@ -112,6 +112,29 @@ var U = {
         }
         return false;
     },
+    findBiggest: function (structures, comparator) {
+        var e_2, _a;
+        var bestDiff = -1;
+        var bestId = null;
+        try {
+            for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
+                var structure = structures_1_1.value;
+                var curDiff = comparator(structure);
+                if (curDiff > bestDiff) {
+                    bestDiff = curDiff;
+                    bestId = structure.id;
+                }
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        return bestId;
+    },
     filterBy: function (neededType) {
         return { filter: { structureType: neededType } };
     }

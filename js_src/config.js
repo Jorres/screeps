@@ -17,17 +17,15 @@ var config = {
     ]),
     spawningConfig: [
         { roleName: 'miner', maxAmount: 1 },
-        { roleName: 'carrier', maxAmount: 2 },
-        { roleName: 'miner', maxAmount: 2 },
-        { roleName: 'carrier', maxAmount: 4 },
-        { roleName: 'upgrader', maxAmount: 4 },
-        { roleName: 'builder', maxAmount: 0 }
+        { roleName: 'upgrader', maxAmount: 2 },
+        { roleName: 'builder', maxAmount: 1 },
+        { roleName: 'miner', maxAmount: 2 }
     ],
     simpleHarvestersAmount: 3,
     emergencySpawningConfig: [
         { roleName: 'simple.harvester', maxAmount: 3 },
         { roleName: 'upgrader', maxAmount: 3 },
-        { roleName: 'simple.builder', maxAmount: 3 }
+        { roleName: 'builder', maxAmount: 3 }
     ]
 };
 module.exports = config;

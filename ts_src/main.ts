@@ -15,8 +15,6 @@ var roleClaimer = require('role.claimer');
 // @ts-ignore
 var roleSimpleHarvester = require('role.simple.harvester');
 // @ts-ignore
-var roleSimpleBuilder = require('role.simple.builder');
-// @ts-ignore
 var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
 var data = require('data');
@@ -65,20 +63,19 @@ module.exports.loop = function() {
         var creep = Game.creeps[name];
         creep.memory.actionTaken = false;
 
-        if (/upgrader/.test(creep.memory.role)) {
+        let role = creep.memory.role;
+        if (/upgrader/.test(role)) {
             roleUpgrader.run(creep);
-        } else if (creep.memory.role == 'builder') {
+        } else if (/builder/.test(role)) {
             roleBuilder.run(creep);
-        } else if (creep.memory.role == 'claimer') {
+        } else if (role == 'claimer') {
             roleClaimer.run(creep);
-        } else if (creep.memory.role == 'miner') {
+        } else if (role == 'miner') {
             roleMiner.run(creep);
-        } else if (creep.memory.role == 'carrier') {
+        } else if (role == 'carrier') {
             roleCarrier.run(creep);
-        } else if (creep.memory.role == 'simple.harvester') {
+        } else if (role == 'simple.harvester') {
             roleSimpleHarvester.run(creep);
-        } else if (creep.memory.role == 'simple.builder') {
-            roleSimpleBuilder.run(creep);
         }
     }
        
