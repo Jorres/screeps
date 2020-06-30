@@ -4,20 +4,18 @@ var U = require('U');
 var config = require('config');
 
 var roleSimpleUpgrader: RoleSimpleUpgrader = {
-    actionTaken: false,
-
+    // roleSimpleUpgrader.run(creep);
     run: function(creep: Creep, newState ?: (creep: Creep) => void) {
-        if (!creep.memory.autoFunc) {
+        if (newState) {
+            creep.memory.autoFunc = this.harvestingState;
+        } else {
             creep.memory.autoFunc = this.harvestingState;
         }
-        if (!newState) {
-            newState = creep.memory.autoFunc;
-        }
+
         if (creep.memory.actionTaken) {
             return;
         }
 
-        creep.memory.autoFunc = newState;
         creep.memory.autoFunc.call(this, creep);
     },
 
@@ -27,15 +25,17 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
             creep.memory.sourceDestId = null;
             this.run(creep, this.upgradingState);
         } else {
-            if (!creep.memory.sourceDestId) {
-                let target = creep.pos.findClosestByPath(FIND_SOURCES);
-                creep.memory.sourceDestId = target ? target.id : null;
-            }
-            if (creep.memory.sourceDestId) {
-                U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
-            } 
+            // if (!creep.memory.sourceDestId) {
+            //     let target = creep.pos.findClosestByPath(FIND_SOURCES);
+            //     creep.memory.sourceDestId = target ? target.id : null;
+            // }
+            // if (creep.memory.sourceDestId) {
+            //     U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
+            // } 
         }
     }, 
+
+    // O    <-  C  ->     S // 100 1 
 
     upgradingState: function(creep: Creep) {
         if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {

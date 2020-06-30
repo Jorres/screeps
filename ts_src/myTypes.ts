@@ -20,10 +20,7 @@ type EnergySelectionInfo = {
 };
 
 type RoleSimpleUpgrader = {
-    actionTaken: boolean;
-
+    run: (creep: Creep, newState ?: (creep: Creep) => void) => void;
     harvestingState: (creep: Creep) => void;
     upgradingState: (creep: Creep) => void;
-    run: (creep: Creep, newState ?: (creep: Creep) => void) => void;
-    sourceDestId ?: string;
 };
