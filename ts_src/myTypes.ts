@@ -25,5 +25,5 @@ type RoleSimpleUpgrader = {
     harvestingState: (creep: Creep) => void;
     upgradingState: (creep: Creep) => void;
     run: (creep: Creep, newState ?: (creep: Creep) => void) => void;
-    sourceDest ?: string;
+    sourceDestId ?: string;
 };

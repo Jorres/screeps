@@ -18,20 +18,21 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
         }
 
         creep.memory.autoFunc = newState;
-        creep.memory.autoFunc(creep);
+        creep.memory.autoFunc.call(this, creep);
     },
 
-    sourceDest: null,
+    // creep.memory.sourceDest
     harvestingState: function(creep: Creep) {
         if (creep.store.getFreeCapacity() == 0) {
-            this.sourceDestId = null;
+            creep.memory.sourceDestId = null;
             this.run(creep, this.upgradingState);
         } else {
-            if (!this.sourceDest) {
-                this.sourceDest = creep.pos.findClosestByPath(FIND_SOURCES);
+            if (!creep.memory.sourceDestId) {
+                let target = creep.pos.findClosestByPath(FIND_SOURCES);
+                creep.memory.sourceDestId = target ? target.id : null;
             }
-            if (this.sourceDest) {
-                U.moveAndHarvest(creep, this.sourceDest);
+            if (creep.memory.sourceDestId) {
+                U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
             } 
         }
     }, 
