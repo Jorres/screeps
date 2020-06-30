@@ -1,12 +1,13 @@
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
-    return {
+    if (o && typeof o.length === "number") return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 require('initialize')();
 require('behaviour.spawn')();
@@ -28,6 +29,7 @@ function isTower(structure) {
 }
 var MAX_BUCKET_SIZE = 10000;
 module.exports.loop = function () {
+    var e_1, _a;
     console.log(Game.time);
     checkGeneratePixel();
     U.cleanupDeadCreeps();
@@ -38,7 +40,7 @@ module.exports.loop = function () {
         if (!visited.has(spawn.room.name)) {
             var structures = spawn.room.find(FIND_STRUCTURES);
             try {
-                for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
+                for (var structures_1 = (e_1 = void 0, __values(structures)), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
                     var structure = structures_1_1.value;
                     if (isTower(structure)) {
                         towerBehaviour.run(structure);
@@ -60,6 +62,7 @@ module.exports.loop = function () {
     }
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
+        creep.memory.actionTaken = false;
         if (creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
         }
@@ -85,7 +88,6 @@ module.exports.loop = function () {
             roleSimpleBuilder.run(creep);
         }
     }
-    var e_1, _a;
 };
 function checkGeneratePixel() {
     if (Game.cpu.bucket >= MAX_BUCKET_SIZE - 1000) {

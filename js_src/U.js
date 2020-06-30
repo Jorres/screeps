@@ -38,11 +38,13 @@ var U = {
         return this.defaultAction(creep, target, function () { return creep.withdraw(target, resourceType); });
     },
     defaultAction: function (creep, target, action) {
-        var error = action();
-        if (error == ERR_NOT_IN_RANGE) {
-            defaultMove(creep, target);
+        var actionRes = action();
+        var moveRes = -1;
+        if (actionRes == ERR_NOT_IN_RANGE) {
+            moveRes = defaultMove(creep, target);
         }
-        return error;
+        creep.memory.actionTaken = (actionRes == OK || moveRes == OK);
+        return actionRes;
     },
     getById: function (id) {
         return Game.getObjectById(id);
@@ -85,7 +87,7 @@ var U = {
     }
 };
 function defaultMove(creep, target) {
-    creep.moveTo(target, {
+    return creep.moveTo(target, {
         reusePath: config.reusePath(),
         visualizePathStyle: { stroke: '#ffffff' }
     });

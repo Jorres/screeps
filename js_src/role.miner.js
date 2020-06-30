@@ -1,12 +1,13 @@
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
-    return {
+    if (o && typeof o.length === "number") return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var config = require('config');
 var data = require('data');
@@ -58,6 +59,7 @@ function minerDropState(creep) {
     }
 }
 function getDesignatedMineId(creep) {
+    var e_1, _a;
     var sources = creep.room.find(FIND_SOURCES);
     var containers = creep.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     var bestDistance = 1000;
@@ -88,9 +90,9 @@ function getDesignatedMineId(creep) {
         data.minesReservationMap.set(bestSourceId, creep.name);
     }
     return bestSourceId;
-    var e_1, _a;
 }
 function hasContainerNearby(containers, pos) {
+    var e_2, _a;
     try {
         for (var containers_1 = __values(containers), containers_1_1 = containers_1.next(); !containers_1_1.done; containers_1_1 = containers_1.next()) {
             var container = containers_1_1.value;
@@ -107,6 +109,5 @@ function hasContainerNearby(containers, pos) {
         finally { if (e_2) throw e_2.error; }
     }
     return false;
-    var e_2, _a;
 }
 module.exports = roleMiner;

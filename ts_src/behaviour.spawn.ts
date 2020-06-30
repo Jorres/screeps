@@ -46,7 +46,7 @@ function getCreepConfiguration(roleName: string, maxEnergy: number): BodyPartCon
     } else if (roleName == 'carrier') {
         return config.defaultCarrierConfig;
     } else if (/simple/.test(roleName)) {
-        let ans = [];
+        let ans: BodyPartConstant[] = [];
         let universalPartCost = 
             config.bodyPartCost.get(MOVE) + 
             config.bodyPartCost.get(WORK) + 

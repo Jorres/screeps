@@ -86,13 +86,14 @@ var U = {
     },
 
 
-    filterBy: function(neededType): AnyStructure[] {
+    filterBy: function(neededType: string): AnyStructure[] {
+        // @ts-ignore
         return { filter: { structureType: neededType } };
     },
 };
 
 
-function defaultMove(creep: Creep, target: Spawn | Structure | Source | Mineral | Deposit) {
+function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {
     return creep.moveTo(target, {
         reusePath: config.reusePath(), 
         visualizePathStyle: {stroke: '#ffffff'}

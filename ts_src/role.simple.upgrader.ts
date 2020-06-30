@@ -4,48 +4,41 @@ var U = require('U');
 var config = require('config');
 
 var roleSimpleUpgrader: RoleSimpleUpgrader = {
-    run: function(creep: Creep, newState ?: AutomataState) {
-        if (!creep.memory.autoState) {
-            creep.memory.autoState = 'harvest';
+    actionTaken: false,
+
+    run: function(creep: Creep, newState ?: (creep: Creep) => void) {
+        if (!creep.memory.autoFunc) {
+            creep.memory.autoFunc = this.harvestingState;
         }
-        if (newState == undefined) {
-            newState == creep.memory.autoState;
+        if (!newState) {
+            newState = creep.memory.autoFunc;
         }
         if (creep.memory.actionTaken) {
             return;
         }
 
-        creep.memory.autoState = newState;
-        switch (creep.memory.autoState) {
-            case 'harvest':
-                harvestingState(creep);
-                break;
-            case 'upgrade':
-                upgradingState(creep);
-                break;
-            default:
-                throw "unknown " + creep.memory.role + " behaviour";
-        }
+        creep.memory.autoFunc = newState;
+        creep.memory.autoFunc(creep);
     },
 
-    sourceDestId: null,
+    sourceDest: null,
     harvestingState: function(creep: Creep) {
         if (creep.store.getFreeCapacity() == 0) {
-            sourceDestId = null;
-            this.run(creep, 'upgrade');
+            this.sourceDestId = null;
+            this.run(creep, this.upgradingState);
         } else {
-            if (!sourceDestId) {
-                sourceDestId = creep.pos.findClosestByPath(FIND_SOURCES);
+            if (!this.sourceDest) {
+                this.sourceDest = creep.pos.findClosestByPath(FIND_SOURCES);
             }
-            if (sourceDestId) {
-                U.moveAndHarvest(creep, target);
+            if (this.sourceDest) {
+                U.moveAndHarvest(creep, this.sourceDest);
             } 
         }
     }, 
 
     upgradingState: function(creep: Creep) {
         if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-            this.run(creep, 'harvest');
+            this.run(creep, this.harvestingState);
         } else {
             U.moveAndUpgradeController(creep, creep.room.controller);
         }

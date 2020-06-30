@@ -1,12 +1,13 @@
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
-    return {
+    if (o && typeof o.length === "number") return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
 var storageSelector = require('storageSelector');
@@ -72,6 +73,7 @@ function tryRepairingState(creep) {
     }
 }
 function reselectConstructingDestination(creep) {
+    var e_1, _a;
     var id = creep.memory.currentActiveDestinationId;
     var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
     try {
@@ -94,9 +96,9 @@ function reselectConstructingDestination(creep) {
         target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
     }
     creep.memory.currentActiveDestinationId = target ? target.id : null;
-    var e_1, _a;
 }
 function reselectRepairingDestination(creep) {
+    var e_2, _a;
     var id = creep.memory.currentActiveDestinationId;
     if (id && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
         return;
@@ -128,7 +130,6 @@ function reselectRepairingDestination(creep) {
         finally { if (e_2) throw e_2.error; }
     }
     creep.memory.currentActiveDestinationId = bestDestinationId;
-    var e_2, _a;
 }
 function builderNoopState(creep) {
     reselectConstructingDestination(creep);

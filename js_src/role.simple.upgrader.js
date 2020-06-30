@@ -1,37 +1,42 @@
 var U = require('U');
 var config = require('config');
-var roleUpgrader = {
-    run: function (creep) {
-        if (!creep.memory.autoState) {
-            creep.memory.autoState = 'harvest';
+var roleSimpleUpgrader = {
+    actionTaken: false,
+    run: function (creep, newState) {
+        if (!creep.memory.autoFunc) {
+            creep.memory.autoFunc = this.harvestingState;
         }
-        if (creep.memory.autoState == 'harvest') {
-            simpleUpgradingHarvestingState(creep);
+        if (!newState) {
+            newState = creep.memory.autoFunc;
         }
-        else if (creep.memory.autoState == 'upgrade') {
-            simpleUpgradingUpgradingState(creep);
+        if (creep.memory.actionTaken) {
+            return;
+        }
+        creep.memory.autoFunc = newState;
+        creep.memory.autoFunc(creep);
+    },
+    sourceDest: null,
+    harvestingState: function (creep) {
+        if (creep.store.getFreeCapacity() == 0) {
+            this.sourceDestId = null;
+            this.run(creep, this.upgradingState);
+        }
+        else {
+            if (!this.sourceDest) {
+                this.sourceDest = creep.pos.findClosestByPath(FIND_SOURCES);
+            }
+            if (this.sourceDest) {
+                U.moveAndHarvest(creep, this.sourceDest);
+            }
+        }
+    },
+    upgradingState: function (creep) {
+        if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+            this.run(creep, this.harvestingState);
+        }
+        else {
+            U.moveAndUpgradeController(creep, creep.room.controller);
         }
     }
 };
-function simpleUpgradingHarvestingState(creep) {
-    if (creep.store.getFreeCapacity() == 0) {
-        U.changeState(creep, 'upgrade');
-        simpleUpgradingUpgradingState(creep);
-    }
-    else {
-        var target = creep.pos.findClosestByPath(FIND_SOURCES);
-        if (target) {
-            U.moveAndHarvest(creep, target);
-        }
-    }
-}
-function simpleUpgradingUpgradingState(creep) {
-    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        U.changeState(creep, 'harvest');
-        simpleUpgradingHarvestingState(creep);
-    }
-    else {
-        U.moveAndUpgradeController(creep, creep.room.controller);
-    }
-}
-module.exports = roleUpgrader;
+module.exports = roleSimpleUpgrader;
