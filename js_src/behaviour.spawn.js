@@ -58,14 +58,18 @@ function getCreepConfiguration(roleName, maxEnergy) {
     else if (roleName == 'carrier') {
         return config.defaultCarrierConfig;
     }
-    else if (roleName == 'simple.harvester') {
-        return config.simpleHarvesterConfig;
-    }
-    else if (roleName == 'simple.upgrader') {
-        return config.simpleUpgraderConfig;
-    }
-    else if (roleName == 'simple.builder') {
-        return config.simpleBuilderConfig;
+    else if (/simple/.test(roleName)) {
+        var ans = [];
+        var universalPartCost = config.bodyPartCost.get(MOVE) +
+            config.bodyPartCost.get(WORK) +
+            config.bodyPartCost.get(CARRY);
+        while (maxEnergy >= universalPartCost) {
+            ans.push(WORK);
+            ans.push(MOVE);
+            ans.push(CARRY);
+            maxEnergy -= universalPartcost;
+        }
+        return ans;
     }
     else {
         return config.defaultUniversalConfig;

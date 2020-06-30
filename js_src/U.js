@@ -77,7 +77,7 @@ var U = {
         return Game.time % range == 0;
     },
     moveToSpawn: function (creep) {
-        var spawn = creep.room.find(FIND_STRUCTURES, this.filterBy(STRUCTURE_SPAWN));
+        var spawn = creep.room.find(FIND_STRUCTURES, this.filterBy(STRUCTURE_SPAWN))[0];
         defaultMove(creep, spawn);
     },
     filterBy: function (neededType) {
