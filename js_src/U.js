@@ -1,3 +1,14 @@
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var config = require('config');
 var structuresWithEnergyStore = new Set([
     STRUCTURE_SPAWN, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_TOWER, STRUCTURE_STORAGE
@@ -81,6 +92,25 @@ var U = {
     moveToSpawn: function (creep) {
         var spawn = creep.room.find(FIND_STRUCTURES, this.filterBy(STRUCTURE_SPAWN))[0];
         defaultMove(creep, spawn);
+    },
+    nextToAnyOf: function (pos, others) {
+        var e_1, _a;
+        try {
+            for (var others_1 = __values(others), others_1_1 = others_1.next(); !others_1_1.done; others_1_1 = others_1.next()) {
+                var other = others_1_1.value;
+                if (Math.abs(pos.x - other.pos.x) <= 1 && Math.abs(pos.y - other.pos.y) <= 1) {
+                    return true;
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (others_1_1 && !others_1_1.done && (_a = others_1["return"])) _a.call(others_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return false;
     },
     filterBy: function (neededType) {
         return { filter: { structureType: neededType } };

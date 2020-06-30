@@ -1,6 +1,8 @@
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
+var data = require('data');
+// @ts-ignore
 var storageSelector = require('storageSelector');
 
 var roleCarrier = {
@@ -71,6 +73,7 @@ function reselectStore(creep: Creep): void {
     }
 
     let structures = creep.room.find(FIND_STRUCTURES);
+    let sources = creep.room.find(FIND_SOURCES);
 
     let possible: EnergySelectionInfo[] = [];
 
@@ -82,7 +85,8 @@ function reselectStore(creep: Creep): void {
             if (totalCapacity * 0.9 < usedCapacity) {
                 continue;
             }
-            if (structure.structureType == STRUCTURE_CONTAINER) {
+
+            if (structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources)) {
                 continue;
             }
     
@@ -99,15 +103,6 @@ function reselectStore(creep: Creep): void {
     })
 
     creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
-}
-
-function dealWithSortResurnValue(a: number, b: number): number {
-    if (a < b) {
-        return -1;
-    } else if (a > b) {
-        return 1;
-    }
-    return 0;
 }
 
 // @ts-ignore

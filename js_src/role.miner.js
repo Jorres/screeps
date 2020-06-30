@@ -73,7 +73,7 @@ function getDesignatedMineId(creep) {
             }
             if (!data.minesReservationMap.get(source.id)
                 && U.manhattanDist(creep.pos, source.pos) < bestDistance
-                && hasContainerNearby(containers, source.pos)) {
+                && U.nextToAnyOf(source.pos, containers)) {
                 bestDistance = U.manhattanDist(creep.pos, source.pos);
                 bestSourceId = source.id;
             }
@@ -90,24 +90,5 @@ function getDesignatedMineId(creep) {
         data.minesReservationMap.set(bestSourceId, creep.name);
     }
     return bestSourceId;
-}
-function hasContainerNearby(containers, pos) {
-    var e_2, _a;
-    try {
-        for (var containers_1 = __values(containers), containers_1_1 = containers_1.next(); !containers_1_1.done; containers_1_1 = containers_1.next()) {
-            var container = containers_1_1.value;
-            if (U.manhattanDist(pos, container.pos) <= 2) {
-                return true;
-            }
-        }
-    }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
-    finally {
-        try {
-            if (containers_1_1 && !containers_1_1.done && (_a = containers_1["return"])) _a.call(containers_1);
-        }
-        finally { if (e_2) throw e_2.error; }
-    }
-    return false;
 }
 module.exports = roleMiner;

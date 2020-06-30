@@ -10,6 +10,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
+var data = require('data');
 var storageSelector = require('storageSelector');
 var roleCarrier = {
     run: function (creep) {
@@ -75,6 +76,7 @@ function reselectStore(creep) {
         return;
     }
     var structures = creep.room.find(FIND_STRUCTURES);
+    var sources = creep.room.find(FIND_SOURCES);
     var possible = [];
     try {
         for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
@@ -86,7 +88,7 @@ function reselectStore(creep) {
                 if (totalCapacity * 0.9 < usedCapacity) {
                     continue;
                 }
-                if (structure.structureType == STRUCTURE_CONTAINER) {
+                if (structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources)) {
                     continue;
                 }
                 possible.push({ cap: totalCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });
@@ -109,14 +111,5 @@ function reselectStore(creep) {
         }
     });
     creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
-}
-function dealWithSortResurnValue(a, b) {
-    if (a < b) {
-        return -1;
-    }
-    else if (a > b) {
-        return 1;
-    }
-    return 0;
 }
 module.exports = roleCarrier;

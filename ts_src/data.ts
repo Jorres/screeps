@@ -1,7 +1,12 @@
 // @ts-ignore
 var config = require('config');
 
-var data = {
+type DataStorage = {
+    terrainData: Map<string, RoomTerrain>;
+    minesReservationMap: Map<string, string>;
+};
+
+var data: DataStorage = {
     terrainData: new Map(),
     minesReservationMap: new Map()
 };

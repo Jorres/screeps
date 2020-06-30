@@ -84,6 +84,14 @@ var U = {
         let spawn = creep.room.find(FIND_STRUCTURES, this.filterBy(STRUCTURE_SPAWN))[0];
         defaultMove(creep, spawn);
     },
+    nextToAnyOf(pos: RoomPosition, others: _HasRoomPosition[]): boolean {
+        for (let other of others) {
+            if (Math.abs(pos.x - other.pos.x) <= 1 && Math.abs(pos.y - other.pos.y) <= 1) {
+                return true;
+            }
+        }
+        return false;
+    },
 
 
     filterBy: function(neededType: string): AnyStructure[] {

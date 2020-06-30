@@ -67,7 +67,7 @@ function getDesignatedMineId(creep: Creep) {
 
         if (!data.minesReservationMap.get(source.id) 
             && U.manhattanDist(creep.pos, source.pos) < bestDistance
-            && hasContainerNearby(containers, source.pos)) {
+            && U.nextToAnyOf(source.pos, containers)) {
             bestDistance = U.manhattanDist(creep.pos, source.pos);
             bestSourceId = source.id;
         }
@@ -77,16 +77,6 @@ function getDesignatedMineId(creep: Creep) {
     }
     return bestSourceId;
 }
-
-function hasContainerNearby(containers: AnyStructure[], pos: RoomPosition): boolean {
-    for (let container of containers) {
-        if (U.manhattanDist(pos, container.pos) <= 2)  {
-            return true;
-        }
-    }   
-    return false;
-}
-
 
 // @ts-ignore
 module.exports = roleMiner;
