@@ -85,11 +85,7 @@ var U = {
 
 
     filterBy: function(neededType): AnyStructure[] {
-        return {
-            filter: (structure: AnyStructure) => {
-                return structure.structureType == neededType;
-            }
-        };
+        return { filter: { structureType: neededType } };
     },
 };
 

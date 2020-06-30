@@ -81,11 +81,7 @@ var U = {
         defaultMove(creep, spawn);
     },
     filterBy: function (neededType) {
-        return {
-            filter: function (structure) {
-                return structure.structureType == neededType;
-            }
-        };
+        return { filter: { structureType: neededType } };
     }
 };
 function defaultMove(creep, target) {
