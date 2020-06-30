@@ -15,15 +15,14 @@ var U = require('U');
 module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
         var e_1, _a;
-        var em_state = emergency(this);
-        console.log(Game.time + " " + em_state);
-        var currentConfig = emergency(this) ?
+        var emState = emergency(this);
+        var currentConfig = emState ?
             config.emergencySpawningConfig :
             config.spawningConfig;
         try {
             for (var currentConfig_1 = __values(currentConfig), currentConfig_1_1 = currentConfig_1.next(); !currentConfig_1_1.done; currentConfig_1_1 = currentConfig_1.next()) {
                 var spawningType = currentConfig_1_1.value;
-                var err = trySpawn(this, spawningType.roleName, spawningType.maxAmount);
+                var err = trySpawn(this, spawningType.roleName, spawningType.maxAmount, emState);
                 if (err == OK) {
                     console.log("Spawning " + spawningType.roleName);
                     break;
@@ -42,51 +41,78 @@ module.exports = function () {
         }
     };
 };
-function trySpawn(spawn, roleName, maxCreepsWithRoleAllowed) {
+function trySpawn(spawn, roleName, maxCreepsWithRoleAllowed, emState) {
     var roleSpecificCreeps = U.getRoleSpecificCreeps(roleName);
     if (roleSpecificCreeps < maxCreepsWithRoleAllowed) {
         if (spawn.spawning) {
             return;
         }
+        var curEnergy = spawn.room.energyAvailable;
+        var maxEnergy = spawn.room.energyCapacityAvailable;
+        if (!emState && 2 * curEnergy < maxEnergy) {
+            return;
+        }
         var newName = roleName + Game.time;
-        return spawn.spawnCreep(getCreepConfiguration(roleName, spawn.room.energyCapacityAvailable), newName, { memory: { role: roleName } });
+        return spawn.spawnCreep(getCreepConfiguration(roleName, curEnergy), newName, { memory: { role: roleName } });
     }
 }
-function getCreepConfiguration(roleName, maxEnergy) {
+function getCreepConfiguration(roleName, curEnergy) {
     if (roleName == 'miner') {
-        return config.defaultMinerConfig;
+        return assembleMiner(curEnergy);
     }
     else if (roleName == 'carrier') {
-        return config.defaultCarrierConfig;
+        return assembleCarrier(curEnergy);
     }
     else if (/simple/.test(roleName)) {
-        var ans = [];
-        var universalPartCost = config.bodyPartCost.get(MOVE) +
-            config.bodyPartCost.get(WORK) +
-            config.bodyPartCost.get(CARRY);
-        while (maxEnergy >= universalPartCost) {
-            ans.push(WORK);
-            ans.push(MOVE);
-            ans.push(CARRY);
-            maxEnergy -= universalPartCost;
-        }
-        return ans;
+        return bestEmergencyCreep(curEnergy);
     }
     else {
         return config.defaultUniversalConfig;
     }
+}
+function assembleCarrier(curEnergy) {
+    return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE]);
+}
+function assembleMiner(curEnergy) {
+    return assembleByChunks(curEnergy, [WORK, WORK, WORK, CARRY, MOVE]);
+}
+function bestEmergencyCreep(curEnergy) {
+    return assembleByChunks(curEnergy, [WORK, MOVE, CARRY]);
+}
+function assembleByChunks(curEnergy, chunk) {
+    var e_2, _a;
+    var ans = [];
+    var universalPartCost = 0;
+    try {
+        for (var chunk_1 = __values(chunk), chunk_1_1 = chunk_1.next(); !chunk_1_1.done; chunk_1_1 = chunk_1.next()) {
+            var part = chunk_1_1.value;
+            universalPartCost += config.bodyPartCost.get(part);
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (chunk_1_1 && !chunk_1_1.done && (_a = chunk_1["return"])) _a.call(chunk_1);
+        }
+        finally { if (e_2) throw e_2.error; }
+    }
+    while (curEnergy >= universalPartCost) {
+        ans.push.apply(ans, chunk);
+        curEnergy -= universalPartCost;
+    }
+    return ans;
 }
 function emergency(spawn) {
     var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     if (containers.length == 0) {
         return true;
     }
-    if (U.getRoleSpecificCreeps('simple.harvester') >= config.simpleHarvestersAmount) {
+    var simpleHarvesters = U.getRoleSpecificCreeps('simple.harvester');
+    if (simpleHarvesters >= config.simpleHarvestersAmount) {
         return false;
     }
     var miners = U.getRoleSpecificCreeps('miner');
-    var carriers = U.getRoleSpecificCreeps('carrier');
-    if (miners == 0 && spawn.room.energyAvailable < config.minimumEnergyToKickstart) {
+    if (miners == 0 && simpleHarvesters <= 1) {
         return true;
     }
     return false;

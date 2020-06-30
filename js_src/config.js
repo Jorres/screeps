@@ -28,13 +28,6 @@ var config = {
         { roleName: 'simple.harvester', maxAmount: 3 },
         { roleName: 'simple.upgrader', maxAmount: 3 },
         { roleName: 'simple.builder', maxAmount: 3 }
-    ],
-    simpleHarvesterConfig: [WORK, CARRY, MOVE],
-    simpleUpgraderConfig: [WORK, CARRY, MOVE],
-    simpleBuilderConfig: [WORK, CARRY, MOVE],
-    defaultMinerConfig: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
-    defaultCarrierConfig: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-    defaultUniversalConfig: [MOVE, WORK, CARRY, WORK, CARRY, WORK, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE],
-    minimumEnergyToKickstart: 1100
+    ]
 };
 module.exports = config;
