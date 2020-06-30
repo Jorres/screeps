@@ -13,8 +13,6 @@ var roleSimpleBuilder = {
             simpleTryBuildingState(creep);
         } else if (creep.memory.autoState == 'tryRepair') {
             simpleTryRepairingState(creep);
-        } else if (creep.memory.autoState == 'noop') {
-            simpleBuilderNoopState(creep);
         } 
     }
 };
@@ -48,7 +46,10 @@ function simpleTryBuildingState(creep: Creep): void {
 }
 
 function simpleTryRepairingState(creep: Creep): void {
-    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+    let usedCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+    let freeCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+
+    if (usedCapacity == 0) {
         U.changeState(creep, 'harvest');
         simpleBuilderHarvestingState(creep);
         return;
@@ -58,8 +59,11 @@ function simpleTryRepairingState(creep: Creep): void {
     if (creep.memory.currentActiveDestinationId) {
         U.moveAndRepair(creep, U.getById(creep.memory.currentActiveDestinationId));
     } else {
-        creep.memory.autoState = 'noop';
-        simpleBuilderNoopState(creep);
+        if (freeCapacity > 0) {
+            U.changeState(creep, 'harvest');
+        } else {
+            U.moveToSpawn(creep);
+        }
     }
 }
 
@@ -72,7 +76,7 @@ function simpleReselectConstructingDestination(creep: Creep): void {
         }
     }
 
-    let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter)[0]; 
+    let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER))[0]; 
     if (!target) {
         target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
     }
@@ -102,29 +106,6 @@ function simpleReselectRepairingDestination(creep: Creep): void {
         }
     }
     creep.memory.currentActiveDestinationId = bestDestinationId;
-}
-
-function simpleBuilderNoopState(creep: Creep): void {
-    simpleReselectConstructingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        creep.memory.autoState = 'tryBuild';
-        simpleTryBuildingState(creep);
-        return;
-    }
-
-    simpleReselectRepairingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        creep.memory.autoState = 'tryRepair';
-        simpleTryRepairingState(creep);
-        return;
-    }
-
-    if (U.atLeastHalfFull(creep)) {
-        creep.moveTo(creep.room.find(FIND_STRUCTURES)[0], {visualizePathStyle: {stroke: '#ffffff'}});
-    } else {
-        U.changeState(creep, 'harvest');
-        simpleBuilderHarvestingState(creep);
-    }
 }
 
 // @ts-ignore

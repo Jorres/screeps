@@ -13,11 +13,9 @@ var roleSimpleHarvester = {
             harvestingState(creep);
         } else if (creep.memory.autoState == 'carry') {
             carryingState(creep);
-        } else if (creep.memory.autoState == 'noop') {
-            noopState(creep);
         } 
     }
-};
+}
 
 function reselectEnergyDestination(creep: Creep): void {
     let oldId: string = creep.memory.currentActiveDestinationId;
@@ -77,24 +75,10 @@ function carryingState(creep: Creep) {
             }
             reselectEnergyDestination(creep);
         } else {
-            U.changeState(creep, 'noop');
-            noopState(creep);
+            U.moveToSpawn(creep);
         }
     }
 }
-
-function noopState(creep: Creep) {
-    creep.memory.currentActiveDestinationId = null;
-    reselectEnergyDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        U.changeState(creep, 'carry');
-    } else if (U.atLeastHalfFull(creep)) {
-        U.changeState(creep, 'harvest');
-    } else {
-        creep.moveTo(Game.spawns['Spawn1'], {visualizePathStyle: {stroke: '#ffffff'}});
-    }
-}
-
 
 // @ts-ignore
 module.exports = roleSimpleHarvester;

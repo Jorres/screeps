@@ -1,13 +1,12 @@
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
     if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
+    return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
 var storageSelector = require('storageSelector');
@@ -69,7 +68,6 @@ function carrierCarryingTo(creep) {
     }
 }
 function reselectStore(creep) {
-    var e_1, _a;
     var oldId = creep.memory.carryingId;
     if (oldId && U.getById(oldId).store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
         return;
@@ -109,6 +107,7 @@ function reselectStore(creep) {
         }
     });
     creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
+    var e_1, _a;
 }
 function dealWithSortResurnValue(a, b) {
     if (a < b) {

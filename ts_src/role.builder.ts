@@ -74,7 +74,7 @@ function reselectConstructingDestination(creep: Creep): void {
         }
     }
 
-    let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter)[0]; 
+    let target = creep.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER))[0]; 
     if (!target) {
         target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
     }

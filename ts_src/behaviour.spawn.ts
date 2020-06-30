@@ -57,7 +57,7 @@ function getCreepConfiguration(roleName: string, maxEnergy: number): BodyPartCon
 }
 
 function emergency(spawn: StructureSpawn): boolean {
-    let containers = spawn.room.find(FIND_STRUCTURES, U.containerFilter);
+    let containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     if (containers.length == 0) {
         return true;
     }

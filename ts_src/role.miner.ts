@@ -56,7 +56,7 @@ function minerDropState(creep: Creep) {
 
 function getDesignatedMineId(creep: Creep) {
     let sources = creep.room.find(FIND_SOURCES);
-    let containers = creep.room.find(FIND_STRUCTURES, U.containerFilter);
+    let containers = creep.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     let bestDistance = 1000;
     let bestSourceId = null;
     for (let source of sources) {

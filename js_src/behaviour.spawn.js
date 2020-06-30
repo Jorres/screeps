@@ -1,20 +1,18 @@
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
     if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
+    return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var config = require('config');
 var data = require('data');
 var U = require('U');
 module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
-        var e_1, _a;
         var em_state = emergency(this);
         console.log(Game.time + " " + em_state);
         var currentConfig = emergency(this) ?
@@ -40,6 +38,7 @@ module.exports = function () {
             }
             finally { if (e_1) throw e_1.error; }
         }
+        var e_1, _a;
     };
 };
 function trySpawn(spawn, roleName, maxCreepsWithRoleAllowed) {
@@ -73,7 +72,7 @@ function getCreepConfiguration(roleName, maxEnergy) {
     }
 }
 function emergency(spawn) {
-    var containers = spawn.room.find(FIND_STRUCTURES, U.containerFilter);
+    var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     if (containers.length == 0) {
         return true;
     }

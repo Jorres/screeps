@@ -9,8 +9,8 @@ var architectContainers = {
     run: function(spawn: StructureSpawn): void {
         console.log("containers architector running...");
         let sources = spawn.room.find(FIND_SOURCES);
-        let containers = spawn.room.find(FIND_STRUCTURES, U.containerFilter);
-        let containerSites = spawn.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter);
+        let containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+        let containerSites = spawn.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER));
 
         for (let source of sources) {
             if (missingContainerNear(source, containers, containerSites)) {

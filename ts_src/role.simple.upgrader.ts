@@ -1,6 +1,4 @@
 // @ts-ignore
-var storageSelector = require('storageSelector');
-// @ts-ignore
 var U = require('U');
 // @ts-ignore
 var config = require('config');
@@ -15,8 +13,6 @@ var roleUpgrader = {
             simpleUpgradingHarvestingState(creep);
         } else if (creep.memory.autoState == 'upgrade') {
             simpleUpgradingUpgradingState(creep);
-        } else if (creep.memory.autoState == 'noop') {
-            simpleUpgradingNoopState(creep);
         } 
     }
 };
@@ -29,9 +25,7 @@ function simpleUpgradingHarvestingState(creep: Creep): void {
         let target = creep.pos.findClosestByPath(FIND_SOURCES);
         if (target) {
             U.moveAndHarvest(creep, target);
-        } else {
-            U.changeState(creep, 'noop');
-        }
+        } 
     }
 }
 
@@ -41,13 +35,6 @@ function simpleUpgradingUpgradingState(creep: Creep): void {
         simpleUpgradingHarvestingState(creep);
     } else {
         U.moveAndUpgradeController(creep, creep.room.controller);
-    }
-}
-
-function simpleUpgradingNoopState(creep: Creep): void {
-    if (storageSelector.selectStorageId(creep)) {
-        U.changeState(creep, 'harvest');
-        simpleUpgradingHarvestingState(creep);
     }
 }
 

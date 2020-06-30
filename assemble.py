@@ -8,23 +8,23 @@ if len(sys.argv) != 2:
     print("Wrong number of arguments, expected commit name")
     sys.exit()
 
-shutil.rmtree('js_src')
-os.system('tsc')
-shutil.rmtree('compiled/typed-screeps')
+os.system('tsc > assembly_log.txt')
+lines = open('assembly_log.txt').readlines()
+for l in lines:
+    if not('typed-screeps' in l):
+        print(l)
+os.system("rm assembly_log.txt")
+shutil.rmtree('compiled/typed-screeps', ignore_errors=True)
 os.rename('compiled/ts_src', 'compiled/js_src')
 shutil.move('compiled/js_src', 'js_src')
-shutil.rmtree('compiled')
+shutil.rmtree('compiled', ignore_errors=True)
 
-# print("Shall we continue? \"Y\" for Yes.")
-# s = input()
-# if s[0] != 'Y':
-#     sys.exit()
-#
-# for fileName in os.listdir("ts_src"):
-#     if fileName.endswith("js"):
-#         os.system("mv ts_src/" + fileName + " .")
-#
-# os.system("git add *.js")
-# os.system("git add ts_src")
-# os.system("git commit -m \"" + sys.argv[1] + "\"")
-# os.system("git push")
+print("Shall we continue? \"Y\" for Yes.")
+s = input()
+if s[0] != 'Y':
+    print("Upload aborted")
+    sys.exit()
+
+os.system("git add js_src ts_src")
+os.system("git commit -m \"" + sys.argv[1] + "\"")
+os.system("git push")

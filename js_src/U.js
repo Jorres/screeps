@@ -76,10 +76,14 @@ var U = {
     oncePerTicks: function (range) {
         return Game.time % range == 0;
     },
-    containerFilter: {
-        filter: function (structure) {
-            return structure.structureType == STRUCTURE_CONTAINER;
-        }
+    moveToSpawn: function (creep) {
+        var spawn = creep.room.find(FIND_STRUCTURES, filterBy(STRUCTURE_SPAWN));
+        defaultMove(creep, spawn);
+    },
+    filterBy: function (neededType) {
+        filter: (function (structure) {
+            return structure.structureType == neededType;
+        });
     }
 };
 function defaultMove(creep, target) {

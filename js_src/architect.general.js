@@ -1,13 +1,12 @@
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
     if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
+    return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var data = require('data');
 var config = require('config');
@@ -21,7 +20,6 @@ var architectGeneral = {
     }
 };
 function adjustBuildersAmount(spawn) {
-    var e_1, _a;
     var sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
     var buildingScore = 0;
     try {
@@ -56,5 +54,6 @@ function adjustBuildersAmount(spawn) {
             break;
         }
     }
+    var e_1, _a;
 }
 module.exports = architectGeneral;

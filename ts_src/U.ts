@@ -3,7 +3,7 @@ var config = require('config');
 
 const structuresWithEnergyStore: Set<StructureConstant> = new Set([
     STRUCTURE_SPAWN, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_TOWER, STRUCTURE_STORAGE
-])
+]);
 
 var U = {
     getRoleSpecificCreeps: function(roleName: string): number {
@@ -78,20 +78,21 @@ var U = {
     oncePerTicks: function(range: number) {
         return Game.time % range == 0;
     },
+    moveToSpawn: function(creep: Creep): void {
+        let spawn = creep.room.find(FIND_STRUCTURES, filterBy(STRUCTURE_SPAWN));
+        defaultMove(creep, spawn);
+    },
 
 
-
-
-
-    containerFilter: {
+    filterBy: function(neededType): AnyStructure[] {
         filter: (structure: AnyStructure) => {
-            return structure.structureType == STRUCTURE_CONTAINER;
+            return structure.structureType == neededType;
         }
     },
 };
 
 
-function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {
+function defaultMove(creep: Creep, target: Spawn | Structure | Source | Mineral | Deposit) {
     creep.moveTo(target, {
         reusePath: config.reusePath(), 
         visualizePathStyle: {stroke: '#ffffff'}

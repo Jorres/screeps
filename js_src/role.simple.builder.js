@@ -1,13 +1,12 @@
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
     if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
+    return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
 var roleSimpleBuilder = {
@@ -23,9 +22,6 @@ var roleSimpleBuilder = {
         }
         else if (creep.memory.autoState == 'tryRepair') {
             simpleTryRepairingState(creep);
-        }
-        else if (creep.memory.autoState == 'noop') {
-            simpleBuilderNoopState(creep);
         }
     }
 };
@@ -57,7 +53,9 @@ function simpleTryBuildingState(creep) {
     }
 }
 function simpleTryRepairingState(creep) {
-    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+    var usedCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+    var freeCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+    if (usedCapacity == 0) {
         U.changeState(creep, 'harvest');
         simpleBuilderHarvestingState(creep);
         return;
@@ -67,12 +65,15 @@ function simpleTryRepairingState(creep) {
         U.moveAndRepair(creep, U.getById(creep.memory.currentActiveDestinationId));
     }
     else {
-        creep.memory.autoState = 'noop';
-        simpleBuilderNoopState(creep);
+        if (freeCapacity > 0) {
+            U.changeState(creep, 'harvest');
+        }
+        else {
+            U.moveToSpawn(creep);
+        }
     }
 }
 function simpleReselectConstructingDestination(creep) {
-    var e_1, _a;
     var id = creep.memory.currentActiveDestinationId;
     var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
     try {
@@ -90,14 +91,14 @@ function simpleReselectConstructingDestination(creep) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    var target = creep.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter)[0];
+    var target = creep.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER))[0];
     if (!target) {
         target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
     }
     creep.memory.currentActiveDestinationId = target ? target.id : null;
+    var e_1, _a;
 }
 function simpleReselectRepairingDestination(creep) {
-    var e_2, _a;
     var id = creep.memory.currentActiveDestinationId;
     if (id && creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
         return;
@@ -129,26 +130,6 @@ function simpleReselectRepairingDestination(creep) {
         finally { if (e_2) throw e_2.error; }
     }
     creep.memory.currentActiveDestinationId = bestDestinationId;
-}
-function simpleBuilderNoopState(creep) {
-    simpleReselectConstructingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        creep.memory.autoState = 'tryBuild';
-        simpleTryBuildingState(creep);
-        return;
-    }
-    simpleReselectRepairingDestination(creep);
-    if (creep.memory.currentActiveDestinationId) {
-        creep.memory.autoState = 'tryRepair';
-        simpleTryRepairingState(creep);
-        return;
-    }
-    if (U.atLeastHalfFull(creep)) {
-        creep.moveTo(creep.room.find(FIND_STRUCTURES)[0], { visualizePathStyle: { stroke: '#ffffff' } });
-    }
-    else {
-        U.changeState(creep, 'harvest');
-        simpleBuilderHarvestingState(creep);
-    }
+    var e_2, _a;
 }
 module.exports = roleSimpleBuilder;

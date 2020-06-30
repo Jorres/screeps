@@ -1,4 +1,3 @@
-var storageSelector = require('storageSelector');
 var U = require('U');
 var config = require('config');
 var roleUpgrader = {
@@ -12,9 +11,6 @@ var roleUpgrader = {
         else if (creep.memory.autoState == 'upgrade') {
             simpleUpgradingUpgradingState(creep);
         }
-        else if (creep.memory.autoState == 'noop') {
-            simpleUpgradingNoopState(creep);
-        }
     }
 };
 function simpleUpgradingHarvestingState(creep) {
@@ -27,9 +23,6 @@ function simpleUpgradingHarvestingState(creep) {
         if (target) {
             U.moveAndHarvest(creep, target);
         }
-        else {
-            U.changeState(creep, 'noop');
-        }
     }
 }
 function simpleUpgradingUpgradingState(creep) {
@@ -39,12 +32,6 @@ function simpleUpgradingUpgradingState(creep) {
     }
     else {
         U.moveAndUpgradeController(creep, creep.room.controller);
-    }
-}
-function simpleUpgradingNoopState(creep) {
-    if (storageSelector.selectStorageId(creep)) {
-        U.changeState(creep, 'harvest');
-        simpleUpgradingHarvestingState(creep);
     }
 }
 module.exports = roleUpgrader;

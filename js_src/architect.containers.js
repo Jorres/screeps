@@ -1,24 +1,22 @@
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+var __values = (this && this.__values) || function (o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
     if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
+    return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var data = require('data');
 var config = require('config');
 var U = require('U');
 var architectContainers = {
     run: function (spawn) {
-        var e_1, _a;
         console.log("containers architector running...");
         var sources = spawn.room.find(FIND_SOURCES);
-        var containers = spawn.room.find(FIND_STRUCTURES, U.containerFilter);
-        var containerSites = spawn.room.find(FIND_CONSTRUCTION_SITES, U.containerFilter);
+        var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+        var containerSites = spawn.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER));
         try {
             for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
                 var source = sources_1_1.value;
@@ -35,6 +33,7 @@ var architectContainers = {
             }
             finally { if (e_1) throw e_1.error; }
         }
+        var e_1, _a;
     }
 };
 function findFreeTileNear(room, pos) {
@@ -48,7 +47,6 @@ function findFreeTileNear(room, pos) {
     throw "should only be called if free tile exists";
 }
 function missingContainerNear(source, containers, sites) {
-    var e_2, _a, e_3, _b;
     try {
         for (var containers_1 = __values(containers), containers_1_1 = containers_1.next(); !containers_1_1.done; containers_1_1 = containers_1.next()) {
             var container = containers_1_1.value;
@@ -80,5 +78,6 @@ function missingContainerNear(source, containers, sites) {
         finally { if (e_3) throw e_3.error; }
     }
     return true;
+    var e_2, _a, e_3, _b;
 }
 module.exports = architectContainers;
