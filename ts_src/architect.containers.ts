@@ -14,8 +14,10 @@ var architectContainers = {
 
         for (let source of sources) {
             if (missingContainerNear(source, containers, containerSites)) {
-                findFreeTileNear(spawn.room, source.pos)
-                    .createConstructionSite(STRUCTURE_CONTAINER);
+                let freeTile = findFreeTileNear(spawn.room, source.pos);
+                if (freeTile) {
+                    freeTile.createConstructionSite(STRUCTURE_CONTAINER);
+                }
             }
         }
     }
