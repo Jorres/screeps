@@ -18,3 +18,10 @@ type EnergySelectionInfo = {
     cap: number,
     length: number
 };
+
+type RoleSimpleUpgrader = {
+    actionTaken: boolean;
+
+    harvestingState: () => void;
+    upgradingState: () => void;
+};

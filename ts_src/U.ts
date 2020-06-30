@@ -41,11 +41,13 @@ var U = {
         return this.defaultAction(creep, target, () => creep.withdraw(target, resourceType));
     },
     defaultAction: function(creep: Creep, target: Structure | StructureController | Source | Mineral | Deposit, action: any) {
-        let error = action();
-        if (error == ERR_NOT_IN_RANGE) {
-            defaultMove(creep, target);
+        let actionRes = action();
+        let moveRes = -1;
+        if (actionRes == ERR_NOT_IN_RANGE) {
+            moveRes = defaultMove(creep, target);
         }
-        return error;
+        creep.memory.actionTaken = (actionRes == OK || moveRes == OK);
+        return actionRes;
     },
     getById: function(id: string): any {
         return Game.getObjectById(id);
@@ -91,7 +93,7 @@ var U = {
 
 
 function defaultMove(creep: Creep, target: Spawn | Structure | Source | Mineral | Deposit) {
-    creep.moveTo(target, {
+    return creep.moveTo(target, {
         reusePath: config.reusePath(), 
         visualizePathStyle: {stroke: '#ffffff'}
     });

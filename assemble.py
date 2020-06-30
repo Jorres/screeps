@@ -8,16 +8,18 @@ if len(sys.argv) != 2:
     print("Wrong number of arguments, expected commit name")
     sys.exit()
 
-os.system('tsc > assembly_log.txt')
-lines = open('assembly_log.txt').readlines()
-for l in lines:
-    if not('typed-screeps' in l):
-        print(l)
+os.system('rm -rf js_src')
+os.system('tsc')
+# os.system('tsc > assembly_log.txt')
+# lines = open('assembly_log.txt').readlines()
+# for l in lines:
+#     if not('typed-screeps' in l):
+#         print(l)
 os.system("rm assembly_log.txt")
-shutil.rmtree('compiled/typed-screeps', ignore_errors=True)
-os.rename('compiled/ts_src', 'compiled/js_src')
-shutil.move('compiled/js_src', 'js_src')
-shutil.rmtree('compiled', ignore_errors=True)
+os.system('rm -rf compiled/typed-screeps')
+os.system('mv compiled/ts_src compiled/js_src')
+os.system('mv compiled/js_src js_src')
+os.system('rm -rf compiled')
 
 print("Shall we continue? \"Y\" for Yes.")
 s = input()
