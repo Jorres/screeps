@@ -2,17 +2,24 @@ var U = require('U');
 var config = require('config');
 var roleSimpleUpgrader = {
     run: function (creep, newState) {
+        if (!newState) {
+            console.log("initial call");
+        }
         if (newState) {
             creep.memory.autoFunc = newState;
         }
         else if (!creep.memory.autoFunc) {
             creep.memory.autoFunc = this.harvestingState;
         }
+        if (creep.memory.actionTaken) {
+            return;
+        }
         creep.memory.autoFunc.call(this, creep);
     },
     harvestingState: function (creep) {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
+            console.log("harvesting to upgrading");
             this.run(creep, this.upgradingState);
         }
         else {
