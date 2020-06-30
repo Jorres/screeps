@@ -11,9 +11,9 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
             creep.memory.autoFunc = this.harvestingState;
         }
 
-        if (creep.memory.actionTaken) {
-            return;
-        }
+        // if (creep.memory.actionTaken) {
+        //     return;
+        // }
 
         creep.memory.autoFunc.call(this, creep);
     },

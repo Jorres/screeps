@@ -8,9 +8,6 @@ var roleSimpleUpgrader = {
         else if (!creep.memory.autoFunc) {
             creep.memory.autoFunc = this.harvestingState;
         }
-        if (creep.memory.actionTaken) {
-            return;
-        }
         creep.memory.autoFunc.call(this, creep);
     },
     harvestingState: function (creep) {
