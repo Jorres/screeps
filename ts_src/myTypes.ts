@@ -19,7 +19,7 @@ type EnergySelectionInfo = {
     length: number
 };
 
-type RoleSimpleUpgrader = {
+type RoleUpgrader = {
     run: (creep: Creep, newState ?: AutomataState) => void;
     harvestingState: (creep: Creep) => void;
     upgradingState: (creep: Creep) => void;

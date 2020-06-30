@@ -1,50 +1,52 @@
-var storageSelector = require('storageSelector');
 var U = require('U');
 var config = require('config');
+var storageSelector = require('storageSelector');
 var roleUpgrader = {
-    run: function (creep) {
-        if (!creep.memory.autoState) {
-            creep.memory.autoState = 'collect';
+    run: function (creep, newState) {
+        if (newState) {
+            creep.memory.autoState = newState;
         }
-        if (creep.memory.autoState == 'collect') {
-            upgradingCollectingState(creep);
+        else if (!creep.memory.autoState) {
+            creep.memory.autoState = 'harvest';
+        }
+        if (creep.memory.actionTaken) {
+            return;
+        }
+        if (creep.memory.autoState == 'harvest') {
+            this.harvestingState(creep);
         }
         else if (creep.memory.autoState == 'upgrade') {
-            upgradingUpgradingState(creep);
+            this.upgradingState(creep);
         }
-        else if (creep.memory.autoState == 'noop') {
-            upgradingNoopState(creep);
+    },
+    harvestingState: function (creep) {
+        if (creep.store.getFreeCapacity() == 0) {
+            creep.memory.sourceDestId = null;
+            this.run(creep, 'upgrade');
+        }
+        else {
+            var targetId = storageSelector.selectStorageId(creep);
+            if (targetId) {
+                U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
+            }
+            else {
+                if (!creep.memory.sourceDestId) {
+                    var target = creep.pos.findClosestByPath(FIND_SOURCES);
+                    creep.memory.sourceDestId = target ? target.id : null;
+                }
+                if (creep.memory.sourceDestId) {
+                    U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
+                }
+            }
+        }
+    },
+    upgradingState: function (creep) {
+        if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+            this.run(creep, 'harvest');
+        }
+        else {
+            U.moveAndUpgradeController(creep, creep.room.controller);
         }
     }
 };
-function upgradingCollectingState(creep) {
-    if (creep.store.getFreeCapacity() == 0) {
-        U.changeState(creep, 'upgrade');
-        upgradingUpgradingState(creep);
-    }
-    else {
-        var targetId = storageSelector.selectStorageId(creep);
-        if (targetId) {
-            U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
-        }
-        else {
-            U.changeState(creep, 'noop');
-        }
-    }
-}
-function upgradingUpgradingState(creep) {
-    if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-        U.changeState(creep, 'collect');
-        upgradingCollectingState(creep);
-    }
-    else {
-        U.moveAndUpgradeController(creep, creep.room.controller);
-    }
-}
-function upgradingNoopState(creep) {
-    if (storageSelector.selectStorageId(creep)) {
-        U.changeState(creep, 'collect');
-        upgradingCollectingState(creep);
-    }
-}
 module.exports = roleUpgrader;
