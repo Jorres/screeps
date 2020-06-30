@@ -4,32 +4,29 @@ var U = require('U');
 var config = require('config');
 
 var roleSimpleUpgrader: RoleSimpleUpgrader = {
-    run: function(creep: Creep, newState ?: (creep: Creep) => void) {
-        // let hstate = this.harvestingState;
-        // let ustate = this.upgradingState;
-        if (!newState) {
-            console.log("initial call");
-        }
+    run: function(creep: Creep, newState ?: AutomataState) {
         if (newState) {
-            creep.memory.autoFunc = newState;
-        } else if (!creep.memory.autoFunc) {
-            creep.memory.autoFunc = this.harvestingState;
+            creep.memory.autoState = newState;
+        } else if (!creep.memory.autoState) {
+            creep.memory.autoState = 'harvest';
         }
 
         if (creep.memory.actionTaken) {
             return;
         }
 
-        creep.memory.autoFunc.call(this, creep);
+        if (creep.memory.autoState == 'harvest') {
+            this.harvestingState(creep);
+        } else if (creep.memory.autoState == 'upgrade') {
+            this.upgradingState(creep);
+        }
     },
 
     // creep.memory.sourceDest
     harvestingState: function(creep: Creep) {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
-            console.log("harvesting to upgrading");
-            creep.memory.autoFunc = this.upgradingState;
-            // this.run(creep, this.upgradingState);
+            this.run(creep, 'upgrade');
         } else {
             if (!creep.memory.sourceDestId) {
                 let target = creep.pos.findClosestByPath(FIND_SOURCES);
@@ -43,8 +40,7 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
 
     upgradingState: function(creep: Creep) {
         if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-            console.log("upgrading to harvesting");
-            this.run(creep, this.harvestingState);
+            this.run(creep, 'harvest');
         } else {
             U.moveAndUpgradeController(creep, creep.room.controller);
         }
@@ -53,3 +49,4 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
 
 // @ts-ignore
 module.exports = roleSimpleUpgrader;
+

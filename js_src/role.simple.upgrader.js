@@ -2,25 +2,26 @@ var U = require('U');
 var config = require('config');
 var roleSimpleUpgrader = {
     run: function (creep, newState) {
-        if (!newState) {
-            console.log("initial call");
-        }
         if (newState) {
-            creep.memory.autoFunc = newState;
+            creep.memory.autoState = newState;
         }
-        else if (!creep.memory.autoFunc) {
-            creep.memory.autoFunc = this.harvestingState;
+        else if (!creep.memory.autoState) {
+            creep.memory.autoState = 'harvest';
         }
         if (creep.memory.actionTaken) {
             return;
         }
-        creep.memory.autoFunc.call(this, creep);
+        if (creep.memory.autoState == 'harvest') {
+            this.harvestingState(creep);
+        }
+        else if (creep.memory.autoState == 'upgrade') {
+            this.upgradingState(creep);
+        }
     },
     harvestingState: function (creep) {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
-            console.log("harvesting to upgrading");
-            creep.memory.autoFunc = this.upgradingState;
+            this.run(creep, 'upgrade');
         }
         else {
             if (!creep.memory.sourceDestId) {
@@ -34,8 +35,7 @@ var roleSimpleUpgrader = {
     },
     upgradingState: function (creep) {
         if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
-            console.log("upgrading to harvesting");
-            this.run(creep, this.harvestingState);
+            this.run(creep, 'harvest');
         }
         else {
             U.moveAndUpgradeController(creep, creep.room.controller);
