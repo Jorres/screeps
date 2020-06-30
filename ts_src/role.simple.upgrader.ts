@@ -7,7 +7,7 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
     run: function(creep: Creep, newState ?: (creep: Creep) => void) {
         if (newState) {
             creep.memory.autoFunc = newState;
-        } else {
+        } else if (!creep.memory.autoFunc) {
             creep.memory.autoFunc = this.harvestingState;
         }
 
