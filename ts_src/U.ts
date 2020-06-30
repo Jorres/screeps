@@ -93,7 +93,6 @@ var U = {
         return false;
     },
 
-
     filterBy: function(neededType: string): AnyStructure[] {
         // @ts-ignore
         return { filter: { structureType: neededType } };

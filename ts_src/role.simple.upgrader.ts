@@ -2,6 +2,8 @@
 var U = require('U');
 // @ts-ignore
 var config = require('config');
+// @ts-ignore
+var storageSelector = require('storageSelector');
 
 var roleSimpleUpgrader: RoleSimpleUpgrader = {
     run: function(creep: Creep, newState ?: AutomataState) {
@@ -22,19 +24,24 @@ var roleSimpleUpgrader: RoleSimpleUpgrader = {
         }
     },
 
-    // creep.memory.sourceDest
+    // creep.memory.sourceDestId
     harvestingState: function(creep: Creep) {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
             this.run(creep, 'upgrade');
         } else {
-            if (!creep.memory.sourceDestId) {
-                let target = creep.pos.findClosestByPath(FIND_SOURCES);
-                creep.memory.sourceDestId = target ? target.id : null;
+            let targetId = storageSelector.selectStorageId(creep);
+            if (targetId) {
+                U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
+            }  else {
+                if (!creep.memory.sourceDestId) {
+                    let target = creep.pos.findClosestByPath(FIND_SOURCES);
+                    creep.memory.sourceDestId = target ? target.id : null;
+                }
+                if (creep.memory.sourceDestId) {
+                    U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
+                } 
             }
-            if (creep.memory.sourceDestId) {
-                U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
-            } 
         }
     }, 
 
