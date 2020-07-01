@@ -50,7 +50,7 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     let containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     let suitableMines = spawn.room.find(FIND_SOURCES, {
         filter: (source: Source) => {
-            return U.nextToAnyOf(source.pos, containers) && !data.minesReservationMap.get(source.id);
+            return U.nextToAnyOf(source.pos, containers);
         }
     });
 

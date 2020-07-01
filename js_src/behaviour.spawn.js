@@ -51,7 +51,7 @@ function decideWhoIsNeeded(spawn) {
     var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     var suitableMines = spawn.room.find(FIND_SOURCES, {
         filter: function (source) {
-            return U.nextToAnyOf(source.pos, containers) && !data.minesReservationMap.get(source.id);
+            return U.nextToAnyOf(source.pos, containers);
         }
     });
     if (!hasProduction(spawn)) {
