@@ -1,13 +1,17 @@
+// @ts-ignore
+var data = require('data');
 var storageSelector = {
     selectStorageId: function(creep: Creep): string {
         let role: string = creep.memory.role;
         let target;
         if (role == 'carrier') {
+            let sources = creep.room.find(FIND_SOURCES);
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return structure.structureType == STRUCTURE_CONTAINER 
                         && 4 * structure.store.getUsedCapacity(RESOURCE_ENERGY) > 
-                           structure.store.getCapacity(RESOURCE_ENERGY);
+                        structure.store.getCapacity(RESOURCE_ENERGY)
+                        && !U.nextToAnyOf(structure.pos, sources);
                 }
             });
         } else if (/upgrader|builder/.test(role)) {
