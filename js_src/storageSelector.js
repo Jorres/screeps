@@ -11,6 +11,7 @@ var __values = (this && this.__values) || function(o) {
 };
 var data = require('data');
 var U = require('U');
+var config = require('config');
 var storageSelector = {
     selectStorageId: function (creep) {
         var role = creep.memory.role;
