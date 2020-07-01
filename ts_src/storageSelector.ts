@@ -32,6 +32,7 @@ var storageSelector = {
     },
     selectPushId: function(creep: Creep): string {
         let structures = creep.room.find(FIND_STRUCTURES);
+        let sources = creep.room.find(FIND_SOURCES);
         let possible: EnergySelectionInfo[] = [];
 
         for (let structure of structures) {
@@ -43,6 +44,10 @@ var storageSelector = {
                     continue;
                 }
                 if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
+                    continue;
+                }
+
+                if (structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources)) {
                     continue;
                 }
         

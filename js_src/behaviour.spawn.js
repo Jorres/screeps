@@ -59,7 +59,7 @@ function decideWhoIsNeeded(spawn) {
     quantities.set('builder', builders);
     quantities.set('harvester', harvesters);
     quantities.set('carrier', carriers);
-    var roles;
+    var roles = [];
     roles.push({ first: findHarvesterNeedness(spawn, quantities), second: 'harvester' });
     roles.push({ first: findCarrierNeedness(spawn, quantities), second: 'carrier' });
     roles.push({ first: findUpgraderNeedness(spawn, quantities), second: 'upgrader' });
@@ -68,7 +68,7 @@ function decideWhoIsNeeded(spawn) {
     roles.sort(function (a, b) {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
-    return roles[0].first >= COOL ? roles[0].second : null;
+    return roles[0].first > COOL ? roles[0].second : null;
 }
 function findMinerNeedness(spawn, quantities) {
     var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));

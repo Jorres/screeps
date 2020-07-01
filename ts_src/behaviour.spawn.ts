@@ -59,7 +59,7 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     quantities.set('builder', builders);
     quantities.set('harvester', harvesters);
     quantities.set('carrier', carriers);
-    let roles: Pair<number, CreepRoles>[];
+    let roles: Pair<number, CreepRoles>[] = [];
     roles.push({first: findHarvesterNeedness(spawn, quantities), second: 'harvester'});
     roles.push({first: findCarrierNeedness(spawn, quantities), second: 'carrier'});
     roles.push({first: findUpgraderNeedness(spawn, quantities), second: 'upgrader'});
@@ -68,7 +68,7 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     roles.sort((a: Pair<number, string>, b: Pair<number, string>) => {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
-    return roles[0].first >= COOL ? roles[0].second : null;
+    return roles[0].first > COOL ? roles[0].second : null;
 }
 
 function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {

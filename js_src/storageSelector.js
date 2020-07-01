@@ -40,6 +40,7 @@ var storageSelector = {
     selectPushId: function (creep) {
         var e_1, _a;
         var structures = creep.room.find(FIND_STRUCTURES);
+        var sources = creep.room.find(FIND_SOURCES);
         var possible = [];
         try {
             for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
@@ -52,6 +53,9 @@ var storageSelector = {
                         continue;
                     }
                     if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
+                        continue;
+                    }
+                    if (structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources)) {
                         continue;
                     }
                     possible.push({
