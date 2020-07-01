@@ -25,14 +25,18 @@ var roleUpgrader: RoleUpgrader = {
     },
 
     // creep.memory.sourceDestId
+    // creep.memory.storageDestId
     gatheringState: function(creep: Creep): void {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
+            creep.memory.storageDestId = null;
             this.run(creep, 'upgrade');
         } else {
-            let targetId = storageSelector.selectStorageId(creep);
-            if (targetId) {
-                U.moveAndWithdraw(creep, U.getById(targetId), RESOURCE_ENERGY);
+            if (!creep.memory.sourceDestId) {
+                creep.memory.storageDestId = storageSelector.selectStorageId(creep);
+            }
+            if (creep.memory.storageDestId && !creep.memory.sourceDestId) {
+                let err = U.moveAndWithdraw(creep, U.getById(creep.memory.storageDestId), RESOURCE_ENERGY);
             }  else {
                 if (!creep.memory.sourceDestId) {
                     let target = creep.pos.findClosestByPath(FIND_SOURCES);

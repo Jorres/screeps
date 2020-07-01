@@ -9,8 +9,8 @@ var U = {
     getRoleSpecificCreeps: function(room: Room, roleName: string): number {
         let roleSpecificCreeps = 0;
         let creeps = room.find(FIND_MY_CREEPS);
-        for (let creepName in creeps) {
-            if (Game.creeps[creepName].memory.role == roleName) {
+        for (let creep of creeps) {
+            if (creep.memory.role == roleName) {
                 roleSpecificCreeps++;
             }
         }

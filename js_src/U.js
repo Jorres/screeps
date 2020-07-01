@@ -15,12 +15,23 @@ var structuresWithEnergyStore = new Set([
 ]);
 var U = {
     getRoleSpecificCreeps: function (room, roleName) {
+        var e_1, _a;
         var roleSpecificCreeps = 0;
         var creeps = room.find(FIND_MY_CREEPS);
-        for (var creepName in creeps) {
-            if (Game.creeps[creepName].memory.role == roleName) {
-                roleSpecificCreeps++;
+        try {
+            for (var creeps_1 = __values(creeps), creeps_1_1 = creeps_1.next(); !creeps_1_1.done; creeps_1_1 = creeps_1.next()) {
+                var creep = creeps_1_1.value;
+                if (creep.memory.role == roleName) {
+                    roleSpecificCreeps++;
+                }
             }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (creeps_1_1 && !creeps_1_1.done && (_a = creeps_1["return"])) _a.call(creeps_1);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
         return roleSpecificCreeps;
     },
@@ -95,7 +106,7 @@ var U = {
         defaultMove(creep, spawn);
     },
     nextToAnyOf: function (pos, others) {
-        var e_1, _a;
+        var e_2, _a;
         try {
             for (var others_1 = __values(others), others_1_1 = others_1.next(); !others_1_1.done; others_1_1 = others_1.next()) {
                 var other = others_1_1.value;
@@ -104,17 +115,17 @@ var U = {
                 }
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (others_1_1 && !others_1_1.done && (_a = others_1["return"])) _a.call(others_1);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
         return false;
     },
     findBiggest: function (structures, comparator) {
-        var e_2, _a;
+        var e_3, _a;
         var bestDiff = -1;
         var bestId = null;
         try {
@@ -127,12 +138,12 @@ var U = {
                 }
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
                 if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_3) throw e_3.error; }
         }
         return bestId;
     },
