@@ -145,7 +145,8 @@ var roleBuilder = {
         });
     },
     reselectImportantDst: function (creep) {
-        if (creep.memory.importantDestId) {
+        var id = creep.memory.importantDestId;
+        if (id && U.getById(id).hitsMax * 0.9 >= U.getById(id).hits) {
             return;
         }
         var structures = creep.room.find(FIND_STRUCTURES, {

@@ -133,7 +133,8 @@ var roleBuilder: RoleBuilder = {
 
     // importantDestId, PERSISTENT
     reselectImportantDst: function(creep: Creep): void {
-        if (creep.memory.importantDestId) {
+        let id = creep.memory.importantDestId;
+        if (id && U.getById(id).hitsMax * 0.9 >= U.getById(id).hits) {
             return;
         }
 
