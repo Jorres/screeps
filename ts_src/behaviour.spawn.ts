@@ -69,7 +69,7 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
 
-    if (roles[0].first <= COOL) {
+    if (roles[0].first <= COOL && U.getRoleSpecificCreeps('longDistanceHarvester') < 3) {
         return 'longDistanceHarvester';
     }
 
