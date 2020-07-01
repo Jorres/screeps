@@ -16,7 +16,7 @@ var roleBuilder = require('role.builder');
 var roleMiner = require('role.miner');
 var roleCarrier = require('role.carrier');
 var roleClaimer = require('role.claimer');
-var roleSimpleHarvester = require('role.simple.harvester');
+var roleHarvester = require('role.harvester');
 var towerBehaviour = require('behaviour.tower');
 var data = require('data');
 var config = require('config');
@@ -77,8 +77,8 @@ module.exports.loop = function () {
         else if (role == 'carrier') {
             roleCarrier.run(creep);
         }
-        else if (role == 'simple.harvester') {
-            roleSimpleHarvester.run(creep);
+        else if (/harvester/.test(role)) {
+            roleHarvester.run(creep);
         }
     }
 };

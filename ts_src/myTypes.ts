@@ -1,4 +1,4 @@
-type CreepRoles = 'upgrader'|'harvester'|'builder';
+type CreepRoles = 'upgrader'|'harvester'|'builder'|'miner'|'carrier';
 
 type AutomataState = 'noop'|'carry'|'build'|'repair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop'|'collect'|'gather'|'important';
 // type AutomataBuilderState = 'build'|'repair'|'gather'|'important';
@@ -25,6 +25,13 @@ type RoleUpgrader = {
     run: (creep: Creep, newState ?: AutomataState) => void;
     gatheringState: (creep: Creep) => void;
     upgradingState: (creep: Creep) => void;
+};
+
+type RoleHarvester = {
+    run: (creep: Creep, newState ?: AutomataState) => void;
+    harvestingState: (creep: Creep) => void;
+    carryingState: (creep: Creep) => void;
+    reselectEnergyDestination: (creep: Creep) => void;
 };
 
 type RoleBuilder = {

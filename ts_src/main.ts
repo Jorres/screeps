@@ -13,7 +13,7 @@ var roleCarrier = require('role.carrier');
 // @ts-ignore
 var roleClaimer = require('role.claimer');
 // @ts-ignore
-var roleSimpleHarvester = require('role.simple.harvester');
+var roleHarvester = require('role.harvester');
 // @ts-ignore
 var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
@@ -74,8 +74,8 @@ module.exports.loop = function() {
             roleMiner.run(creep);
         } else if (role == 'carrier') {
             roleCarrier.run(creep);
-        } else if (role == 'simple.harvester') {
-            roleSimpleHarvester.run(creep);
+        } else if (/harvester/.test(role)) {
+            roleHarvester.run(creep);
         }
     }
        

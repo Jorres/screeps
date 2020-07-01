@@ -16,17 +16,18 @@ var config = {
         [CLAIM, 600]
     ]),
     spawningConfig: [
-        {roleName: 'miner', maxAmount: 1},
-        {roleName: 'upgrader', maxAmount: 2},
-        {roleName: 'builder', maxAmount: 1},
-        {roleName: 'miner', maxAmount: 2}
+        {roleName: 'harvester'},
+        {roleName: 'miner'},
+        {roleName: 'carrier'},
+        {roleName: 'upgrader'},
+        {roleName: 'builder'}
     ],
-    simpleHarvestersAmount: 3,
-    emergencySpawningConfig: [
-        {roleName: 'simple.harvester', maxAmount: 3},
-        {roleName: 'upgrader', maxAmount: 3},
-        {roleName: 'builder', maxAmount: 3}
-    ]
+    // simpleHarvestersAmount: 3,
+    // emergencySpawningConfig: [
+    //     {roleName: 'simple.harvester', maxAmount: 3},
+    //     {roleName: 'upgrader', maxAmount: 3},
+    //     {roleName: 'builder', maxAmount: 3}
+    // ]
 };
 
 // @ts-ignore

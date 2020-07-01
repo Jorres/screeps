@@ -6,9 +6,10 @@ const structuresWithEnergyStore: Set<StructureConstant> = new Set([
 ]);
 
 var U = {
-    getRoleSpecificCreeps: function(roleName: string): number {
+    getRoleSpecificCreeps: function(room: Room, roleName: string): number {
         let roleSpecificCreeps = 0;
-        for (let creepName in Game.creeps) {
+        let creeps = room.find(FIND_MY_CREEPS);
+        for (let creepName in creeps) {
             if (Game.creeps[creepName].memory.role == roleName) {
                 roleSpecificCreeps++;
             }
@@ -111,7 +112,6 @@ var U = {
         return { filter: { structureType: neededType } };
     },
 };
-
 
 function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {
     return creep.moveTo(target, {

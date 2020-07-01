@@ -14,47 +14,105 @@ var data = require('data');
 var U = require('U');
 module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
-        var e_1, _a;
-        var emState = emergency(this);
-        var currentConfig = emState ?
-            config.emergencySpawningConfig :
-            config.spawningConfig;
-        try {
-            for (var currentConfig_1 = __values(currentConfig), currentConfig_1_1 = currentConfig_1.next(); !currentConfig_1_1.done; currentConfig_1_1 = currentConfig_1.next()) {
-                var spawningType = currentConfig_1_1.value;
-                var err = trySpawn(this, spawningType.roleName, spawningType.maxAmount, emState);
-                if (err == OK) {
-                    console.log("Spawning " + spawningType.roleName);
-                    break;
-                }
-                else if (err == ERR_NOT_ENOUGH_RESOURCES) {
-                    break;
-                }
-            }
+        var curEnergy = this.room.energyAvailable;
+        var maxEnergy = this.room.energyCapacityAvailable;
+        if (2 * curEnergy < maxEnergy && hasProduction(this) && hasCarrying(this)) {
+            console.log("Not spawning cheap creep");
+            return;
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (currentConfig_1_1 && !currentConfig_1_1.done && (_a = currentConfig_1["return"])) _a.call(currentConfig_1);
+        var bestRoleName = decideWhoIsNeeded(this);
+        if (bestRoleName) {
+            var err = trySpawn(this, bestRoleName);
+            if (err == OK) {
+                console.log("Spawning " + bestRoleName);
             }
-            finally { if (e_1) throw e_1.error; }
+            else if (err == ERR_NOT_ENOUGH_RESOURCES) {
+                console.log("Postponing spawn");
+            }
         }
     };
 };
-function trySpawn(spawn, roleName, maxCreepsWithRoleAllowed, emState) {
-    var roleSpecificCreeps = U.getRoleSpecificCreeps(roleName);
-    if (roleSpecificCreeps < maxCreepsWithRoleAllowed) {
-        if (spawn.spawning) {
-            return;
+function hasProduction(spawn) {
+    var miners = U.getRoleSpecificCreeps(spawn.room, 'miner');
+    var harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
+    return miners > 0 || harvesters > 0;
+}
+function hasCarrying(spawn) {
+    var carriers = U.getRoleSpecificCreeps(spawn.room, 'carrier');
+    var harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
+    return carriers > 0 || harvesters > 0;
+}
+function decideWhoIsNeeded(spawn) {
+    var miners = U.getRoleSpecificCreeps(spawn.room, 'miner');
+    var carriers = U.getRoleSpecificCreeps(spawn.room, 'carrier');
+    var upgraders = U.getRoleSpecificCreeps(spawn.room, 'upgrader');
+    var builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
+    var harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
+    if (!hasProduction(spawn)) {
+        if (carriers == 0) {
+            return 'harvester';
         }
-        var curEnergy = spawn.room.energyAvailable;
-        var maxEnergy = spawn.room.energyCapacityAvailable;
-        if (!emState && 2 * curEnergy < maxEnergy) {
-            return;
+        var containers_1 = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+        var suitableMines = spawn.room.find(FIND_SOURCES, {
+            filter: function (source) {
+                return U.nextToAnyOf(source.pos, containers_1) && !data.minesReservationMap.get(source.id);
+            }
+        });
+        if (miners < suitableMines.length) {
+            return 'miner';
         }
-        var newName = roleName + Game.time;
-        return spawn.spawnCreep(getCreepConfiguration(roleName, curEnergy), newName, { memory: { role: roleName } });
+        return 'harvester';
     }
+    if (needsCarrier(spawn)) {
+        return 'carrier';
+    }
+    if (needsBuilder(spawn, builders)) {
+        return 'builder';
+    }
+    if (upgraders < 4) {
+        return 'upgrader';
+    }
+    return null;
+}
+function needsCarrier(spawn) {
+    var fullContainers = spawn.room.find(FIND_STRUCTURES, {
+        filter: function (structure) {
+            return structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 1500;
+        }
+    });
+    return fullContainers.length > 0;
+}
+function needsBuilder(spawn, builders) {
+    var e_1, _a;
+    var sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
+    var buildingScore = 0;
+    try {
+        for (var sites_1 = __values(sites), sites_1_1 = sites_1.next(); !sites_1_1.done; sites_1_1 = sites_1.next()) {
+            var site = sites_1_1.value;
+            buildingScore += site.progressTotal - site.progress;
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (sites_1_1 && !sites_1_1.done && (_a = sites_1["return"])) _a.call(sites_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    var buildersAmount = Math.max(3, buildingScore / 5000.0);
+    if (spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length > 0) {
+        buildersAmount += 1;
+    }
+    return builders + 1 <= buildersAmount;
+}
+function trySpawn(spawn, roleName) {
+    if (spawn.spawning) {
+        return ERR_BUSY;
+    }
+    var curEnergy = spawn.room.energyAvailable;
+    var maxEnergy = spawn.room.energyCapacityAvailable;
+    var newName = roleName + Game.time;
+    return spawn.spawnCreep(getCreepConfiguration(roleName, curEnergy), newName, { memory: { role: roleName } });
 }
 function getCreepConfiguration(roleName, curEnergy) {
     if (roleName == 'miner') {
@@ -96,29 +154,6 @@ function assembleByChunks(curEnergy, chunk) {
     while (curEnergy >= universalPartCost) {
         ans.push.apply(ans, chunk);
         curEnergy -= universalPartCost;
-    }
-    return ans;
-}
-function emergency(spawn) {
-    var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
-    if (containers.length == 0) {
-        return true;
-    }
-    var simpleHarvesters = U.getRoleSpecificCreeps('simple.harvester');
-    if (simpleHarvesters >= config.simpleHarvestersAmount) {
-        return false;
-    }
-    var miners = U.getRoleSpecificCreeps('miner');
-    if (miners == 0 && simpleHarvesters <= 1) {
-        return true;
-    }
-    return false;
-}
-function getCreepsAmount() {
-    var ans = 0;
-    U.cleanupDeadCreeps();
-    for (var creep in Game.creeps) {
-        ans++;
     }
     return ans;
 }
