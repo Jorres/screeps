@@ -90,7 +90,7 @@ function reselectStore(creep: Creep): void {
                 continue;
             }
     
-            possible.push({cap: totalCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length});
+            possible.push({cap: freeCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length});
         }
     }
 
@@ -98,7 +98,7 @@ function reselectStore(creep: Creep): void {
         if (a.cap == b.cap) {
             return U.dealWithSortResurnValue(a.length, b.length);
         } else {
-            return U.dealWithSortResurnValue(a.cap, b.cap);
+            return U.dealWithSortResurnValue(b.cap, a.cap);
         }
     })
 

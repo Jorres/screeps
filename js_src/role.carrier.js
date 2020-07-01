@@ -91,7 +91,7 @@ function reselectStore(creep) {
                 if (structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources)) {
                     continue;
                 }
-                possible.push({ cap: totalCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });
+                possible.push({ cap: freeCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });
             }
         }
     }
@@ -107,7 +107,7 @@ function reselectStore(creep) {
             return U.dealWithSortResurnValue(a.length, b.length);
         }
         else {
-            return U.dealWithSortResurnValue(a.cap, b.cap);
+            return U.dealWithSortResurnValue(b.cap, a.cap);
         }
     });
     creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
