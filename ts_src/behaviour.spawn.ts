@@ -54,7 +54,7 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
         }
     });
 
-    if (!hasProduction(spawn)) {
+    if (!hasProduction(spawn)) { 
         if (carriers == 0) {
             return 'harvester';
         }
@@ -83,15 +83,7 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
 }
 
 function needsCarrier(spawn: StructureSpawn, miners: number, carriers: number): boolean {
-    let fullContainers = spawn.room.find(FIND_STRUCTURES, {
-        filter: (structure) => {
-            return structure.structureType == STRUCTURE_CONTAINER &&  structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 1500;
-        }
-    });
-    if (miners <= carriers) {
-        return false;
-    }
-    return fullContainers.length > 0;
+    return carriers < miners;
 }
 
 function needsBuilder(spawn: StructureSpawn, builders: number): boolean {

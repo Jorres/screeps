@@ -78,15 +78,7 @@ function decideWhoIsNeeded(spawn) {
     return null;
 }
 function needsCarrier(spawn, miners, carriers) {
-    var fullContainers = spawn.room.find(FIND_STRUCTURES, {
-        filter: function (structure) {
-            return structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 1500;
-        }
-    });
-    if (miners <= carriers) {
-        return false;
-    }
-    return fullContainers.length > 0;
+    return carriers < miners;
 }
 function needsBuilder(spawn, builders) {
     var e_1, _a;
