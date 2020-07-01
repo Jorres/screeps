@@ -2,6 +2,8 @@
 var config  = require('config');
 // @ts-ignore
 var U = require('U');
+// @ts-ignore
+var storageSelector = require('storageSelector');
 
 var roleLondDistanceHarvester: RoleLongDistanceHarvester = {
     run: function(creep: Creep, newState ?: AutomataState) {
