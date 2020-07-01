@@ -31,6 +31,9 @@ var roleHarvester: RoleHarvester = {
                 let freeCapacity = ((structure as AnyStoreStructure).store as GenericStoreBase).getFreeCapacity(RESOURCE_ENERGY);
                 let usedCapacity = ((structure as AnyStoreStructure).store as GenericStoreBase).getUsedCapacity(RESOURCE_ENERGY);
                 let totalCapacity = freeCapacity + usedCapacity;
+                if (freeCapacity == 0) {
+                    continue;
+                }
                 if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
                     continue;
                 }

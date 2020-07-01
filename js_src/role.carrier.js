@@ -86,6 +86,9 @@ function reselectStore(creep) {
                 var freeCapacity = structure.store.getFreeCapacity(RESOURCE_ENERGY);
                 var usedCapacity = structure.store.getUsedCapacity(RESOURCE_ENERGY);
                 var totalCapacity = freeCapacity + usedCapacity;
+                if (freeCapacity == 0) {
+                    continue;
+                }
                 if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
                     continue;
                 }
