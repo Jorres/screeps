@@ -28,7 +28,7 @@ type RoleUpgrader = {
 };
 
 type RoleHarvester = {
-    run: (creep: Creep, newState ?: AutomataState) => void;
+    run: (creep: Creep, newState ?: AutomataState) =>  void;
     harvestingState: (creep: Creep) => void;
     carryingState: (creep: Creep) => void;
     reselectEnergyDestination: (creep: Creep) => void;
