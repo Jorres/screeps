@@ -15,6 +15,8 @@ var roleClaimer = require('role.claimer');
 // @ts-ignore
 var roleHarvester = require('role.harvester');
 // @ts-ignore
+var roleLongDistanceHarvester = require('role.longDistanceHarvester');
+// @ts-ignore
 var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
 var data = require('data');
@@ -64,9 +66,9 @@ module.exports.loop = function() {
         creep.memory.actionTaken = false;
 
         let role = creep.memory.role;
-        if (/upgrader/.test(role)) {
+        if (role == 'upgrader') {
             roleUpgrader.run(creep);
-        } else if (/builder/.test(role)) {
+        } else if (role == 'builder') {
             roleBuilder.run(creep);
         } else if (role == 'claimer') {
             roleClaimer.run(creep);
@@ -74,11 +76,14 @@ module.exports.loop = function() {
             roleMiner.run(creep);
         } else if (role == 'carrier') {
             roleCarrier.run(creep);
-        } else if (/harvester/.test(role)) {
+        } else if (role == 'harvester') {
             roleHarvester.run(creep);
+        } else if (role == 'longDistanceHarvester') {
+            roleLongDistanceHarvester.run(creep);
+        } else {
+            throw "unknown creep role";
         }
-    }
-       
+    } 
 }
 
 function checkGeneratePixel() {

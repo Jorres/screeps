@@ -17,6 +17,7 @@ var roleMiner = require('role.miner');
 var roleCarrier = require('role.carrier');
 var roleClaimer = require('role.claimer');
 var roleHarvester = require('role.harvester');
+var roleLongDistanceHarvester = require('role.longDistanceHarvester');
 var towerBehaviour = require('behaviour.tower');
 var data = require('data');
 var config = require('config');
@@ -62,10 +63,10 @@ module.exports.loop = function () {
         var creep = Game.creeps[name];
         creep.memory.actionTaken = false;
         var role = creep.memory.role;
-        if (/upgrader/.test(role)) {
+        if (role == 'upgrader') {
             roleUpgrader.run(creep);
         }
-        else if (/builder/.test(role)) {
+        else if (role == 'builder') {
             roleBuilder.run(creep);
         }
         else if (role == 'claimer') {
@@ -77,8 +78,14 @@ module.exports.loop = function () {
         else if (role == 'carrier') {
             roleCarrier.run(creep);
         }
-        else if (/harvester/.test(role)) {
+        else if (role == 'harvester') {
             roleHarvester.run(creep);
+        }
+        else if (role == 'longDistanceHarvester') {
+            roleLongDistanceHarvester.run(creep);
+        }
+        else {
+            throw "unknown creep role";
         }
     }
 };

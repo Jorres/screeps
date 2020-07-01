@@ -68,6 +68,11 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     roles.sort((a: Pair<number, string>, b: Pair<number, string>) => {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
+
+    if (roles[0].first <= COOL) {
+        return 'longDistanceHarvester';
+    }
+
     return roles[0].first > COOL ? roles[0].second : null;
 }
 
@@ -156,8 +161,16 @@ function trySpawn(spawn: StructureSpawn, roleName: CreepRoles): number {
     let maxEnergy = spawn.room.energyCapacityAvailable;
 
     let newName = roleName + Game.time;
-    return spawn.spawnCreep(getCreepConfiguration(roleName, curEnergy), 
-        newName, {memory: {role: roleName}} );
+    let memoryObject: CreepMemory = {
+        role: roleName
+    };
+
+    if (roleName == 'longDistanceHarvester') {
+        memoryObject.homeRoom = spawn.room;
+        memoryObject.distantSourceId = '5bbcaae39099fc012e6325db';
+    }
+
+    return spawn.spawnCreep(getCreepConfiguration(roleName, curEnergy), newName, {memory: memoryObject});
 }
 
 function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartConstant[] {
@@ -165,6 +178,8 @@ function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartCon
         return assembleMiner(curEnergy);
     } else if (roleName == 'carrier') {
         return assembleCarrier(curEnergy);
+    } else if (roleName == 'longDistanceHarvester') {
+        return bestEmergencyCreep(curEnergy);
     } else {
         return bestEmergencyCreep(curEnergy);
     }
