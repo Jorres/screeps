@@ -16,7 +16,7 @@ module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
         var curEnergy = this.room.energyAvailable;
         var maxEnergy = this.room.energyCapacityAvailable;
-        if (2 * curEnergy < maxEnergy && hasProduction(this) && hasCarrying(this)) {
+        if (curEnergy < 0.7 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
             console.log("Not spawning cheap creep");
             return;
         }
@@ -83,7 +83,7 @@ function needsCarrier(spawn, miners, carriers) {
             return structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 1500;
         }
     });
-    if (miners >= carriers) {
+    if (miners <= carriers) {
         return false;
     }
     return fullContainers.length > 0;
