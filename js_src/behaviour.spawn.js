@@ -136,6 +136,7 @@ function assembleMiner(curEnergy) {
     curEnergy -= 100;
     while (curEnergy >= 100) {
         ans.push(WORK);
+        curEnergy -= 100;
     }
     return ans;
 }
