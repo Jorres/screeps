@@ -37,7 +37,7 @@ var roleBuilder = {
     },
     gatheringState: function (creep) {
         if (creep.store.getFreeCapacity() == 0) {
-            this.run(creep, 'build');
+            this.run(creep, 'important');
         }
         else {
             var targetId = storageSelector.selectStorageId(creep);
@@ -54,7 +54,7 @@ var roleBuilder = {
     },
     importantState: function (creep) {
         var usedCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
-        var freeCapacity = creep.store.getUsedCapacity(RESOURCE_ENERGY);
+        var freeCapacity = creep.store.getFreeCapacity(RESOURCE_ENERGY);
         if (usedCapacity == 0) {
             this.run(creep, 'gather');
         }
