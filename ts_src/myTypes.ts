@@ -16,6 +16,7 @@ type Pair<F, S> = {
 };
 
 type EnergySelectionInfo = {
+    stType: string,
     id: string, 
     cap: number,
     length: number

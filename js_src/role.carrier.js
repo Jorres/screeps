@@ -12,6 +12,7 @@ var __values = (this && this.__values) || function(o) {
 var U = require('U');
 var data = require('data');
 var storageSelector = require('storageSelector');
+var config = require('config');
 var roleCarrier = {
     run: function (creep) {
         if (!creep.memory.autoState) {
@@ -91,8 +92,43 @@ function reselectStore(creep) {
                 if (structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources)) {
                     continue;
                 }
-                possible.push({ cap: freeCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });
+                possible.push({
+                    cap: freeCapacity,
+                    id: structure.id,
+                    length: creep.pos.findPathTo(structure.pos).length,
+                    stType: structure.structureType
+                });
             }
+            possible.sort(function (a, b) {
+                var e_2, _a;
+                if (a.stType == b.stType) {
+                    if (a.cap == b.cap) {
+                        return U.dealWithSortResurnValue(a.length, b.length);
+                    }
+                    else {
+                        return U.dealWithSortResurnValue(b.cap, a.cap);
+                    }
+                }
+                else {
+                    try {
+                        for (var _b = (e_2 = void 0, __values(config.refillingOrder)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                            var o = _c.value;
+                            if (a.stType == o) {
+                                return -1;
+                            }
+                        }
+                    }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    finally {
+                        try {
+                            if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+                        }
+                        finally { if (e_2) throw e_2.error; }
+                    }
+                    return 1;
+                }
+            });
+            creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -102,14 +138,5 @@ function reselectStore(creep) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    possible.sort(function (a, b) {
-        if (a.cap == b.cap) {
-            return U.dealWithSortResurnValue(a.length, b.length);
-        }
-        else {
-            return U.dealWithSortResurnValue(b.cap, a.cap);
-        }
-    });
-    creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
 }
 module.exports = roleCarrier;

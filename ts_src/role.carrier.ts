@@ -4,6 +4,8 @@ var U = require('U');
 var data = require('data');
 // @ts-ignore
 var storageSelector = require('storageSelector');
+// @ts-ignore
+var config = require('config');
 
 var roleCarrier = {
     run: function(creep: Creep): void {
@@ -89,20 +91,35 @@ function reselectStore(creep: Creep): void {
             if (structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources)) {
                 continue;
             }
-    
-            possible.push({cap: freeCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length});
+
+            possible.push({
+                cap: freeCapacity, 
+                id: structure.id, 
+                length: creep.pos.findPathTo(structure.pos).length,
+                stType: structure.structureType
+            });
+
         }
+
+        possible.sort((a: EnergySelectionInfo, b: EnergySelectionInfo) => {
+            if (a.stType == b.stType) {
+                if (a.cap == b.cap) {
+                    return U.dealWithSortResurnValue(a.length, b.length);
+                } else {
+                    return U.dealWithSortResurnValue(b.cap, a.cap);
+                }
+            } else {
+                for (let o of config.refillingOrder) {
+                    if (a.stType == o) {
+                        return -1;
+                    }
+                }
+                return 1;
+            }
+        })
+
+        creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
     }
-
-    possible.sort((a: EnergySelectionInfo, b: EnergySelectionInfo) => {
-        if (a.cap == b.cap) {
-            return U.dealWithSortResurnValue(a.length, b.length);
-        } else {
-            return U.dealWithSortResurnValue(b.cap, a.cap);
-        }
-    })
-
-    creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;
 }
 
 // @ts-ignore

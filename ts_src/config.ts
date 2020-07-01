@@ -22,6 +22,13 @@ var config = {
         {roleName: 'upgrader'},
         {roleName: 'builder'}
     ],
+    refillingOrder: [
+        STRUCTURE_SPAWN, 
+        STRUCTURE_EXTENSION, 
+        STRUCTURE_TOWER, 
+        STRUCTURE_CONTAINER, 
+        STRUCTURE_STORAGE
+    ],
     // simpleHarvestersAmount: 3,
     // emergencySpawningConfig: [
     //     {roleName: 'simple.harvester', maxAmount: 3},

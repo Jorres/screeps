@@ -21,6 +21,13 @@ var config = {
         { roleName: 'carrier' },
         { roleName: 'upgrader' },
         { roleName: 'builder' }
+    ],
+    refillingOrder: [
+        STRUCTURE_SPAWN,
+        STRUCTURE_EXTENSION,
+        STRUCTURE_TOWER,
+        STRUCTURE_CONTAINER,
+        STRUCTURE_STORAGE
     ]
 };
 module.exports = config;

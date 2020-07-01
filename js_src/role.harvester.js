@@ -43,7 +43,12 @@ var roleHarvester = {
                     if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
                         continue;
                     }
-                    possible.push({ cap: totalCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });
+                    possible.push({
+                        cap: totalCapacity,
+                        id: structure.id,
+                        length: creep.pos.findPathTo(structure.pos).length,
+                        stType: structure.structureType
+                    });
                 }
             }
         }
@@ -55,11 +60,32 @@ var roleHarvester = {
             finally { if (e_1) throw e_1.error; }
         }
         possible.sort(function (a, b) {
-            if (a.cap == b.cap) {
-                return U.dealWithSortResurnValue(a.length, b.length);
+            var e_2, _a;
+            if (a.stType == b.stType) {
+                if (a.cap == b.cap) {
+                    return U.dealWithSortResurnValue(a.length, b.length);
+                }
+                else {
+                    return U.dealWithSortResurnValue(b.cap, a.cap);
+                }
             }
             else {
-                return U.dealWithSortResurnValue(a.cap, b.cap);
+                try {
+                    for (var _b = __values(config.refillingOrder), _c = _b.next(); !_c.done; _c = _b.next()) {
+                        var o = _c.value;
+                        if (a.stType == o) {
+                            return -1;
+                        }
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (_c && !_c.done && (_a = _b["return"])) _a.call(_b);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
+                return 1;
             }
         });
         creep.memory.sourceDestId = possible.length > 0 ? possible[0].id : null;
