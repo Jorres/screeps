@@ -26,26 +26,35 @@ var roleUpgrader: RoleUpgrader = {
 
     // creep.memory.sourceDestId
     // creep.memory.storageDestId
+    // creep.fixed = true
     gatheringState: function(creep: Creep): void {
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
             creep.memory.storageDestId = null;
             this.run(creep, 'upgrade');
         } else {
-            if (!creep.memory.sourceDestId) {
-                creep.memory.storageDestId = storageSelector.selectStorageId(creep);
+            creep.memory.sourceDestId = storageSelector.selectSourceId(creep);
+            creep.memory.storageDestId = storageSelector.selectStorageId(creep);
+            if (creep.memory.fixed == 'source' && !creep.memory.sourceDestId) {
+                creep.memory.fixed = null;
             }
-            if (creep.memory.storageDestId && !creep.memory.sourceDestId) {
-                let err = U.moveAndWithdraw(creep, U.getById(creep.memory.storageDestId), RESOURCE_ENERGY);
-            }  else {
-                if (!creep.memory.sourceDestId) {
-                    let target = creep.pos.findClosestByPath(FIND_SOURCES);
-                    creep.memory.sourceDestId = target ? target.id : null;
-                }
+            if (creep.memory.fixed == 'storage' && !creep.memory.storageDestId) {
+                creep.memory.fixed = null;
+            }
+
+            if (!creep.memory.fixed) {
                 if (creep.memory.sourceDestId) {
-                    U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
-                } 
+                    creep.memory.fixed = 'source';
+                } else if (creep.memory.storageDestId) {
+                    creep.memory.fixed = 'storage';
+                }
             }
+
+            if (creep.memory.fixed == 'source') {
+                U.moveAndHarvest(creep, U.getById(creep.memory.sourceDestId));
+            } else if (creep.memory.fixed == 'storage') {
+                U.moveAndWithdraw(creep, U.getById(creep.memory.storageDestId), RESOURCE_ENERGY);
+            } 
         }
     }, 
 

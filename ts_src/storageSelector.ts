@@ -80,8 +80,32 @@ var storageSelector = {
         });
 
         return possible.length > 0 ? possible[0].id : null;
+    },
+
+    selectSourceId: function(creep: Creep): string {
+        let minerFilter = {
+            filter: (other: Creep) => {
+                return other.memory.role == 'miner';
+            }
+        };
+        
+        let miners = creep.room.find(FIND_MY_CREEPS, minerFilter);
+        if (creep.memory.sourceDestId) {
+            let busy = U.nextToAnyOf(U.getById(creep.memory.sourceDestId).pos, miners);
+            if (busy)  {
+                creep.memory.sourceDestId = null;
+            } else {
+                return;
+            }
+        }
+        let availSources = creep.room.find(FIND_SOURCES, {
+            filter: (source: Source) => {
+                return !U.nextToAnyOf(source.pos, miners);
+            }
+        });
+        return availSources.length > 0 ? availSources[0].id : null;
     }
-};
+}
 
 // @ts-ignore
 module.exports = storageSelector;

@@ -106,6 +106,29 @@ var storageSelector = {
             }
         });
         return possible.length > 0 ? possible[0].id : null;
+    },
+    selectSourceId: function (creep) {
+        var minerFilter = {
+            filter: function (other) {
+                return other.memory.role == 'miner';
+            }
+        };
+        var miners = creep.room.find(FIND_MY_CREEPS, minerFilter);
+        if (creep.memory.sourceDestId) {
+            var busy = U.nextToAnyOf(U.getById(creep.memory.sourceDestId).pos, miners);
+            if (busy) {
+                creep.memory.sourceDestId = null;
+            }
+            else {
+                return;
+            }
+        }
+        var availSources = creep.room.find(FIND_SOURCES, {
+            filter: function (source) {
+                return !U.nextToAnyOf(source.pos, miners);
+            }
+        });
+        return availSources.length > 0 ? availSources[0].id : null;
     }
 };
 module.exports = storageSelector;
