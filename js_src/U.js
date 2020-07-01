@@ -35,6 +35,15 @@ var U = {
         }
         return roleSpecificCreeps;
     },
+    getRoleSpecificCreepsInGame: function (roleName) {
+        var roleSpecificCreeps = 0;
+        for (var creepName in Game.creeps) {
+            if (Game.creeps[creepName].memory.role == roleName) {
+                roleSpecificCreeps++;
+            }
+        }
+        return roleSpecificCreeps;
+    },
     changeState: function (creep, state) {
         creep.memory.autoState = state;
         creep.say(state);

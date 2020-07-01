@@ -68,7 +68,7 @@ function decideWhoIsNeeded(spawn) {
     roles.sort(function (a, b) {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
-    if (roles[0].first <= COOL && U.getRoleSpecificCreeps('longDistanceHarvester') < 3) {
+    if (roles[0].first <= COOL && U.getRoleSpecificCreepsInGame('longDistanceHarvester') < 3) {
         return 'longDistanceHarvester';
     }
     return roles[0].first > COOL ? roles[0].second : null;
