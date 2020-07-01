@@ -119,6 +119,9 @@ function reselectStore(creep) {
                             if (a.stType == o) {
                                 return -1;
                             }
+                            if (b.stType == o) {
+                                return 1;
+                            }
                         }
                     }
                     catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -128,7 +131,6 @@ function reselectStore(creep) {
                         }
                         finally { if (e_2) throw e_2.error; }
                     }
-                    return 1;
                 }
             });
             creep.memory.carryingId = possible.length > 0 ? possible[0].id : null;

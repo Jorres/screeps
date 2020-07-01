@@ -115,8 +115,10 @@ function reselectStore(creep: Creep): void {
                     if (a.stType == o) {
                         return -1;
                     }
+                    if (b.stType == o) {
+                        return 1;
+                    }
                 }
-                return 1;
             }
         })
 
