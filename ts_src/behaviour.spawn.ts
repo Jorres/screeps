@@ -69,9 +69,9 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
 
-    // if (roles[0].first <= COOL) {
-    //     return 'longDistanceHarvester';
-    // }
+    if (roles[0].first <= COOL) {
+        return 'longDistanceHarvester';
+    }
 
     return roles[0].first > COOL ? roles[0].second : null;
 }
@@ -179,7 +179,7 @@ function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartCon
     } else if (roleName == 'carrier') {
         return assembleCarrier(curEnergy);
     } else if (roleName == 'longDistanceHarvester') {
-        return bestEmergencyCreep(curEnergy);
+        return assembleLongDistanceHarvester(curEnergy);
     } else {
         return bestEmergencyCreep(curEnergy);
     }
@@ -187,6 +187,10 @@ function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartCon
 
 function assembleCarrier(curEnergy: number): BodyPartConstant[] {
     return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE]);
+}
+
+function assembleLongDistanceHarvester(curEnergy: number): BodyPartConstant[] {
+    return assembleByChunks(curEnergy, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE]);
 }
 
 function assembleMiner(curEnergy: number): BodyPartConstant[] {
