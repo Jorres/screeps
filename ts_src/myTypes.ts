@@ -32,7 +32,14 @@ type RoleHarvester = {
     run: (creep: Creep, newState ?: AutomataState) =>  void;
     harvestingState: (creep: Creep) => void;
     carryingState: (creep: Creep) => void;
-    reselectEnergyDestination: (creep: Creep) => void;
+};
+
+type RoleCarrier = {
+    run: (creep: Creep, newState ?: AutomataState) =>  void;
+    carryingTo: (creep: Creep) => void;
+    carryingFrom: (creep: Creep) => void;
+    reselectStore: (creep: Creep) => void;
+    tryReselectPickup: (creep: Creep) => void;
 };
 
 type RoleBuilder = {

@@ -22,53 +22,6 @@ var roleHarvester: RoleHarvester = {
         }
     },
 
-    reselectEnergyDestination: function(creep: Creep): void {
-        let structures = creep.room.find(FIND_STRUCTURES);
-        let possible: EnergySelectionInfo[] = [];
-
-        for (let structure of structures) {
-            if (U.hasEnergyStore(structure)) {
-                let freeCapacity = ((structure as AnyStoreStructure).store as GenericStoreBase).getFreeCapacity(RESOURCE_ENERGY);
-                let usedCapacity = ((structure as AnyStoreStructure).store as GenericStoreBase).getUsedCapacity(RESOURCE_ENERGY);
-                let totalCapacity = freeCapacity + usedCapacity;
-                if (freeCapacity == 0) {
-                    continue;
-                }
-                if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
-                    continue;
-                }
-        
-                possible.push({
-                    cap: totalCapacity, 
-                    id: structure.id, 
-                    length: creep.pos.findPathTo(structure.pos).length,
-                    stType: structure.structureType
-                });
-            }
-        }
-
-        possible.sort((a: EnergySelectionInfo, b: EnergySelectionInfo) => {
-            if (a.stType == b.stType) {
-                if (a.cap == b.cap) {
-                    return U.dealWithSortResurnValue(a.length, b.length);
-                } else {
-                    return U.dealWithSortResurnValue(b.cap, a.cap);
-                }
-            } else {
-                for (let o of config.refillingOrder) {
-                    if (a.stType == o) {
-                        return -1;
-                    }
-                    if (b.stType == o) {
-                        return 1;
-                    }
-                }
-            }
-        })
-
-        creep.memory.sourceDestId = possible.length > 0 ? possible[0].id : null;
-    },
-
     harvestingState: function(creep: Creep): void {
         if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
             this.run(creep, 'carry');
@@ -84,12 +37,12 @@ var roleHarvester: RoleHarvester = {
             creep.memory.sourceDestId = null;
             this.run(creep, 'harvest');
         } else {
-            this.reselectEnergyDestination(creep);
+            creep.memory.sourceDestId = storageSelector.selectPushId(creep);
             if (creep.memory.sourceDestId) {
                 let err = U.moveAndTransfer(creep, U.getById(creep.memory.sourceDestId));
                 if (err == OK) {
                     creep.memory.sourceDestId = null;
-                    this.reselectEnergyDestination(creep);
+                    creep.memory.sourceDestId = storageSelector.selectPushId(creep);
                 }
             } else {
                 U.moveToSpawn(creep);
