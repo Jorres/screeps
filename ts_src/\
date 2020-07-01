@@ -53,22 +53,46 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     let builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
     let harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
 
+
     let quantities: Map<CreepRoles, number> = new Map();
-    quantities.set('miner', miners);
-    quantities.set('upgrader', upgraders);
-    quantities.set('builder', builders);
-    quantities.set('harvester', harvesters);
-    quantities.set('carrier', carriers);
-    let roles: Pair<number, CreepRoles>[];
-    roles.push({first: findHarvesterNeedness(spawn, quantities), second: 'harvester'});
-    roles.push({first: findCarrierNeedness(spawn, quantities), second: 'carrier'});
-    roles.push({first: findUpgraderNeedness(spawn, quantities), second: 'upgrader'});
-    roles.push({first: findMinerNeedness(spawn, quantities), second: 'miner'});
-    roles.push({first: findBuilderNeedness(spawn, quantities), second: 'builder'});
-    roles.sort((a: Pair<number, string>, b: Pair<number, string>) => {
+    roles.set('miner', miners);
+    roles.set('upgrader', upgraders);
+    roles.set('builder', builders);
+    roles.set('harvester', harvesters);
+    roles.set('carrier', carriers);
+    let roles: Pair<number, string>[];
+    roles.push(findHarvesterNeedness(spawn, quantities));
+    roles.push(findCarrierNeedness(spawn, quantities));
+    roles.push(findUpgraderNeedness(spawn, quantities));
+    roles.push(findBuilderNeedness(spawn, quantities));
+    roles.push(findMinerNeedness(spawn, quantities));
+    roles.sort(a: Pair<number, string>, b: Pair<number, string>) {
         return U.dealWithSortResurnValue(b.first, a.first);
-    });
+    }
     return roles[0].first >= COOL ? roles[0].second : null;
+
+    if (!hasProduction(spawn)) { 
+        if (carriers == 0) {
+            return 'harvester';
+        }
+        if (miners < suitableMines.length) {
+            return 'miner';
+        }
+        return 'harvester';
+    }
+
+    if (miners < suitableMines.length) {
+        return 'miner';
+    }
+
+    if (needsCarrier(spawn, miners, carriers)) {
+        return 'carrier';
+    }
+
+    if (needsBuilder(spawn, builders)) {
+        return 'builder';
+    }
+    return null;
 }
 
 function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
@@ -79,14 +103,14 @@ function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, nu
         }
     });
 
-    let diff = suitableMines.length - quantities.get('miner');
+    let diff = suitableMines.length - quantities.get('miners');
     if (diff >= 2) {
         return DYING;
     }
     if (diff == 1) {
         return WORRYING;
     }
-    return FREEZE;
+    return COOL;
 }
 
 function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
@@ -100,7 +124,7 @@ function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
     if (diff == 0) {
         return WORRYING;
     }
-    return FREEZE;
+    return COOL;
 }
 
 function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
@@ -110,7 +134,7 @@ function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles,
     if (quantities.get('upgrader') <= 3) {
         return WORRYING;
     }
-    return COOL;
+    return FREEZE;
 }
 
 function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
@@ -136,15 +160,14 @@ function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
         buildingScore += site.progressTotal - site.progress;
     }
 
-    let req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
-    let diff = Math.max(0, quantities.get('builder') - req);
+    let diff = Math.max(0, quantities.get('builder') - Math.ceiling(buildingScore / 5000.0));
     if (diff >= 2) {
         return PAINFUL;
     }
     if (diff == 1) {
         return WORRYING;
     }
-    return FREEZE;
+    return COOL;
 }
 
 function trySpawn(spawn: StructureSpawn, roleName: CreepRoles): number {

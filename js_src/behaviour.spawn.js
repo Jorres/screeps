@@ -12,11 +12,16 @@ var __values = (this && this.__values) || function(o) {
 var config = require('config');
 var data = require('data');
 var U = require('U');
+var FREEZE = 10;
+var COOL = 11;
+var WORRYING = 12;
+var PAINFUL = 13;
+var DYING = 14;
 module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
         var curEnergy = this.room.energyAvailable;
         var maxEnergy = this.room.energyCapacityAvailable;
-        if (curEnergy < maxEnergy && hasProduction(this) && hasCarrying(this)) {
+        if (curEnergy < 0.9 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
             console.log("Not spawning cheap creep");
             return;
         }
@@ -48,39 +53,77 @@ function decideWhoIsNeeded(spawn) {
     var upgraders = U.getRoleSpecificCreeps(spawn.room, 'upgrader');
     var builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
     var harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
+    var quantities = new Map();
+    quantities.set('miner', miners);
+    quantities.set('upgrader', upgraders);
+    quantities.set('builder', builders);
+    quantities.set('harvester', harvesters);
+    quantities.set('carrier', carriers);
+    var roles;
+    roles.push({ first: findHarvesterNeedness(spawn, quantities), second: 'harvester' });
+    roles.push({ first: findCarrierNeedness(spawn, quantities), second: 'carrier' });
+    roles.push({ first: findUpgraderNeedness(spawn, quantities), second: 'upgrader' });
+    roles.push({ first: findMinerNeedness(spawn, quantities), second: 'miner' });
+    roles.push({ first: findBuilderNeedness(spawn, quantities), second: 'builder' });
+    roles.sort(function (a, b) {
+        return U.dealWithSortResurnValue(b.first, a.first);
+    });
+    return roles[0].first >= COOL ? roles[0].second : null;
+}
+function findMinerNeedness(spawn, quantities) {
     var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     var suitableMines = spawn.room.find(FIND_SOURCES, {
         filter: function (source) {
             return U.nextToAnyOf(source.pos, containers);
         }
     });
-    if (!hasProduction(spawn)) {
-        if (carriers == 0) {
-            return 'harvester';
-        }
-        if (miners < suitableMines.length) {
-            return 'miner';
-        }
-        return 'harvester';
+    var diff = suitableMines.length - quantities.get('miner');
+    if (diff >= 2) {
+        return DYING;
     }
-    if (miners < suitableMines.length) {
-        return 'miner';
+    if (diff == 1) {
+        return WORRYING;
     }
-    if (needsCarrier(spawn, miners, carriers)) {
-        return 'carrier';
-    }
-    if (needsBuilder(spawn, builders)) {
-        return 'builder';
-    }
-    if (upgraders < 5) {
-        return 'upgrader';
-    }
-    return null;
+    return FREEZE;
 }
-function needsCarrier(spawn, miners, carriers) {
-    return carriers < miners;
+function findCarrierNeedness(spawn, quantities) {
+    var diff = quantities.get('miner') - quantities.get('carrier');
+    if (diff > 1) {
+        return DYING;
+    }
+    if (diff == 1) {
+        return PAINFUL;
+    }
+    if (diff == 0) {
+        return WORRYING;
+    }
+    return FREEZE;
 }
-function needsBuilder(spawn, builders) {
+function findUpgraderNeedness(spawn, quantities) {
+    if (quantities.get('upgrader') == 0) {
+        return PAINFUL;
+    }
+    if (quantities.get('upgrader') <= 3) {
+        return WORRYING;
+    }
+    return COOL;
+}
+function findHarvesterNeedness(spawn, quantities) {
+    var miners = quantities.get('miner');
+    var carriers = quantities.get('carrier');
+    var harvesters = quantities.get('harvester');
+    if (harvesters > 2) {
+        return FREEZE;
+    }
+    if (miners == 0 || carriers == 0) {
+        return PAINFUL;
+    }
+    if (miners == 1) {
+        return COOL;
+    }
+    return FREEZE;
+}
+function findBuilderNeedness(spawn, quantities) {
     var e_1, _a;
     var sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
     var buildingScore = 0;
@@ -97,11 +140,15 @@ function needsBuilder(spawn, builders) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    var buildersAmount = Math.min(3, buildingScore / 5000.0);
-    if (spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length > 0) {
-        buildersAmount += 1;
+    var req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
+    var diff = Math.max(0, quantities.get('builder') - req);
+    if (diff >= 2) {
+        return PAINFUL;
     }
-    return builders <= buildersAmount;
+    if (diff == 1) {
+        return WORRYING;
+    }
+    return FREEZE;
 }
 function trySpawn(spawn, roleName) {
     if (spawn.spawning) {
