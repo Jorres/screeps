@@ -63,7 +63,7 @@ function decideWhoIsNeeded(spawn) {
         }
         return 'harvester';
     }
-    if (needsCarrier(spawn)) {
+    if (needsCarrier(spawn, miners, carriers)) {
         return 'carrier';
     }
     if (needsBuilder(spawn, builders)) {
@@ -74,12 +74,15 @@ function decideWhoIsNeeded(spawn) {
     }
     return null;
 }
-function needsCarrier(spawn) {
+function needsCarrier(spawn, miners, carriers) {
     var fullContainers = spawn.room.find(FIND_STRUCTURES, {
         filter: function (structure) {
             return structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 1500;
         }
     });
+    if (miners >= carriers) {
+        return false;
+    }
     return fullContainers.length > 0;
 }
 function needsBuilder(spawn, builders) {
