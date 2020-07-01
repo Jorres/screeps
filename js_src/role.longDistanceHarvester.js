@@ -23,13 +23,21 @@ var roleLondDistanceHarvester = {
             this.run(creep, 'carry');
         }
         else {
-            var target = creep.pos.findClosestByRange(FIND_SOURCES);
-            U.moveAndHarvest(creep, U.getById(creep.memory.distantSourceId));
+            if (creep.room.name == creep.memory.targetRoomName) {
+                var target = creep.room.find(FIND_SOURCES)[0];
+                U.moveAndHarvest(creep, target);
+            }
+            else {
+                var exit = creep.room.findExitTo(creep.memory.targetRoomName);
+                creep.moveTo(creep.pos.findClosestByRange(exit));
+                creep.memory.actionTaken = true;
+            }
         }
     },
     carryingState: function (creep) {
         if (creep.room.name != creep.memory.homeRoom.name) {
-            creep.moveTo(creep.memory.homeRoom.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_SPAWN))[0]);
+            var exit = creep.room.findExitTo(creep.memory.homeRoom.name);
+            creep.moveTo(creep.pos.findClosestByRange(exit));
             creep.memory.actionTaken = true;
             return;
         }

@@ -26,15 +26,24 @@ var roleLondDistanceHarvester: RoleLongDistanceHarvester = {
         if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
             this.run(creep, 'carry');
         } else {
-            let target = creep.pos.findClosestByRange(FIND_SOURCES);
-            U.moveAndHarvest(creep, U.getById(creep.memory.distantSourceId));
+            if (creep.room.name == creep.memory.targetRoomName) {
+                let target = creep.room.find(FIND_SOURCES)[0];
+                U.moveAndHarvest(creep, target);
+            } else {
+                let exit = creep.room.findExitTo(creep.memory.targetRoomName);
+                // @ts-ignore
+                creep.moveTo(creep.pos.findClosestByRange(exit));
+                creep.memory.actionTaken = true;
+            }
         }
     },
 
     // creep.memory.sourceDestId
     carryingState: function(creep: Creep): void {
         if (creep.room.name != creep.memory.homeRoom.name) {
-            creep.moveTo(creep.memory.homeRoom.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_SPAWN))[0]);
+            let exit = creep.room.findExitTo(creep.memory.homeRoom.name);
+            // @ts-ignore
+            creep.moveTo(creep.pos.findClosestByRange(exit));
             creep.memory.actionTaken = true;
             return;
         }
