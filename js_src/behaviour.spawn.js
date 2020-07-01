@@ -48,20 +48,23 @@ function decideWhoIsNeeded(spawn) {
     var upgraders = U.getRoleSpecificCreeps(spawn.room, 'upgrader');
     var builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
     var harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
+    var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+    var suitableMines = spawn.room.find(FIND_SOURCES, {
+        filter: function (source) {
+            return U.nextToAnyOf(source.pos, containers) && !data.minesReservationMap.get(source.id);
+        }
+    });
     if (!hasProduction(spawn)) {
         if (carriers == 0) {
             return 'harvester';
         }
-        var containers_1 = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
-        var suitableMines = spawn.room.find(FIND_SOURCES, {
-            filter: function (source) {
-                return U.nextToAnyOf(source.pos, containers_1) && !data.minesReservationMap.get(source.id);
-            }
-        });
         if (miners < suitableMines.length) {
             return 'miner';
         }
         return 'harvester';
+    }
+    if (miners < suitableMines.length) {
+        return 'miner';
     }
     if (needsCarrier(spawn, miners, carriers)) {
         return 'carrier';

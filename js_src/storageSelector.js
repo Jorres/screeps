@@ -1,4 +1,5 @@
 var data = require('data');
+var U = require('U');
 var storageSelector = {
     selectStorageId: function (creep) {
         var role = creep.memory.role;
@@ -10,7 +11,7 @@ var storageSelector = {
                     return structure.structureType == STRUCTURE_CONTAINER
                         && 4 * structure.store.getUsedCapacity(RESOURCE_ENERGY) >
                             structure.store.getCapacity(RESOURCE_ENERGY)
-                        && !U.nextToAnyOf(structure.pos, sources_1);
+                        && U.nextToAnyOf(structure.pos, sources_1);
                 }
             });
         }
