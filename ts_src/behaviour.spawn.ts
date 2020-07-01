@@ -71,7 +71,7 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
         return 'builder';
     }
 
-    if (upgraders < 4) {
+    if (upgraders < 5) {
         return 'upgrader';
     }
     return null;
@@ -96,13 +96,13 @@ function needsBuilder(spawn: StructureSpawn, builders: number): boolean {
         buildingScore += site.progressTotal - site.progress;
     }
 
-    let buildersAmount = Math.max(3, buildingScore / 5000.0);
+    let buildersAmount = Math.min(3, buildingScore / 5000.0);
 
     if (spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length > 0) {
         buildersAmount += 1;
     }
 
-    return builders + 1 <= buildersAmount;
+    return builders <= buildersAmount;
 }
 
 
@@ -134,7 +134,12 @@ function assembleCarrier(curEnergy: number): BodyPartConstant[] {
 }
 
 function assembleMiner(curEnergy: number): BodyPartConstant[] {
-    return assembleByChunks(curEnergy, [WORK, WORK, WORK, CARRY, MOVE]);
+    let ans: BodyPartConstant[] = [CARRY, MOVE];
+    curEnergy -= 100;
+    while (curEnergy >= 100) {
+        ans.push(WORK);
+    }
+    return ans;
 }
 
 function bestEmergencyCreep(curEnergy: number): BodyPartConstant[] {

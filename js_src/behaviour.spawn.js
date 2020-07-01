@@ -69,7 +69,7 @@ function decideWhoIsNeeded(spawn) {
     if (needsBuilder(spawn, builders)) {
         return 'builder';
     }
-    if (upgraders < 4) {
+    if (upgraders < 5) {
         return 'upgrader';
     }
     return null;
@@ -102,11 +102,11 @@ function needsBuilder(spawn, builders) {
         }
         finally { if (e_1) throw e_1.error; }
     }
-    var buildersAmount = Math.max(3, buildingScore / 5000.0);
+    var buildersAmount = Math.min(3, buildingScore / 5000.0);
     if (spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length > 0) {
         buildersAmount += 1;
     }
-    return builders + 1 <= buildersAmount;
+    return builders <= buildersAmount;
 }
 function trySpawn(spawn, roleName) {
     if (spawn.spawning) {
@@ -132,7 +132,12 @@ function assembleCarrier(curEnergy) {
     return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE]);
 }
 function assembleMiner(curEnergy) {
-    return assembleByChunks(curEnergy, [WORK, WORK, WORK, CARRY, MOVE]);
+    var ans = [CARRY, MOVE];
+    curEnergy -= 100;
+    while (curEnergy >= 100) {
+        ans.push(WORK);
+    }
+    return ans;
 }
 function bestEmergencyCreep(curEnergy) {
     return assembleByChunks(curEnergy, [WORK, MOVE, CARRY]);
