@@ -16,7 +16,7 @@ module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
         var curEnergy = this.room.energyAvailable;
         var maxEnergy = this.room.energyCapacityAvailable;
-        if (curEnergy < 0.7 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
+        if (curEnergy < maxEnergy && hasProduction(this) && hasCarrying(this)) {
             console.log("Not spawning cheap creep");
             return;
         }
@@ -127,8 +127,8 @@ function assembleCarrier(curEnergy) {
     return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE]);
 }
 function assembleMiner(curEnergy) {
-    var ans = [CARRY, MOVE];
-    curEnergy -= 100;
+    var ans = [CARRY, MOVE, WORK, WORK];
+    curEnergy -= 300;
     while (curEnergy >= 100) {
         ans.push(WORK);
         curEnergy -= 100;

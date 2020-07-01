@@ -40,7 +40,7 @@ var roleHarvester = {
                     var freeCapacity = structure.store.getFreeCapacity(RESOURCE_ENERGY);
                     var usedCapacity = structure.store.getUsedCapacity(RESOURCE_ENERGY);
                     var totalCapacity = freeCapacity + usedCapacity;
-                    if (totalCapacity * 0.9 < usedCapacity) {
+                    if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
                         continue;
                     }
                     possible.push({ cap: totalCapacity, id: structure.id, length: creep.pos.findPathTo(structure.pos).length });

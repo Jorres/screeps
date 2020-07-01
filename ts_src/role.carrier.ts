@@ -82,7 +82,7 @@ function reselectStore(creep: Creep): void {
             let freeCapacity = ((structure as AnyStoreStructure).store as GenericStoreBase).getFreeCapacity(RESOURCE_ENERGY);
             let usedCapacity = ((structure as AnyStoreStructure).store as GenericStoreBase).getUsedCapacity(RESOURCE_ENERGY);
             let totalCapacity = freeCapacity + usedCapacity;
-            if (totalCapacity * 0.9 < usedCapacity) {
+            if (totalCapacity * 0.9 < usedCapacity && structure.structureType == STRUCTURE_TOWER) {
                 continue;
             }
 

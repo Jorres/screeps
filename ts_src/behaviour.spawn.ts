@@ -11,7 +11,7 @@ module.exports = function() {
         let curEnergy = this.room.energyAvailable;
         let maxEnergy = this.room.energyCapacityAvailable;
 
-        if (curEnergy < 0.7 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
+        if (curEnergy < maxEnergy && hasProduction(this) && hasCarrying(this)) {
             console.log("Not spawning cheap creep");
             return;
         }
@@ -131,8 +131,8 @@ function assembleCarrier(curEnergy: number): BodyPartConstant[] {
 }
 
 function assembleMiner(curEnergy: number): BodyPartConstant[] {
-    let ans: BodyPartConstant[] = [CARRY, MOVE];
-    curEnergy -= 100;
+    let ans: BodyPartConstant[] = [CARRY, MOVE, WORK, WORK];
+    curEnergy -= 300;
     while (curEnergy >= 100) {
         ans.push(WORK);
         curEnergy -= 100;

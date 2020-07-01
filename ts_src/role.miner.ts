@@ -20,7 +20,7 @@ var roleMiner = {
 };
 
 function minerMineState(creep: Creep) {
-    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) < 12) {
+    if (creep.store.getFreeCapacity(RESOURCE_ENERGY) < 10) {
         U.changeState(creep, 'drop');
         minerDropState(creep);
     } else {
