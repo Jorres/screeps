@@ -109,10 +109,18 @@ function findCarrierNeedness(spawn, quantities) {
     return FREEZE;
 }
 function findUpgraderNeedness(spawn, quantities) {
+    if (statistics.isEnoughStatistics()) {
+        if (isTherePotentialEnergy()) {
+            return FREEZE;
+        }
+        else {
+            return PAINFUL;
+        }
+    }
     if (quantities.get('upgrader') == 0) {
         return PAINFUL;
     }
-    if (quantities.get('upgrader') <= 3) {
+    if (quantities.get('upgrader') <= 1) {
         return WORRYING;
     }
     return COOL;
@@ -262,4 +270,15 @@ function statisticallyEnoughCarriers() {
     }
     avrg /= n;
     return avrg <= 1500;
+}
+function isTherePotentialEnergy() {
+    var avrg = 0;
+    var diff = 0;
+    var n = statistics.getDataLength();
+    for (var i = 1; i < n; i++) {
+        avrg += statistics.getAt(statistics.freeEnergy, i);
+        diff += statistics.getAt(statistics.freeEnergy, i) - statistics.getAt(statistics.freeEnergy, i - 1);
+    }
+    avrg /= n;
+    return avrg >= 1500 && diff > 0;
 }

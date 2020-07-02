@@ -5,24 +5,28 @@ type Statistics = {
     next: number;
     maxAllowedSize: number;
     intervalBetweenMeasurement: number;
-    miningContainersAvailableEnergy: number[];
-    // idling: Map<string, number>
-    //
-    //
+
     run: (room: Room) => void;
     append: <T>(array: T[], val: T) => void;
     getAt: <T>(array: T[], i: number) => T;
     getDataLength: () => number;
     isEnoughStatistics: () => boolean;
 
+    miningContainersAvailableEnergy: number[];
     measureMiningContainers: (room: Room) => void;
+
+    freeEnergy: number[];
+    measureFreeEnergy: (room: Room) => void;
+    // idling: Map<string, number>
+    //
+    //
+
 };
 
 var statistics: Statistics = {
     next: 0,
-    maxAllowedSize: 100,
+    maxAllowedSize: 50,
     intervalBetweenMeasurement: 2,
-    miningContainersAvailableEnergy: [],
     run: function(room: Room): void {
         this.measureMiningContainers(room);
         console.log("running statistics... " + this.getDataLength());
@@ -38,7 +42,15 @@ var statistics: Statistics = {
     getAt: function<T>(array: T[], i: number): T {
         return array[(this.next + i) % this.maxAllowedSize];
     },
+    getDataLength: function(): number {
+        return this.miningContainersAvailableEnergy.length;
+    },
 
+    isEnoughStatistics: function(): boolean {
+        return this.getDataLength() > 30;
+    },
+
+    miningContainersAvailableEnergy: [],
     measureMiningContainers: function(room: Room): void {
         let sources = room.find(FIND_SOURCES);
         let containers = room.find(FIND_STRUCTURES, {
@@ -53,12 +65,20 @@ var statistics: Statistics = {
         this.append(this.miningContainersAvailableEnergy, totalEnergy);
     },
 
-    getDataLength: function(): number {
-        return this.miningContainersAvailableEnergy.length;
-    },
-
-    isEnoughStatistics: function(): boolean {
-        return this.getDataLength() > 30;
+    freeEnergy: [],
+    measureFreeEnergy: function(room: Room): void {
+        let sources = room.find(FIND_SOURCES);
+        let containers = room.find(FIND_STRUCTURES, {
+            filter: (structure) => {
+                return structure.structureType == STRUCTURE_CONTAINER && !U.nextToAnyOf(structure.pos, sources) || 
+                    structure.structureType == STRUCTURE_STORAGE;
+            }
+        });
+        let totalEnergy = 0;
+        for (let container of containers) {
+            totalEnergy += (container as StructureContainer).store.getUsedCapacity(RESOURCE_ENERGY);
+        }
+        this.append(this.freeEnergy, totalEnergy);
     }
 };
 

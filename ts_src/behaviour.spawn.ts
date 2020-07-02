@@ -5,7 +5,7 @@ var data = require('data');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
-var statistics = require('statistics');
+var statistics: Statistics = require('statistics');
 
 const FREEZE = 10;
 const COOL = 11;
@@ -123,10 +123,18 @@ function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
 }
 
 function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (statistics.isEnoughStatistics()) {
+        if (isTherePotentialEnergy()) {
+            return FREEZE;
+        } else {
+            return PAINFUL;
+        }
+    }
+
     if (quantities.get('upgrader') == 0) {
         return PAINFUL;
     }
-    if (quantities.get('upgrader') <= 3) {
+    if (quantities.get('upgrader') <= 1) {
         return WORRYING;
     }
     return COOL;
@@ -268,4 +276,17 @@ function statisticallyEnoughCarriers(): boolean {
     }
     avrg /= n;
     return avrg <= 1500;
+}
+
+function isTherePotentialEnergy(): boolean {
+    let avrg: number = 0;
+    let diff: number = 0;
+    let n = statistics.getDataLength();
+    for (let i = 1; i < n; i++) {
+        avrg += statistics.getAt(statistics.freeEnergy, i);
+        diff += statistics.getAt(statistics.freeEnergy, i) - statistics.getAt(statistics.freeEnergy, i - 1);
+    }
+    avrg /= n;
+
+    return avrg >= 1500 && diff > 0;
 }
