@@ -4,6 +4,8 @@ var config = require('config');
 var data = require('data');
 // @ts-ignore
 var U = require('U');
+// @ts-ignore
+var statistics = require('statistics');
 
 const FREEZE = 10;
 const COOL = 11;
@@ -102,6 +104,14 @@ function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, nu
 }
 
 function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (statistics.isEnoughStatistics()) {
+        if (statisticallyEnoughCarriers()) {
+            return FREEZE;
+        } else {
+            return DYING;
+        }
+    }
+
     let diff = quantities.get('miner') - quantities.get('carrier');
     if (diff > 1) {
         return DYING;
@@ -248,4 +258,14 @@ function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnerg
         spentEnergy += universalPartCost;
     }
     return ans;
+}
+
+function statisticallyEnoughCarriers(): boolean {
+    let avrg: number = 0;
+    let n = statistics.getDataLength();
+    for (let i = 0; i < n; i++) {
+        avrg += statistics.getAt(statistics.miningContainersAvailableEnergy, i);
+    }
+    avrg /= n;
+    return avrg <= 1500;
 }

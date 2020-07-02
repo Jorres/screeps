@@ -12,6 +12,7 @@ var __values = (this && this.__values) || function(o) {
 var config = require('config');
 var data = require('data');
 var U = require('U');
+var statistics = require('statistics');
 var FREEZE = 10;
 var COOL = 11;
 var WORRYING = 12;
@@ -90,6 +91,14 @@ function findMinerNeedness(spawn, quantities) {
     return FREEZE;
 }
 function findCarrierNeedness(spawn, quantities) {
+    if (statistics.isEnoughStatistics()) {
+        if (statisticallyEnoughCarriers()) {
+            return FREEZE;
+        }
+        else {
+            return DYING;
+        }
+    }
     var diff = quantities.get('miner') - quantities.get('carrier');
     if (diff > 1) {
         return DYING;
@@ -244,4 +253,13 @@ function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
         spentEnergy += universalPartCost;
     }
     return ans;
+}
+function statisticallyEnoughCarriers() {
+    var avrg = 0;
+    var n = statistics.getDataLength();
+    for (var i = 0; i < n; i++) {
+        avrg += statistics.getAt(statistics.miningContainersAvailableEnergy, i);
+    }
+    avrg /= n;
+    return avrg <= 1500;
 }

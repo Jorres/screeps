@@ -23,6 +23,7 @@ var data = require('data');
 var config = require('config');
 var U = require('U');
 var architectGeneral = require('architect.general');
+var statistics = require('statistics');
 function isTower(structure) {
     return structure.structureType == STRUCTURE_TOWER;
 }
@@ -55,6 +56,9 @@ module.exports.loop = function () {
             }
             if (U.oncePerTicks(5)) {
                 architectGeneral.run(spawn);
+            }
+            if (U.oncePerTicks(statistics.intervalBetweenMeasurement)) {
+                statistics.run();
             }
             visited.add(spawn.room.name);
         }
