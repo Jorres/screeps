@@ -21,7 +21,7 @@ module.exports = function () {
     StructureSpawn.prototype.trySpawningProcess = function () {
         var curEnergy = this.room.energyAvailable;
         var maxEnergy = this.room.energyCapacityAvailable;
-        if (curEnergy < 0.9 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
+        if (curEnergy < 0.7 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
             console.log("Not spawning cheap creep");
             return;
         }
@@ -53,25 +53,25 @@ function decideWhoIsNeeded(spawn) {
     var upgraders = U.getRoleSpecificCreeps(spawn.room, 'upgrader');
     var builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
     var harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
+    var longDistanceHarvesters = U.getRoleSpecificCreeps(spawn.room, 'longDistanceHarvester');
     var quantities = new Map();
+    var roles = [];
     quantities.set('miner', miners);
     quantities.set('upgrader', upgraders);
     quantities.set('builder', builders);
     quantities.set('harvester', harvesters);
     quantities.set('carrier', carriers);
-    var roles = [];
+    quantities.set('longDistanceHarvester', longDistanceHarvesters);
     roles.push({ first: findHarvesterNeedness(spawn, quantities), second: 'harvester' });
     roles.push({ first: findCarrierNeedness(spawn, quantities), second: 'carrier' });
     roles.push({ first: findUpgraderNeedness(spawn, quantities), second: 'upgrader' });
     roles.push({ first: findMinerNeedness(spawn, quantities), second: 'miner' });
     roles.push({ first: findBuilderNeedness(spawn, quantities), second: 'builder' });
+    roles.push({ first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester' });
     roles.sort(function (a, b) {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
-    if (roles[0].first <= COOL && U.getRoleSpecificCreepsInGame('longDistanceHarvester') < 3) {
-        return 'longDistanceHarvester';
-    }
-    return roles[0].first > COOL ? roles[0].second : null;
+    return roles[0].first >= COOL ? roles[0].second : null;
 }
 function findMinerNeedness(spawn, quantities) {
     var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
@@ -85,7 +85,7 @@ function findMinerNeedness(spawn, quantities) {
         return DYING;
     }
     if (diff == 1) {
-        return WORRYING;
+        return PAINFUL;
     }
     return FREEZE;
 }
@@ -94,10 +94,7 @@ function findCarrierNeedness(spawn, quantities) {
     if (diff > 1) {
         return DYING;
     }
-    if (diff == 1) {
-        return PAINFUL;
-    }
-    if (diff == 0) {
+    if (diff == 1 && quantities.get('miner') == 1) {
         return WORRYING;
     }
     return FREEZE;
@@ -153,6 +150,12 @@ function findBuilderNeedness(spawn, quantities) {
     }
     return FREEZE;
 }
+function findLongDistanceHarvesterNeedness(spawn, quantities) {
+    if (quantities.get('longDistanceHarvester') >= 3) {
+        return FREEZE;
+    }
+    return COOL;
+}
 function trySpawn(spawn, roleName) {
     if (spawn.spawning) {
         return ERR_BUSY;
@@ -184,24 +187,40 @@ function getCreepConfiguration(roleName, curEnergy) {
     }
 }
 function assembleCarrier(curEnergy) {
-    return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE]);
+    return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE], 750);
 }
 function assembleLongDistanceHarvester(curEnergy) {
     return assembleByChunks(curEnergy, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE]);
 }
 function assembleMiner(curEnergy) {
+    var sourceCapacity = 3000;
+    var sourceRegen = 300;
+    var minerCapacity = 50;
+    var optimalWorkParts = 2;
+    while (true) {
+        var miningStreak = Math.floor(minerCapacity / optimalWorkParts);
+        var cycleLength = miningStreak + 1;
+        var energyPerCycle = miningStreak * optimalWorkParts;
+        var drainTicks = sourceCapacity / energyPerCycle * cycleLength;
+        if (drainTicks > sourceRegen) {
+            optimalWorkParts--;
+            break;
+        }
+        optimalWorkParts++;
+    }
     var ans = [CARRY, MOVE, WORK, WORK];
+    var workParts = 2;
     curEnergy -= 300;
-    while (curEnergy >= 100) {
+    while (curEnergy >= 100 && workParts < optimalWorkParts) {
         ans.push(WORK);
         curEnergy -= 100;
     }
     return ans;
 }
 function bestEmergencyCreep(curEnergy) {
-    return assembleByChunks(curEnergy, [WORK, MOVE, CARRY]);
+    return assembleByChunks(curEnergy, [WORK, MOVE, CARRY], 800);
 }
-function assembleByChunks(curEnergy, chunk) {
+function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
     var e_2, _a;
     var ans = [];
     var universalPartCost = 0;
@@ -218,9 +237,11 @@ function assembleByChunks(curEnergy, chunk) {
         }
         finally { if (e_2) throw e_2.error; }
     }
-    while (curEnergy >= universalPartCost) {
+    var spentEnergy = 0;
+    while (curEnergy >= universalPartCost && spentEnergy < maxEnergyAllowed) {
         ans.push.apply(ans, chunk);
         curEnergy -= universalPartCost;
+        spentEnergy += universalPartCost;
     }
     return ans;
 }

@@ -17,7 +17,7 @@ module.exports = function() {
         let curEnergy = this.room.energyAvailable;
         let maxEnergy = this.room.energyCapacityAvailable;
 
-        if (curEnergy < 0.9 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
+        if (curEnergy < 0.7 * maxEnergy && hasProduction(this) && hasCarrying(this)) {
             console.log("Not spawning cheap creep");
             return;
         }
@@ -52,29 +52,36 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     let upgraders = U.getRoleSpecificCreeps(spawn.room, 'upgrader');
     let builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
     let harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
+    let longDistanceHarvesters = U.getRoleSpecificCreeps(spawn.room, 'longDistanceHarvester');
 
     let quantities: Map<CreepRoles, number> = new Map();
+    let roles: Pair<number, CreepRoles>[] = [];
+
     quantities.set('miner', miners);
     quantities.set('upgrader', upgraders);
     quantities.set('builder', builders);
     quantities.set('harvester', harvesters);
     quantities.set('carrier', carriers);
-    let roles: Pair<number, CreepRoles>[] = [];
+    quantities.set('longDistanceHarvester', longDistanceHarvesters);
     roles.push({first: findHarvesterNeedness(spawn, quantities), second: 'harvester'});
     roles.push({first: findCarrierNeedness(spawn, quantities), second: 'carrier'});
     roles.push({first: findUpgraderNeedness(spawn, quantities), second: 'upgrader'});
     roles.push({first: findMinerNeedness(spawn, quantities), second: 'miner'});
     roles.push({first: findBuilderNeedness(spawn, quantities), second: 'builder'});
+    roles.push({first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester'});
     roles.sort((a: Pair<number, string>, b: Pair<number, string>) => {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
 
-    if (roles[0].first <= COOL && U.getRoleSpecificCreepsInGame('longDistanceHarvester') < 3) {
-        return 'longDistanceHarvester';
-    }
-
-    return roles[0].first > COOL ? roles[0].second : null;
+    return roles[0].first >= COOL ? roles[0].second : null;
 }
+
+// function appendRole(roleName: CreepRoles, needness: number, roles: Pair<number, string>[], quantities: Map<CreepRoles, number>): void {
+//     roles.push({first: needness, second: roleName });
+//
+//     let withThatRole = U.getRoleSpecificCreeps(spawn.room, roleName);
+//     quantities.set(roleName, withThatRole);
+// }
 
 function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
     let containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
@@ -89,7 +96,7 @@ function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, nu
         return DYING;
     }
     if (diff == 1) {
-        return WORRYING;
+        return PAINFUL;
     }
     return FREEZE;
 }
@@ -99,10 +106,7 @@ function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
     if (diff > 1) {
         return DYING;
     }               
-    if (diff == 1) {
-        return PAINFUL;
-    }
-    if (diff == 0) {
+    if (diff == 1 && quantities.get('miner') == 1) {
         return WORRYING;
     }
     return FREEZE;
@@ -152,6 +156,13 @@ function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
     return FREEZE;
 }
 
+function findLongDistanceHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (quantities.get('longDistanceHarvester') >= 3) {
+        return FREEZE;
+    }
+    return COOL;
+}
+
 function trySpawn(spawn: StructureSpawn, roleName: CreepRoles): number {
     if (spawn.spawning) {
         return ERR_BUSY;
@@ -186,7 +197,7 @@ function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartCon
 }
 
 function assembleCarrier(curEnergy: number): BodyPartConstant[] {
-    return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE]);
+    return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE], 750);
 }
 
 function assembleLongDistanceHarvester(curEnergy: number): BodyPartConstant[] {
@@ -194,9 +205,26 @@ function assembleLongDistanceHarvester(curEnergy: number): BodyPartConstant[] {
 }
 
 function assembleMiner(curEnergy: number): BodyPartConstant[] {
+    let sourceCapacity = 3000;
+    let sourceRegen = 300;
+    let minerCapacity = 50;
+    let optimalWorkParts = 2;
+    while (true) {
+        let miningStreak = Math.floor(minerCapacity / optimalWorkParts);
+        let cycleLength =  miningStreak + 1;
+        let energyPerCycle = miningStreak * optimalWorkParts;
+        let drainTicks = sourceCapacity / energyPerCycle * cycleLength;
+        if (drainTicks > sourceRegen) {
+            optimalWorkParts--;
+            break;
+        }
+        optimalWorkParts++;
+    }
+
     let ans: BodyPartConstant[] = [CARRY, MOVE, WORK, WORK];
+    let workParts = 2;
     curEnergy -= 300;
-    while (curEnergy >= 100) {
+    while (curEnergy >= 100 && workParts < optimalWorkParts) {
         ans.push(WORK);
         curEnergy -= 100;
     }
@@ -204,18 +232,20 @@ function assembleMiner(curEnergy: number): BodyPartConstant[] {
 }
 
 function bestEmergencyCreep(curEnergy: number): BodyPartConstant[] {
-    return assembleByChunks(curEnergy, [WORK, MOVE, CARRY]);
+    return assembleByChunks(curEnergy, [WORK, MOVE, CARRY], 800);
 }
 
-function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[]): BodyPartConstant[] {
+function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnergyAllowed ?: number): BodyPartConstant[] {
     let ans: BodyPartConstant[] = [];
     let universalPartCost = 0;
     for (let part of chunk) {
         universalPartCost += config.bodyPartCost.get(part);
     }
-    while (curEnergy >= universalPartCost) {
+    let spentEnergy = 0;
+    while (curEnergy >= universalPartCost && spentEnergy < maxEnergyAllowed) {
         ans.push.apply(ans, chunk);
         curEnergy -= universalPartCost;
+        spentEnergy += universalPartCost;
     }
     return ans;
 }
