@@ -144,7 +144,7 @@ function findBuilderNeedness(spawn, quantities) {
         finally { if (e_1) throw e_1.error; }
     }
     var req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
-    var diff = Math.max(0, quantities.get('builder') - req);
+    var diff = Math.min(2, req) - quantities.get('builder');
     if (diff >= 2) {
         return PAINFUL;
     }

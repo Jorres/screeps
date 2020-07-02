@@ -1,5 +1,6 @@
 var config = require('config');
 var U = require('U');
+var storageSelector = require('storageSelector');
 var roleHarvester = {
     run: function (creep, newState) {
         if (newState) {

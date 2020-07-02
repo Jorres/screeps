@@ -120,7 +120,7 @@ var storageSelector = {
                 creep.memory.sourceDestId = null;
             }
             else {
-                return;
+                return creep.memory.sourceDestId;
             }
         }
         var availSources = creep.room.find(FIND_SOURCES, {

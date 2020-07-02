@@ -88,16 +88,17 @@ var storageSelector = {
                 return other.memory.role == 'miner';
             }
         };
-        
         let miners = creep.room.find(FIND_MY_CREEPS, minerFilter);
+
         if (creep.memory.sourceDestId) {
             let busy = U.nextToAnyOf(U.getById(creep.memory.sourceDestId).pos, miners);
             if (busy)  {
                 creep.memory.sourceDestId = null;
             } else {
-                return;
+                return creep.memory.sourceDestId;
             }
         }
+
         let availSources = creep.room.find(FIND_SOURCES, {
             filter: (source: Source) => {
                 return !U.nextToAnyOf(source.pos, miners);

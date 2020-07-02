@@ -142,7 +142,7 @@ function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
     }
 
     let req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
-    let diff = Math.max(0, quantities.get('builder') - req);
+    let diff = Math.min(2, req) - quantities.get('builder');
     if (diff >= 2) {
         return PAINFUL;
     }
