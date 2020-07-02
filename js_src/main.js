@@ -58,7 +58,7 @@ module.exports.loop = function () {
                 architectGeneral.run(spawn);
             }
             if (U.oncePerTicks(statistics.intervalBetweenMeasurement)) {
-                statistics.run();
+                statistics.run(spawn.room);
             }
             visited.add(spawn.room.name);
         }
