@@ -111,10 +111,10 @@ function findCarrierNeedness(spawn, quantities) {
 function findUpgraderNeedness(spawn, quantities) {
     if (statistics.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
-            return FREEZE;
+            return WORRYING;
         }
         else {
-            return PAINFUL;
+            return FREEZE;
         }
     }
     if (quantities.get('upgrader') == 0) {

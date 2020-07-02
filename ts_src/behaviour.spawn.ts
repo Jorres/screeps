@@ -125,9 +125,9 @@ function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
 function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
     if (statistics.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
-            return FREEZE;
+            return WORRYING;
         } else {
-            return PAINFUL;
+            return FREEZE;
         }
     }
 
