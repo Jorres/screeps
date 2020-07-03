@@ -90,11 +90,11 @@ function findMinerNeedness(spawn, quantities) {
 }
 function findCarrierNeedness(spawn, quantities) {
     if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
-        if (statisticallyEnoughCarriers()) {
-            statistics.miningContainersAvailableEnergy.dropData();
+        if (statisticallyEnoughCarriers(spawn.room)) {
             return FREEZE;
         }
         else {
+            statistics.miningContainersAvailableEnergy.dropData();
             return DYING;
         }
     }
@@ -261,7 +261,7 @@ function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
     }
     return ans;
 }
-function statisticallyEnoughCarriers() {
+function statisticallyEnoughCarriers(room) {
     var containersEnergy = statistics.miningContainersAvailableEnergy;
     var n = containersEnergy.getDataLength();
     var avrg = 0;
@@ -269,7 +269,7 @@ function statisticallyEnoughCarriers() {
         avrg += containersEnergy.getAt(i);
     }
     avrg /= n;
-    var totalMinerContainersCapacity = U.minerContainers.length * 1000;
+    var totalMinerContainersCapacity = U.minerContainers(room).length * 1000;
     return avrg <= 0.75 * totalMinerContainersCapacity;
 }
 function isTherePotentialEnergy() {

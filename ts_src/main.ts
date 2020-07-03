@@ -2,6 +2,7 @@
 require('initialize')();
 // @ts-ignore
 require('behaviour.spawn')();
+
 // @ts-ignore
 var roleUpgrader = require('role.upgrader');
 // @ts-ignore

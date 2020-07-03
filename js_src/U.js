@@ -159,9 +159,9 @@ var U = {
     filterBy: function (neededType) {
         return { filter: { structureType: neededType } };
     },
-    minerContainers: function (creep) {
-        var sources = creep.room.find(FIND_SOURCES);
-        return creep.room.find(FIND_STRUCTURES, {
+    minerContainers: function (room) {
+        var sources = room.find(FIND_SOURCES);
+        return room.find(FIND_STRUCTURES, {
             filter: function (structure) {
                 return structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources);
             }

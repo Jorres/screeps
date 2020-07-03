@@ -120,9 +120,9 @@ var U = {
         // @ts-ignore
         return { filter: { structureType: neededType } };
     },
-    minerContainers: function(creep: Creep): StructureContainer[] {
-        let sources: Source[] = creep.room.find(FIND_SOURCES);
-        return (creep.room.find(FIND_STRUCTURES, {
+    minerContainers: function(room: Room): StructureContainer[] {
+        let sources: Source[] = room.find(FIND_SOURCES);
+        return (room.find(FIND_STRUCTURES, {
             filter: (structure: AnyStructure) => {
                 return structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources);
             }

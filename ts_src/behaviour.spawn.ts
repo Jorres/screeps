@@ -105,10 +105,10 @@ function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, nu
 
 function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
     if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
-        if (statisticallyEnoughCarriers()) {
-            statistics.miningContainersAvailableEnergy.dropData();
+        if (statisticallyEnoughCarriers(spawn.room)) {
             return FREEZE;
         } else {
+            statistics.miningContainersAvailableEnergy.dropData();
             return DYING;
         }
     }
@@ -269,7 +269,7 @@ function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnerg
     return ans;
 }
 
-function statisticallyEnoughCarriers(): boolean {
+function statisticallyEnoughCarriers(room: Room): boolean {
     let containersEnergy: metricArray<number> = statistics.miningContainersAvailableEnergy;
     let n = containersEnergy.getDataLength();
 
@@ -279,7 +279,7 @@ function statisticallyEnoughCarriers(): boolean {
     }
     avrg /= n;
 
-    let totalMinerContainersCapacity = U.minerContainers.length * 1000;
+    let totalMinerContainersCapacity = U.minerContainers(room).length * 1000;
     return avrg <= 0.75 * totalMinerContainersCapacity;
 }
 
