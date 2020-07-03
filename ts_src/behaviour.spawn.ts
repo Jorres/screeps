@@ -64,13 +64,13 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     quantities.set('builder', builders);
     quantities.set('harvester', harvesters);
     quantities.set('carrier', carriers);
-    quantities.set('longDistanceHarvester', longDistanceHarvesters);
+    // quantities.set('longDistanceHarvester', longDistanceHarvesters);
     roles.push({first: findHarvesterNeedness(spawn, quantities), second: 'harvester'});
     roles.push({first: findCarrierNeedness(spawn, quantities), second: 'carrier'});
     roles.push({first: findUpgraderNeedness(spawn, quantities), second: 'upgrader'});
     roles.push({first: findMinerNeedness(spawn, quantities), second: 'miner'});
     roles.push({first: findBuilderNeedness(spawn, quantities), second: 'builder'});
-    roles.push({first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester'});
+    // roles.push({first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester'});
     roles.sort((a: Pair<number, string>, b: Pair<number, string>) => {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
@@ -104,40 +104,44 @@ function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, nu
 }
 
 function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
-    if (statistics.isEnoughStatistics()) {
+    if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
         if (statisticallyEnoughCarriers()) {
+            statistics.miningContainersAvailableEnergy.dropData();
             return FREEZE;
         } else {
             return DYING;
         }
     }
-
-    let diff = quantities.get('miner') - quantities.get('carrier');
-    if (diff > 1) {
-        return DYING;
-    }               
-    if (diff == 1 && quantities.get('miner') == 1) {
-        return WORRYING;
-    }
     return FREEZE;
+
+    // let diff = quantities.get('miner') - quantities.get('carrier');
+    // if (diff > 1) {
+    //     return DYING;
+    // }               
+    // if (diff == 1 && quantities.get('miner') == 1) {
+    //     return WORRYING;
+    // }
+    // return FREEZE;
 }
 
 function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
-    if (statistics.isEnoughStatistics()) {
+    if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
+            statistics.freeEnergy.dropData();
             return WORRYING;
         } else {
             return FREEZE;
         }
     }
+    return FREEZE;
 
-    if (quantities.get('upgrader') == 0) {
-        return PAINFUL;
-    }
-    if (quantities.get('upgrader') <= 1) {
-        return WORRYING;
-    }
-    return COOL;
+    // if (quantities.get('upgrader') == 0) {
+    //     return PAINFUL;
+    // }
+    // if (quantities.get('upgrader') <= 1) {
+    //     return WORRYING;
+    // }
+    // return COOL;
 }
 
 function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
@@ -270,9 +274,10 @@ function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnerg
 
 function statisticallyEnoughCarriers(): boolean {
     let avrg: number = 0;
-    let n = statistics.getDataLength();
+    let containersEnergy: metricArray<number> = statistics.miningContainersAvailableEnergy;
+    let n = containersEnergy.getDataLength();
     for (let i = 0; i < n; i++) {
-        avrg += statistics.getAt(statistics.miningContainersAvailableEnergy, i);
+        avrg += containersEnergy.getAt(i);
     }
     avrg /= n;
     return avrg <= 1500;
@@ -281,10 +286,11 @@ function statisticallyEnoughCarriers(): boolean {
 function isTherePotentialEnergy(): boolean {
     let avrg: number = 0;
     let diff: number = 0;
-    let n = statistics.getDataLength();
+    let freeEnergy: metricArray<number> = statistics.freeEnergy;
+    let n = freeEnergy.getDataLength();
     for (let i = 1; i < n; i++) {
-        avrg += statistics.getAt(statistics.freeEnergy, i);
-        diff += statistics.getAt(statistics.freeEnergy, i) - statistics.getAt(statistics.freeEnergy, i - 1);
+        avrg += freeEnergy.getAt(i);
+        diff += freeEnergy.getAt(i) - freeEnergy.getAt(i - 1);
     }
     avrg /= n;
 

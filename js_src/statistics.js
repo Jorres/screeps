@@ -10,33 +10,43 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var U = require('U');
+function createMetricArray(maxSize) {
+    return {
+        data: [],
+        next: 0,
+        append: function (val) {
+            if (this.data.length < maxSize) {
+                this.data.push(val);
+            }
+            else {
+                this.data[this.next] = val;
+                this.next = (this.next + 1) % maxSize;
+            }
+        },
+        getAt: function (i) {
+            return this.data[(this.next + i) % maxSize];
+        },
+        getDataLength: function () {
+            return this.data.length;
+        },
+        isEnoughStatistics: function () {
+            return this.data.length > 30;
+        },
+        dropData: function () {
+            this.next = 0;
+            this.data = [];
+        }
+    };
+}
+;
+var maxAllowedSize = 50;
 var statistics = {
-    next: 0,
-    maxAllowedSize: 50,
     intervalBetweenMeasurement: 2,
     run: function (room) {
         this.measureMiningContainers(room);
-        console.log("running statistics... " + this.getDataLength());
+        this.measureFreeEnergy(room);
     },
-    append: function (array, val) {
-        if (array.length < this.maxAllowedSize) {
-            array.push(val);
-        }
-        else {
-            array[this.next] = val;
-            this.next = (this.next + 1) % this.maxAllowedSize;
-        }
-    },
-    getAt: function (array, i) {
-        return array[(this.next + i) % this.maxAllowedSize];
-    },
-    getDataLength: function () {
-        return this.miningContainersAvailableEnergy.length;
-    },
-    isEnoughStatistics: function () {
-        return this.getDataLength() > 30;
-    },
-    miningContainersAvailableEnergy: [],
+    miningContainersAvailableEnergy: createMetricArray(maxAllowedSize),
     measureMiningContainers: function (room) {
         var e_1, _a;
         var sources = room.find(FIND_SOURCES);
@@ -59,16 +69,16 @@ var statistics = {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        this.append(this.miningContainersAvailableEnergy, totalEnergy);
+        this.miningContainersAvailableEnergy.append(totalEnergy);
     },
-    freeEnergy: [],
+    freeEnergy: createMetricArray(maxAllowedSize),
     measureFreeEnergy: function (room) {
         var e_2, _a;
         var sources = room.find(FIND_SOURCES);
         var containers = room.find(FIND_STRUCTURES, {
             filter: function (structure) {
-                return structure.structureType == STRUCTURE_CONTAINER && !U.nextToAnyOf(structure.pos, sources) ||
-                    structure.structureType == STRUCTURE_STORAGE;
+                return (structure.structureType == STRUCTURE_CONTAINER && !U.nextToAnyOf(structure.pos, sources))
+                    || structure.structureType == STRUCTURE_STORAGE;
             }
         });
         var totalEnergy = 0;
@@ -85,7 +95,7 @@ var statistics = {
             }
             finally { if (e_2) throw e_2.error; }
         }
-        this.append(this.freeEnergy, totalEnergy);
+        this.freeEnergy.append(totalEnergy);
     }
 };
 module.exports = statistics;

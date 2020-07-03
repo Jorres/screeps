@@ -62,13 +62,11 @@ function decideWhoIsNeeded(spawn) {
     quantities.set('builder', builders);
     quantities.set('harvester', harvesters);
     quantities.set('carrier', carriers);
-    quantities.set('longDistanceHarvester', longDistanceHarvesters);
     roles.push({ first: findHarvesterNeedness(spawn, quantities), second: 'harvester' });
     roles.push({ first: findCarrierNeedness(spawn, quantities), second: 'carrier' });
     roles.push({ first: findUpgraderNeedness(spawn, quantities), second: 'upgrader' });
     roles.push({ first: findMinerNeedness(spawn, quantities), second: 'miner' });
     roles.push({ first: findBuilderNeedness(spawn, quantities), second: 'builder' });
-    roles.push({ first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester' });
     roles.sort(function (a, b) {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
@@ -91,39 +89,28 @@ function findMinerNeedness(spawn, quantities) {
     return FREEZE;
 }
 function findCarrierNeedness(spawn, quantities) {
-    if (statistics.isEnoughStatistics()) {
+    if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
         if (statisticallyEnoughCarriers()) {
+            statistics.miningContainersAvailableEnergy.dropData();
             return FREEZE;
         }
         else {
             return DYING;
         }
     }
-    var diff = quantities.get('miner') - quantities.get('carrier');
-    if (diff > 1) {
-        return DYING;
-    }
-    if (diff == 1 && quantities.get('miner') == 1) {
-        return WORRYING;
-    }
     return FREEZE;
 }
 function findUpgraderNeedness(spawn, quantities) {
-    if (statistics.isEnoughStatistics()) {
+    if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
+            statistics.freeEnergy.dropData();
             return WORRYING;
         }
         else {
             return FREEZE;
         }
     }
-    if (quantities.get('upgrader') == 0) {
-        return PAINFUL;
-    }
-    if (quantities.get('upgrader') <= 1) {
-        return WORRYING;
-    }
-    return COOL;
+    return FREEZE;
 }
 function findHarvesterNeedness(spawn, quantities) {
     var miners = quantities.get('miner');
@@ -264,9 +251,10 @@ function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
 }
 function statisticallyEnoughCarriers() {
     var avrg = 0;
-    var n = statistics.getDataLength();
+    var containersEnergy = statistics.miningContainersAvailableEnergy;
+    var n = containersEnergy.getDataLength();
     for (var i = 0; i < n; i++) {
-        avrg += statistics.getAt(statistics.miningContainersAvailableEnergy, i);
+        avrg += containersEnergy.getAt(i);
     }
     avrg /= n;
     return avrg <= 1500;
@@ -274,10 +262,11 @@ function statisticallyEnoughCarriers() {
 function isTherePotentialEnergy() {
     var avrg = 0;
     var diff = 0;
-    var n = statistics.getDataLength();
+    var freeEnergy = statistics.freeEnergy;
+    var n = freeEnergy.getDataLength();
     for (var i = 1; i < n; i++) {
-        avrg += statistics.getAt(statistics.freeEnergy, i);
-        diff += statistics.getAt(statistics.freeEnergy, i) - statistics.getAt(statistics.freeEnergy, i - 1);
+        avrg += freeEnergy.getAt(i);
+        diff += freeEnergy.getAt(i) - freeEnergy.getAt(i - 1);
     }
     avrg /= n;
     return avrg >= 1500 && diff > 0;
