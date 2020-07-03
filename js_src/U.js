@@ -69,6 +69,9 @@ var U = {
     moveAndWithdraw: function (creep, target, resourceType) {
         return this.defaultAction(creep, target, function () { return creep.withdraw(target, resourceType); });
     },
+    moveAndPickup: function (creep, target) {
+        return this.defaultAction(creep, target, function () { return creep.pickup(target); });
+    },
     defaultAction: function (creep, target, action) {
         var actionRes = action();
         var moveRes = -1;

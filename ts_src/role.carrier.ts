@@ -50,6 +50,16 @@ var roleCarrier: RoleCarrier = {
 
     // carryingFromId
     tryReselectPickup: function(creep: Creep): void {
+        let dropped: any[] = creep.room.find(FIND_DROPPED_RESOURCES);
+        for (let drop of dropped) {
+            let maxAllowed = drop.amount / 100 * 3;
+            if (U.manhattanDist(creep.pos, drop.pos) <= maxAllowed) {
+                creep.memory.pickingResource = true;
+                return drop.id;
+            }
+        }
+
+        creep.memory.pickingResource = false;
         let oldId = creep.memory.carryingFromId;
         if (oldId && U.getById(oldId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
             return;
@@ -66,10 +76,17 @@ var roleCarrier: RoleCarrier = {
         } else {
             this.tryReselectPickup(creep);
             if (creep.memory.carryingFromId) {
-                let err = U.moveAndWithdraw(creep, U.getById(creep.memory.carryingFromId), RESOURCE_ENERGY);
+                let err;
+                if (creep.memory.pickingResource) {
+                    err = U.moveAndPickup(creep, U.getById(creep.memory.carryingFromId));
+                } else {
+                    err = U.moveAndWithdraw(creep, U.getById(creep.memory.carryingFromId), RESOURCE_ENERGY);
+                }
+
                 if (err == OK) {                
                     this.run(creep, 'carryingTo');
                     creep.memory.carryingFromId = null;
+                    creep.memory.pickingResource = false;
                 } else if (err == ERR_NOT_ENOUGH_RESOURCES) {
                     throw "should not happen, carrier has not enough resources";
                 }

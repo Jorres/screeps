@@ -50,6 +50,9 @@ var U = {
     moveAndWithdraw: function(creep: Creep, target: PossibleEnergyContainer, resourceType: ResourceConstant) {
         return this.defaultAction(creep, target, () => creep.withdraw(target, resourceType));
     },
+    moveAndPickup: function(creep: Creep, target: Resource) {
+        return this.defaultAction(creep, target, () => creep.pickup(target));
+    },
     defaultAction: function(creep: Creep, target: Structure | StructureController | Source | Mineral | Deposit, action: any) {
         let actionRes = action();
         let moveRes = -1;
