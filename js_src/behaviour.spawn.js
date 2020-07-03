@@ -217,10 +217,12 @@ function assembleMiner(curEnergy) {
         var energyPerCycle = miningStreak * optimalWorkParts;
         var drainTicks = sourceCapacity / energyPerCycle * cycleLength;
         if (drainTicks > sourceRegen) {
+            optimalWorkParts++;
+        }
+        else {
             optimalWorkParts--;
             break;
         }
-        optimalWorkParts++;
     }
     var ans = [CARRY, MOVE, WORK, WORK];
     var workParts = 2;

@@ -226,16 +226,18 @@ function assembleMiner(curEnergy: number): BodyPartConstant[] {
     let sourceRegen = 300;
     let minerCapacity = 50;
     let optimalWorkParts = 2;
+
     while (true) {
         let miningStreak = Math.floor(minerCapacity / optimalWorkParts);
         let cycleLength =  miningStreak + 1;
         let energyPerCycle = miningStreak * optimalWorkParts;
-        let drainTicks = sourceCapacity / energyPerCycle * cycleLength;
+        let drainTicks = sourceCapacity / energyPerCycle * cycleLength; 
         if (drainTicks > sourceRegen) {
+            optimalWorkParts++;
+        } else {
             optimalWorkParts--;
             break;
         }
-        optimalWorkParts++;
     }
 
     let ans: BodyPartConstant[] = [CARRY, MOVE, WORK, WORK];
