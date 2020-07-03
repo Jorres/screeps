@@ -98,9 +98,9 @@ var roleCarrier = {
                     err = U.moveAndWithdraw(creep, U.getById(creep.memory.carryingFromId), RESOURCE_ENERGY);
                 }
                 if (err == OK) {
-                    this.run(creep, 'carryingTo');
                     creep.memory.carryingFromId = null;
                     creep.memory.pickingResource = false;
+                    this.run(creep, 'carryingTo');
                 }
                 else if (err == ERR_NOT_ENOUGH_RESOURCES) {
                     throw "should not happen, carrier has not enough resources";
