@@ -63,7 +63,8 @@ var roleCarrier = {
                 var maxAllowed = drop.amount / 100 * 3;
                 if (U.manhattanDist(creep.pos, drop.pos) <= maxAllowed) {
                     creep.memory.pickingResource = true;
-                    return drop.id;
+                    creep.memory.carryingFromId = drop.id;
+                    return;
                 }
             }
         }
