@@ -1,10 +1,7 @@
 var config = {
-    roomName: function () {
-        return "W37N36";
-    },
-    reusePath: function () {
-        return 1;
-    },
+    roomName: "W37N36",
+    distantRoomToMine: "W38N36",
+    reusePath: 1,
     bodyPartCost: new Map([
         [WORK, 100],
         [MOVE, 50],

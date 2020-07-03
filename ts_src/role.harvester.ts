@@ -1,6 +1,4 @@
 // @ts-ignore
-var config  = require('config');
-// @ts-ignore
 var U = require('U');
 // @ts-ignore
 var storageSelector = require('storageSelector');

@@ -1,7 +1,6 @@
 var U = require('U');
 var data = require('data');
 var storageSelector = require('storageSelector');
-var config = require('config');
 var roleCarrier = {
     run: function (creep, newState) {
         if (newState) {

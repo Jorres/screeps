@@ -101,6 +101,9 @@ function findCarrierNeedness(spawn, quantities) {
     return FREEZE;
 }
 function findUpgraderNeedness(spawn, quantities) {
+    if (quantities.get('upgrader') < 1) {
+        return PAINFUL;
+    }
     if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
             statistics.freeEnergy.dropData();
@@ -129,28 +132,33 @@ function findHarvesterNeedness(spawn, quantities) {
 }
 function findBuilderNeedness(spawn, quantities) {
     var e_1, _a;
-    var sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
-    var buildingScore = 0;
-    try {
-        for (var sites_1 = __values(sites), sites_1_1 = sites_1.next(); !sites_1_1.done; sites_1_1 = sites_1.next()) {
-            var site = sites_1_1.value;
-            buildingScore += site.progressTotal - site.progress;
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
+    var freeEnergy = statistics.freeEnergy;
+    var allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy();
+    if (allowedByResources) {
+        var sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        var buildingScore = 0;
         try {
-            if (sites_1_1 && !sites_1_1.done && (_a = sites_1["return"])) _a.call(sites_1);
+            for (var sites_1 = __values(sites), sites_1_1 = sites_1.next(); !sites_1_1.done; sites_1_1 = sites_1.next()) {
+                var site = sites_1_1.value;
+                buildingScore += site.progressTotal - site.progress;
+            }
         }
-        finally { if (e_1) throw e_1.error; }
-    }
-    var req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
-    var diff = Math.min(2, req) - quantities.get('builder');
-    if (diff >= 2) {
-        return PAINFUL;
-    }
-    if (diff == 1) {
-        return WORRYING;
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (sites_1_1 && !sites_1_1.done && (_a = sites_1["return"])) _a.call(sites_1);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        var req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
+        var diff = Math.min(2, req) - quantities.get('builder');
+        if (diff >= 1) {
+            freeEnergy.dropData();
+            if (diff >= 2) {
+                return PAINFUL;
+            }
+            return WORRYING;
+        }
     }
     return FREEZE;
 }
@@ -172,9 +180,11 @@ function trySpawn(spawn, roleName) {
     };
     if (roleName == 'longDistanceHarvester') {
         memoryObject.homeRoom = spawn.room;
-        memoryObject.targetRoomName = 'W38N36';
+        memoryObject.targetRoomName = config.distantRoomToMine;
     }
-    return spawn.spawnCreep(getCreepConfiguration(roleName, curEnergy), newName, { memory: memoryObject });
+    var boundEnergy = Math.min(curEnergy, 800);
+    var creepConfiguration = getCreepConfiguration(roleName, boundEnergy);
+    return spawn.spawnCreep(creepConfiguration, newName, { memory: memoryObject });
 }
 function getCreepConfiguration(roleName, curEnergy) {
     if (roleName == 'miner') {
@@ -250,24 +260,24 @@ function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
     return ans;
 }
 function statisticallyEnoughCarriers() {
-    var avrg = 0;
     var containersEnergy = statistics.miningContainersAvailableEnergy;
     var n = containersEnergy.getDataLength();
+    var avrg = 0;
     for (var i = 0; i < n; i++) {
         avrg += containersEnergy.getAt(i);
     }
     avrg /= n;
-    return avrg <= 1500;
+    var totalMinerContainersCapacity = U.minerContainers.length * 1000;
+    return avrg <= 0.75 * totalMinerContainersCapacity;
 }
 function isTherePotentialEnergy() {
-    var avrg = 0;
-    var diff = 0;
     var freeEnergy = statistics.freeEnergy;
     var n = freeEnergy.getDataLength();
+    var avrg = 0;
     for (var i = 1; i < n; i++) {
         avrg += freeEnergy.getAt(i);
-        diff += freeEnergy.getAt(i) - freeEnergy.getAt(i - 1);
     }
     avrg /= n;
-    return avrg >= 1500 && diff > 0;
+    var diff = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
+    return avrg >= 1500 && diff > 100;
 }

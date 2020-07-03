@@ -10,7 +10,6 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 var data = require('data');
-var config = require('config');
 var U = require('U');
 var architectContainers = {
     run: function (spawn) {

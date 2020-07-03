@@ -1,10 +1,16 @@
-var config = {
-    roomName: function(): string {
-        return "W37N36"
-    },
-    reusePath: function(): number {
-        return 1; // re-plot every second route
-    },
+type Config = {
+    roomName: string;
+    distantRoomToMine: string;
+    reusePath: number;
+    bodyPartCost: Map<BodyPartConstant, number>;
+    spawningConfig: {roleName: string}[];
+    refillingOrder: string[];
+};
+
+var config: Config = {
+    roomName: "W37N36",
+    distantRoomToMine: "W38N36",
+    reusePath: 1,
     bodyPartCost: new Map([
         [WORK, 100],
         [MOVE, 50],
@@ -29,12 +35,6 @@ var config = {
         STRUCTURE_CONTAINER, 
         STRUCTURE_STORAGE
     ],
-    // simpleHarvestersAmount: 3,
-    // emergencySpawningConfig: [
-    //     {roleName: 'simple.harvester', maxAmount: 3},
-    //     {roleName: 'upgrader', maxAmount: 3},
-    //     {roleName: 'builder', maxAmount: 3}
-    // ]
 };
 
 // @ts-ignore

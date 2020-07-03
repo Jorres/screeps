@@ -3,7 +3,7 @@ var data = require('data');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
-var config = require('config');
+var config: Config = require('config');
 var storageSelector = {
     selectStorageId: function(creep: Creep): string {
         let role: string = creep.memory.role;

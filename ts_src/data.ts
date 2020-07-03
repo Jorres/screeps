@@ -1,5 +1,5 @@
 // @ts-ignore
-var config = require('config');
+var config: Config = require('config');
 
 type DataStorage = {
     terrainData: Map<string, RoomTerrain>;

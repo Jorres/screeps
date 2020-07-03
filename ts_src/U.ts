@@ -1,5 +1,5 @@
 // @ts-ignore
-var config = require('config');
+var config: Config = require('config');
 
 const structuresWithEnergyStore: Set<StructureConstant> = new Set([
     STRUCTURE_SPAWN, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_TOWER, STRUCTURE_STORAGE
@@ -120,11 +120,19 @@ var U = {
         // @ts-ignore
         return { filter: { structureType: neededType } };
     },
+    minerContainers: function(creep: Creep): StructureContainer[] {
+        let sources: Source[] = creep.room.find(FIND_SOURCES);
+        return (creep.room.find(FIND_STRUCTURES, {
+            filter: (structure: AnyStructure) => {
+                return structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources);
+            }
+        }) as StructureContainer[]);
+    }
 };
 
 function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {
     return creep.moveTo(target, {
-        reusePath: config.reusePath(), 
+        reusePath: config.reusePath, 
         visualizePathStyle: {stroke: '#ffffff'}
     });
 }

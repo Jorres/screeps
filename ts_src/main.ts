@@ -21,13 +21,13 @@ var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
 var data = require('data');
 // @ts-ignore
-var config = require('config');
+var config: Config = require('config');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
 var architectGeneral = require('architect.general');
 // @ts-ignore
-var statistics = require('statistics');
+var statistics: Statistics = require('statistics');
 
 function isTower(structure: Structure): structure is StructureTower {
     return structure.structureType == STRUCTURE_TOWER;

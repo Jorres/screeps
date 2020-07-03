@@ -1,8 +1,6 @@
 // @ts-ignore
 var data = require('data');
 // @ts-ignore
-var config = require('config');
-// @ts-ignore
 var U = require('U');
 
 var architectContainers = {

@@ -1,5 +1,5 @@
 // @ts-ignore
-var config = require('config');
+var config: Config = require('config');
 // @ts-ignore
 var data = require('data');
 // @ts-ignore
@@ -113,18 +113,13 @@ function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
         }
     }
     return FREEZE;
-
-    // let diff = quantities.get('miner') - quantities.get('carrier');
-    // if (diff > 1) {
-    //     return DYING;
-    // }               
-    // if (diff == 1 && quantities.get('miner') == 1) {
-    //     return WORRYING;
-    // }
-    // return FREEZE;
 }
 
 function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (quantities.get('upgrader') < 1) {
+        return PAINFUL;
+    }
+
     if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
             statistics.freeEnergy.dropData();
@@ -134,14 +129,6 @@ function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles,
         }
     }
     return FREEZE;
-
-    // if (quantities.get('upgrader') == 0) {
-    //     return PAINFUL;
-    // }
-    // if (quantities.get('upgrader') <= 1) {
-    //     return WORRYING;
-    // }
-    // return COOL;
 }
 
 function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
@@ -161,19 +148,25 @@ function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles
 }
 
 function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
-    let sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
-    let buildingScore = 0;
-    for (let site of sites) {
-        buildingScore += site.progressTotal - site.progress;
-    }
+    let freeEnergy: metricArray<number> = statistics.freeEnergy;
+    let allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy();
 
-    let req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
-    let diff = Math.min(2, req) - quantities.get('builder');
-    if (diff >= 2) {
-        return PAINFUL;
-    }
-    if (diff == 1) {
-        return WORRYING;
+    if (allowedByResources) {
+        let sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
+        let buildingScore = 0;
+        for (let site of sites) {
+            buildingScore += site.progressTotal - site.progress;
+        }
+        let req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
+        let diff = Math.min(2, req) - quantities.get('builder');
+
+        if (diff >= 1) {
+            freeEnergy.dropData();
+            if (diff >= 2) {
+                return PAINFUL;
+            }
+            return WORRYING;
+        }
     }
     return FREEZE;
 }
@@ -200,10 +193,12 @@ function trySpawn(spawn: StructureSpawn, roleName: CreepRoles): number {
 
     if (roleName == 'longDistanceHarvester') {
         memoryObject.homeRoom = spawn.room;
-        memoryObject.targetRoomName = 'W38N36';
+        memoryObject.targetRoomName = config.distantRoomToMine;
     }
 
-    return spawn.spawnCreep(getCreepConfiguration(roleName, curEnergy), newName, {memory: memoryObject});
+    let boundEnergy = Math.min(curEnergy, 800);
+    let creepConfiguration = getCreepConfiguration(roleName, boundEnergy);
+    return spawn.spawnCreep(creepConfiguration, newName, {memory: memoryObject});
 }
 
 function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartConstant[] {
@@ -273,26 +268,30 @@ function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnerg
 }
 
 function statisticallyEnoughCarriers(): boolean {
-    let avrg: number = 0;
     let containersEnergy: metricArray<number> = statistics.miningContainersAvailableEnergy;
     let n = containersEnergy.getDataLength();
+
+    let avrg: number = 0;
     for (let i = 0; i < n; i++) {
         avrg += containersEnergy.getAt(i);
     }
     avrg /= n;
-    return avrg <= 1500;
+
+    let totalMinerContainersCapacity = U.minerContainers.length * 1000;
+    return avrg <= 0.75 * totalMinerContainersCapacity;
 }
 
 function isTherePotentialEnergy(): boolean {
-    let avrg: number = 0;
-    let diff: number = 0;
     let freeEnergy: metricArray<number> = statistics.freeEnergy;
     let n = freeEnergy.getDataLength();
+
+    let avrg: number = 0;
     for (let i = 1; i < n; i++) {
         avrg += freeEnergy.getAt(i);
-        diff += freeEnergy.getAt(i) - freeEnergy.getAt(i - 1);
     }
     avrg /= n;
 
-    return avrg >= 1500 && diff > 0;
+    let diff: number = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
+
+    return avrg >= 1500 && diff > 100;
 }

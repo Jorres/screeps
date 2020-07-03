@@ -9,7 +9,6 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var config = require('config');
 var data = require('data');
 var U = require('U');
 var roleMiner = {

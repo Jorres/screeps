@@ -1,5 +1,5 @@
 // @ts-ignore
-var config  = require('config');
+var config: Config = require('config');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore

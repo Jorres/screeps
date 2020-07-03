@@ -4,8 +4,6 @@ var U = require('U');
 var data = require('data');
 // @ts-ignore
 var storageSelector = require('storageSelector');
-// @ts-ignore
-var config = require('config');
 
 var roleCarrier: RoleCarrier = {
     run: function(creep: Creep, newState ?: AutomataState): void {
