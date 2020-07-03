@@ -62,7 +62,7 @@ var roleCarrier: RoleCarrier = {
 
         creep.memory.pickingResource = false;
         let oldId = creep.memory.carryingFromId;
-        if (oldId && U.getById(oldId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+        if (oldId && U.getById(oldId) && U.getById(oldId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
             return;
         }
 
