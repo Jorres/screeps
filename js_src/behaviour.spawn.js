@@ -70,7 +70,14 @@ function decideWhoIsNeeded(spawn) {
     roles.sort(function (a, b) {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
-    return roles[0].first >= COOL ? roles[0].second : null;
+    var ans = roles[0].first >= COOL ? roles[0].second : null;
+    if (ans == 'carrier') {
+        statistics.miningContainersAvailableEnergy.dropData();
+    }
+    else if (ans == 'upgrader' || ans == 'builder') {
+        statistics.freeEnergy.dropData();
+    }
+    return ans;
 }
 function findMinerNeedness(spawn, quantities) {
     var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
@@ -94,7 +101,6 @@ function findCarrierNeedness(spawn, quantities) {
             return FREEZE;
         }
         else {
-            statistics.miningContainersAvailableEnergy.dropData();
             return DYING;
         }
     }
@@ -106,7 +112,6 @@ function findUpgraderNeedness(spawn, quantities) {
     }
     if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
-            statistics.freeEnergy.dropData();
             return WORRYING;
         }
         else {
@@ -153,7 +158,6 @@ function findBuilderNeedness(spawn, quantities) {
         var req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
         var diff = Math.min(2, req) - quantities.get('builder');
         if (diff >= 1) {
-            freeEnergy.dropData();
             if (diff >= 2) {
                 return PAINFUL;
             }

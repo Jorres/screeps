@@ -75,7 +75,14 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
 
-    return roles[0].first >= COOL ? roles[0].second : null;
+    let ans: CreepRoles = roles[0].first >= COOL ? roles[0].second : null;
+    if (ans == 'carrier') {
+        statistics.miningContainersAvailableEnergy.dropData();
+    } else if (ans == 'upgrader' || ans == 'builder') {
+        statistics.freeEnergy.dropData();
+    }
+
+    return ans;
 }
 
 // function appendRole(roleName: CreepRoles, needness: number, roles: Pair<number, string>[], quantities: Map<CreepRoles, number>): void {
@@ -108,7 +115,6 @@ function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
         if (statisticallyEnoughCarriers(spawn.room)) {
             return FREEZE;
         } else {
-            statistics.miningContainersAvailableEnergy.dropData();
             return DYING;
         }
     }
@@ -122,7 +128,6 @@ function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles,
 
     if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy()) {
-            statistics.freeEnergy.dropData();
             return WORRYING;
         } else {
             return FREEZE;
@@ -161,7 +166,6 @@ function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
         let diff = Math.min(2, req) - quantities.get('builder');
 
         if (diff >= 1) {
-            freeEnergy.dropData();
             if (diff >= 2) {
                 return PAINFUL;
             }
