@@ -15,6 +15,7 @@ var config = require('config');
 var architectExtensions = {
     run: function (room) {
         var e_1, _a;
+        console.log(room.name);
         console.log("containers extensions running...");
         var controller = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTROLLER))[0];
         var level = controller.level;
@@ -42,7 +43,6 @@ var architectExtensions = {
                     var curPos = new RoomPosition(i, j, room.name);
                     if (checkSuitablePlaceForExtensionPack(room, curPos, obstacles)) {
                         var distToMainPoints = 0;
-                        console.log(i + " " + j);
                         try {
                             for (var spawns_1 = (e_1 = void 0, __values(spawns)), spawns_1_1 = spawns_1.next(); !spawns_1_1.done; spawns_1_1 = spawns_1.next()) {
                                 var spawn = spawns_1_1.value;

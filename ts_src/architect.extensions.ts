@@ -7,6 +7,7 @@ var config: Config = require('config');
 
 var architectExtensions = {
     run: function(room: Room): void {
+        console.log(room.name);
         console.log("containers extensions running...");
         let controller: StructureController = (room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTROLLER))[0] as StructureController);
         let level = controller.level;
@@ -40,7 +41,6 @@ var architectExtensions = {
                     let curPos = new RoomPosition(i, j, room.name);
                     if (checkSuitablePlaceForExtensionPack(room, curPos, obstacles)) {
                         let distToMainPoints = 0;
-                        console.log(i + " " + j);
                         // for (let source of sources) {
                         //     distToMainPoints += PathFinder.search(curPos, source.pos).cost;
                         // }
