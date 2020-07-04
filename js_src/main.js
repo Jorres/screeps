@@ -55,7 +55,7 @@ module.exports.loop = function () {
                 finally { if (e_1) throw e_1.error; }
             }
             if (U.oncePerTicks(5)) {
-                architectGeneral.run(spawn);
+                architectGeneral.run(spawn.room);
             }
             if (U.oncePerTicks(statistics.intervalBetweenMeasurement)) {
                 statistics.run(spawn.room);

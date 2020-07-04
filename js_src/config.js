@@ -3,6 +3,8 @@ var config = {
     distantRoomToMine: "W38N36",
     reusePath: 1,
     lowestToPickup: 800,
+    INFINITY: 1000000000,
+    roomSingleDimension: 50,
     bodyPartCost: new Map([
         [WORK, 100],
         [MOVE, 50],
@@ -26,6 +28,9 @@ var config = {
         STRUCTURE_TOWER,
         STRUCTURE_CONTAINER,
         STRUCTURE_STORAGE
+    ],
+    controllerToExtensions: [
+        0, 0, 5, 10, 20, 30, 40, 50, 60
     ]
 };
 module.exports = config;

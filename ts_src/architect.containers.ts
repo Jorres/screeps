@@ -4,15 +4,15 @@ var data = require('data');
 var U = require('U');
 
 var architectContainers = {
-    run: function(spawn: StructureSpawn): void {
+    run: function(room: Room): void {
         console.log("containers architector running...");
-        let sources = spawn.room.find(FIND_SOURCES);
-        let containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
-        let containerSites = spawn.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER));
+        let sources = room.find(FIND_SOURCES);
+        let containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+        let containerSites = room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER));
 
         for (let source of sources) {
             if (missingContainerNear(source, containers, containerSites)) {
-                let freeTile = findFreeTileNear(spawn.room, source.pos);
+                let freeTile = findFreeTileNear(room, source.pos);
                 if (freeTile) {
                     freeTile.createConstructionSite(STRUCTURE_CONTAINER);
                 }

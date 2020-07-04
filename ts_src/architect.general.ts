@@ -4,12 +4,15 @@ var U = require('U');
 var architectContainers = require('architect.containers');
 // @ts-ignore
 var architectRoads = require('architect.roads');
+// @ts-ignore
+var architectExtensions = require('architect.extensions');
 
 var architectGeneral = {
-    run: function(spawn: StructureSpawn) {
+    run: function(room: Room) {
         console.log("general running...");
-        architectContainers.run(spawn);
-        architectRoads.run(spawn);
+        architectContainers.run(room);
+        architectRoads.run(room);
+        architectExtensions.run(room);
     }
 };
 

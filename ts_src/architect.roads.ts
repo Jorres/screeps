@@ -4,7 +4,7 @@ var data = require('data');
 var U = require('U');
 
 var architectRoads = {
-    run: function(spawn: StructureSpawn): void {
+    run: function(room: Room): void {
         console.log("containers roads running...");
     }
 };

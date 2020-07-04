@@ -12,17 +12,17 @@ var __values = (this && this.__values) || function(o) {
 var data = require('data');
 var U = require('U');
 var architectContainers = {
-    run: function (spawn) {
+    run: function (room) {
         var e_1, _a;
         console.log("containers architector running...");
-        var sources = spawn.room.find(FIND_SOURCES);
-        var containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
-        var containerSites = spawn.room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER));
+        var sources = room.find(FIND_SOURCES);
+        var containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+        var containerSites = room.find(FIND_CONSTRUCTION_SITES, U.filterBy(STRUCTURE_CONTAINER));
         try {
             for (var sources_1 = __values(sources), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
                 var source = sources_1_1.value;
                 if (missingContainerNear(source, containers, containerSites)) {
-                    var freeTile = findFreeTileNear(spawn.room, source.pos);
+                    var freeTile = findFreeTileNear(room, source.pos);
                     if (freeTile) {
                         freeTile.createConstructionSite(STRUCTURE_CONTAINER);
                     }
