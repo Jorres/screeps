@@ -1,3 +1,14 @@
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var data = require('data');
 var U = require('U');
 var config = require('config');
@@ -24,10 +35,11 @@ var architectExtensions = {
                 plainCost: 1,
                 range: 1
             };
+            var obstacles = findObstaclesInTheRoom(room);
             for (var i = 0; i < sz; i++) {
                 for (var j = 0; j < sz; j++) {
                     var curPos = new RoomPosition(i, j, room.name);
-                    if (checkSuitablePlaceForExtensionPack(room, curPos)) {
+                    if (checkSuitablePlaceForExtensionPack(room, curPos, obstacles)) {
                         var distToMainPoints = 0;
                         if (distToMainPoints < bestPosDist) {
                             bestPos = curPos;
@@ -40,30 +52,71 @@ var architectExtensions = {
         }
     }
 };
-function checkSuitablePlaceForExtensionPack(room, pos) {
+function checkSuitablePlaceForExtensionPack(room, pos, obstacles) {
     for (var x = pos.x - 2; x <= pos.x + 2; x++) {
         for (var y = pos.y - 2; y <= pos.y + 2; y++) {
             if (!U.validTile(x, y)) {
                 return false;
             }
+            var diff = Math.abs(x - pos.x) + Math.abs(y - pos.y);
+            if (diff != 4 && obstacles[x][y] > 0) {
+                return false;
+            }
         }
     }
-    var lx = pos.x - 1;
-    var ly = pos.y - 1;
-    var rx = pos.x + 1;
-    var ry = pos.y + 1;
-    var lookStructures = room.lookForAtArea(LOOK_STRUCTURES, ly, lx, ry, rx, true);
-    if (lookStructures.length > 0) {
-        return false;
-    }
-    var lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, ly, lx, ry, rx, true);
-    if (lookSites.length > 0) {
-        return false;
-    }
-    var lookRuins = room.lookForAtArea(LOOK_RUINS, ly, lx, ry, rx, true);
-    if (lookRuins.length > 0) {
-        return false;
-    }
     return true;
+}
+function findObstaclesInTheRoom(room) {
+    var e_1, _a, e_2, _b, e_3, _c;
+    var obstacles = [];
+    for (var i = 0; i < config.roomSingleDimension; i++) {
+        obstacles.push([]);
+        for (var j = 0; j < config.roomSingleDimension; j++) {
+            obstacles[i][j] = 0;
+        }
+    }
+    var sites = room.find(FIND_CONSTRUCTION_SITES);
+    try {
+        for (var sites_1 = __values(sites), sites_1_1 = sites_1.next(); !sites_1_1.done; sites_1_1 = sites_1.next()) {
+            var site = sites_1_1.value;
+            obstacles[site.pos.x][site.pos.y]++;
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (sites_1_1 && !sites_1_1.done && (_a = sites_1["return"])) _a.call(sites_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
+    var ruins = room.find(FIND_RUINS);
+    try {
+        for (var ruins_1 = __values(ruins), ruins_1_1 = ruins_1.next(); !ruins_1_1.done; ruins_1_1 = ruins_1.next()) {
+            var ruin = ruins_1_1.value;
+            obstacles[ruin.pos.x][ruin.pos.y]++;
+        }
+    }
+    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    finally {
+        try {
+            if (ruins_1_1 && !ruins_1_1.done && (_b = ruins_1["return"])) _b.call(ruins_1);
+        }
+        finally { if (e_2) throw e_2.error; }
+    }
+    var structures = room.find(FIND_STRUCTURES);
+    try {
+        for (var structures_1 = __values(structures), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
+            var structure = structures_1_1.value;
+            obstacles[structure.pos.x][structure.pos.y]++;
+        }
+    }
+    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+    finally {
+        try {
+            if (structures_1_1 && !structures_1_1.done && (_c = structures_1["return"])) _c.call(structures_1);
+        }
+        finally { if (e_3) throw e_3.error; }
+    }
+    return obstacles;
 }
 module.exports = architectExtensions;

@@ -33,10 +33,12 @@ var architectExtensions = {
                 range: 1
             };
 
+            let obstacles = findObstaclesInTheRoom(room);
+
             for (let i = 0; i < sz; i++) {
                 for (let j = 0; j < sz; j++) {
                     let curPos = new RoomPosition(i, j, room.name);
-                    if (checkSuitablePlaceForExtensionPack(room, curPos)) {
+                    if (checkSuitablePlaceForExtensionPack(room, curPos, obstacles)) {
                         let distToMainPoints = 0;
                         // for (let source of sources) {
                         //     distToMainPoints += PathFinder.search(curPos, source.pos).cost;
@@ -75,35 +77,46 @@ var architectExtensions = {
     }
 };
 
-function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition): boolean {
+function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition, obstacles: number[][]): boolean {
     for (let x = pos.x - 2; x <= pos.x + 2; x++) {                    //   E E E    E - empty
         for (let y = pos.y - 2; y <= pos.y + 2; y++) {                // E W W W E  W - walkable
             if (!U.validTile(x, y)) {                                // E W W W E
                 return false;                                        // E W W W E
             }                                                        //   E E E    Expected behaviour
-            // let diff = Math.abs(x - pos.x) + Math.abs(y - pos.y);
+            let diff = Math.abs(x - pos.x) + Math.abs(y - pos.y);
             // if (diff != 4 /* && !U.isConstructibleOn(new RoomPosition(i, j, room.name)) */) {  
             //     return false;                                                    
             // }                                                                    
+            if (diff != 4 && obstacles[x][y] > 0) {
+                return false;
+            }
         }
     }
-    let lx = pos.x - 1;
-    let ly = pos.y - 1;
-    let rx = pos.x + 1;
-    let ry = pos.y + 1;
-    const lookStructures = room.lookForAtArea(LOOK_STRUCTURES, ly, lx, ry, rx, true);
-    if (lookStructures.length > 0) {
-        return false;
-    }
-    const lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, ly, lx, ry, rx, true);
-    if (lookSites.length > 0) {
-        return false;
-    }
-    const lookRuins = room.lookForAtArea(LOOK_RUINS, ly, lx, ry, rx, true);
-    if (lookRuins.length > 0) {
-        return false;
-    }
     return true;
+}
+
+function findObstaclesInTheRoom(room: Room): number[][] {
+    let obstacles: number[][] = [];
+    for (let i = 0; i < config.roomSingleDimension; i++) {
+        obstacles.push([]);
+        for (let j = 0; j < config.roomSingleDimension; j++) {
+            obstacles[i][j] = 0;
+        }
+    }
+
+    let sites = room.find(FIND_CONSTRUCTION_SITES);
+    for (let site of sites) {
+        obstacles[site.pos.x][site.pos.y]++;
+    }
+    let ruins = room.find(FIND_RUINS);
+    for (let ruin of ruins) {
+        obstacles[ruin.pos.x][ruin.pos.y]++;
+    }
+    let structures = room.find(FIND_STRUCTURES);
+    for (let structure of structures) {
+        obstacles[structure.pos.x][structure.pos.y]++;
+    }
+    return obstacles;
 }
 
 // @ts-ignore
