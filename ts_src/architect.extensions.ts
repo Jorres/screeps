@@ -97,7 +97,7 @@ function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition, obsta
 }
 
 function findObstaclesInTheRoom(room: Room): number[][] {
-    let obstacles: number[][] = [];
+    let obstacles: number[][];
     for (let i = 0; i < config.roomSingleDimension; i++) {
         obstacles.push([]);
         for (let j = 0; j < config.roomSingleDimension; j++) {

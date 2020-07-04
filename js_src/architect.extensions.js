@@ -83,7 +83,7 @@ function checkSuitablePlaceForExtensionPack(room, pos, obstacles) {
 }
 function findObstaclesInTheRoom(room) {
     var e_2, _a, e_3, _b, e_4, _c;
-    var obstacles = [];
+    var obstacles;
     for (var i = 0; i < config.roomSingleDimension; i++) {
         obstacles.push([]);
         for (var j = 0; j < config.roomSingleDimension; j++) {
