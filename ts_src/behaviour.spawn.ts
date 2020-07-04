@@ -146,6 +146,10 @@ function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles
 }
 
 function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (quantities.get('builder') == 0) {
+        return PAINFUL;
+    }
+
     let freeEnergy: metricArray<number> = statistics.freeEnergy;
     let allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy(spawn.room);
 

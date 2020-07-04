@@ -31,7 +31,6 @@ var MAX_BUCKET_SIZE = 10000;
 module.exports.loop = function () {
     var e_1, _a;
     console.log(Game.time);
-    checkGeneratePixel();
     U.cleanupDeadCreeps();
     var visited = new Set();
     for (var spawnName in Game.spawns) {

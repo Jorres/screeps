@@ -137,6 +137,9 @@ function findHarvesterNeedness(spawn, quantities) {
 }
 function findBuilderNeedness(spawn, quantities) {
     var e_1, _a;
+    if (quantities.get('builder') == 0) {
+        return PAINFUL;
+    }
     var freeEnergy = statistics.freeEnergy;
     var allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy(spawn.room);
     if (allowedByResources) {

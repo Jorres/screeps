@@ -12,7 +12,8 @@ type Config = {
 };
 
 var config: Config = {
-    roomName: "W37N36",
+    // roomName: "W37N36",
+    roomName: "E7N9",
     distantRoomToMine: "W38N36",
     reusePath: 1,
     lowestToPickup: 800,

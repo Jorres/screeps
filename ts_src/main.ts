@@ -39,7 +39,7 @@ const MAX_BUCKET_SIZE = 10000;
 // @ts-ignore
 module.exports.loop = function() {
     console.log(Game.time);
-    checkGeneratePixel();
+    // checkGeneratePixel();
     U.cleanupDeadCreeps();
 
     let visited: Set<string> = new Set();

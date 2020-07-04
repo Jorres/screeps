@@ -18,6 +18,27 @@ var architectContainers = {
                 }
             }
         }
+
+        if (room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_STORAGE)).length == 0) {
+            let storageContainersPresent: boolean = false;
+            for (let container of containers) {
+                if (!U.nextToAnyOf(container.pos, sources)) {
+                    storageContainersPresent = true;
+                    break;
+                }
+            }
+            if (!storageContainersPresent) {
+                let spawn = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_SPAWN))[0];
+                for (let x = spawn.pos.x - 2; x <= spawn.pos.x + 2; x++) {
+                    for (let y = spawn.pos.x - 2; y <= spawn.pos.y + 2; y++) {
+                        if (data.terrainData.get(room.name).get(x, y) != TERRAIN_MASK_WALL) {
+                            new RoomPosition(x, y, room.name).createConstructionSite(STRUCTURE_CONTAINER);
+                            break;
+                        }
+                    }
+                }
+            }
+        };
     }
 };
 
