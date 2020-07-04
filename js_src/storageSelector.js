@@ -18,11 +18,11 @@ var storageSelector = {
         var target;
         if (role == 'carrier') {
             var sources_1 = creep.room.find(FIND_SOURCES);
+            var creepCap_1 = creep.store.getFreeCapacity(RESOURCE_ENERGY);
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: function (structure) {
                     return structure.structureType == STRUCTURE_CONTAINER
-                        && 4 * structure.store.getUsedCapacity(RESOURCE_ENERGY) >
-                            structure.store.getCapacity(RESOURCE_ENERGY)
+                        && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= creepCap_1
                         && U.nextToAnyOf(structure.pos, sources_1);
                 }
             });
@@ -30,8 +30,11 @@ var storageSelector = {
         else if (/upgrader|builder/.test(role)) {
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: function (structure) {
-                    return (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 800) ||
-                        (structure.structureType == STRUCTURE_STORAGE && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 200);
+                    var goodContainer = structure.structureType == STRUCTURE_CONTAINER &&
+                        structure.store.getUsedCapacity(RESOURCE_ENERGY) >= config.lowestToPickup;
+                    var goodStorage = structure.structureType == STRUCTURE_STORAGE &&
+                        structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 200;
+                    return goodContainer || goodStorage;
                 }
             });
         }

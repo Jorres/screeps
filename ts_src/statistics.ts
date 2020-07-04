@@ -50,9 +50,12 @@ type Statistics = {
 
     freeEnergy: metricArray<number>;
     measureFreeEnergy: (room: Room) => void;
+
+    // idleUpgraders: metricArray<number>;
+    // measureIdleUpgraders: (room: Room) => void;
 };
 
-const maxAllowedSize = 50;
+const maxAllowedSize = 70;
 var statistics: Statistics = {
     intervalBetweenMeasurement: 2,
     run: function(room: Room): void {

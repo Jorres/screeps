@@ -8,23 +8,27 @@ var storageSelector = {
     selectStorageId: function(creep: Creep): string {
         let role: string = creep.memory.role;
         let target;
+
         if (role == 'carrier') {
             let sources = creep.room.find(FIND_SOURCES);
+            let creepCap = creep.store.getFreeCapacity(RESOURCE_ENERGY);
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return structure.structureType == STRUCTURE_CONTAINER 
-                        && 4 * structure.store.getUsedCapacity(RESOURCE_ENERGY) > 
-                        structure.store.getCapacity(RESOURCE_ENERGY)
+                        && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= creepCap
                         && U.nextToAnyOf(structure.pos, sources);
                 }
             });
         } else if (/upgrader|builder/.test(role)) {
             target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    // @ts-ignore
-                    return (structure.structureType == STRUCTURE_CONTAINER &&  structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 800) ||
-                    // @ts-ignore
-                    (structure.structureType == STRUCTURE_STORAGE   &&  structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 200);
+                    let goodContainer = structure.structureType == STRUCTURE_CONTAINER &&  
+                        // @ts-ignore
+                        structure.store.getUsedCapacity(RESOURCE_ENERGY) >= config.lowestToPickup;
+                    let goodStorage = structure.structureType == STRUCTURE_STORAGE &&  
+                        // @ts-ignore
+                        structure.store.getUsedCapacity(RESOURCE_ENERGY) >= 200;
+                    return goodContainer || goodStorage;
                 }
             });
         }

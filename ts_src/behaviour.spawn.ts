@@ -85,13 +85,6 @@ function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     return ans;
 }
 
-// function appendRole(roleName: CreepRoles, needness: number, roles: Pair<number, string>[], quantities: Map<CreepRoles, number>): void {
-//     roles.push({first: needness, second: roleName });
-//
-//     let withThatRole = U.getRoleSpecificCreeps(spawn.room, roleName);
-//     quantities.set(roleName, withThatRole);
-// }
-
 function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
     let containers = spawn.room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
     let suitableMines = spawn.room.find(FIND_SOURCES, {
@@ -127,8 +120,8 @@ function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles,
     }
 
     if (statistics.freeEnergy.isEnoughStatistics()) {
-        if (isTherePotentialEnergy()) {
-            return WORRYING;
+        if (isTherePotentialEnergy(spawn.room)) {
+            return DYING - quantities.get('upgrader');
         } else {
             return FREEZE;
         }
@@ -154,7 +147,7 @@ function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles
 
 function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
     let freeEnergy: metricArray<number> = statistics.freeEnergy;
-    let allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy();
+    let allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy(spawn.room);
 
     if (allowedByResources) {
         let sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
@@ -287,7 +280,7 @@ function statisticallyEnoughCarriers(room: Room): boolean {
     return avrg <= 0.75 * totalMinerContainersCapacity;
 }
 
-function isTherePotentialEnergy(): boolean {
+function isTherePotentialEnergy(room: Room): boolean {
     let freeEnergy: metricArray<number> = statistics.freeEnergy;
     let n = freeEnergy.getDataLength();
 
@@ -298,6 +291,7 @@ function isTherePotentialEnergy(): boolean {
     avrg /= n;
 
     let diff: number = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
+    let containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length;
 
-    return avrg >= 1500 && diff > 100;
+    return avrg >= containers * config.lowestToPickup && diff > 1000;
 }

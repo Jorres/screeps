@@ -39,7 +39,7 @@ function createMetricArray(maxSize) {
     };
 }
 ;
-var maxAllowedSize = 50;
+var maxAllowedSize = 70;
 var statistics = {
     intervalBetweenMeasurement: 2,
     run: function (room) {

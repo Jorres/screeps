@@ -2,6 +2,7 @@ type Config = {
     roomName: string;
     distantRoomToMine: string;
     reusePath: number;
+    lowestToPickup: number;
     bodyPartCost: Map<BodyPartConstant, number>;
     spawningConfig: {roleName: string}[];
     refillingOrder: string[];
@@ -11,6 +12,7 @@ var config: Config = {
     roomName: "W37N36",
     distantRoomToMine: "W38N36",
     reusePath: 1,
+    lowestToPickup: 800,
     bodyPartCost: new Map([
         [WORK, 100],
         [MOVE, 50],

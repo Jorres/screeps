@@ -111,8 +111,8 @@ function findUpgraderNeedness(spawn, quantities) {
         return PAINFUL;
     }
     if (statistics.freeEnergy.isEnoughStatistics()) {
-        if (isTherePotentialEnergy()) {
-            return WORRYING;
+        if (isTherePotentialEnergy(spawn.room)) {
+            return DYING - quantities.get('upgrader');
         }
         else {
             return FREEZE;
@@ -138,7 +138,7 @@ function findHarvesterNeedness(spawn, quantities) {
 function findBuilderNeedness(spawn, quantities) {
     var e_1, _a;
     var freeEnergy = statistics.freeEnergy;
-    var allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy();
+    var allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy(spawn.room);
     if (allowedByResources) {
         var sites = spawn.room.find(FIND_CONSTRUCTION_SITES);
         var buildingScore = 0;
@@ -276,7 +276,7 @@ function statisticallyEnoughCarriers(room) {
     var totalMinerContainersCapacity = U.minerContainers(room).length * 1000;
     return avrg <= 0.75 * totalMinerContainersCapacity;
 }
-function isTherePotentialEnergy() {
+function isTherePotentialEnergy(room) {
     var freeEnergy = statistics.freeEnergy;
     var n = freeEnergy.getDataLength();
     var avrg = 0;
@@ -285,5 +285,6 @@ function isTherePotentialEnergy() {
     }
     avrg /= n;
     var diff = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
-    return avrg >= 1500 && diff > 100;
+    var containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length;
+    return avrg >= containers * config.lowestToPickup && diff > 1000;
 }

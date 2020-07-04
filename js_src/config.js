@@ -2,6 +2,7 @@ var config = {
     roomName: "W37N36",
     distantRoomToMine: "W38N36",
     reusePath: 1,
+    lowestToPickup: 800,
     bodyPartCost: new Map([
         [WORK, 100],
         [MOVE, 50],
