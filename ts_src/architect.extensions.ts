@@ -66,8 +66,8 @@ var architectExtensions = {
             if (bestPosDist != config.INFINITY) {
                 let x = bestPos.x;                                             // E R E
                 let y = bestPos.y;                                             // R E R
-                for (let i = x - 1; i < x + 1; i++) {                          // E R E 
-                    for (let j = y - 1; j < y + 1; j++) {                      // creates a neat square
+                for (let i = x - 1; i <= x + 1; i++) {                          // E R E 
+                    for (let j = y - 1; j <= y + 1; j++) {                      // creates a neat square
                         let diff = Math.abs(i - x) + Math.abs(j - y);
                         let pos = new RoomPosition(i, j, room.name);
                         if (diff % 2 == 0) {
@@ -83,8 +83,8 @@ var architectExtensions = {
 };
 
 function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition, obstacles: number[][]): boolean {
-    for (let x = pos.x - 2; x <= pos.x + 2; x++) {                    //   E E E    E - empty
-        for (let y = pos.y - 2; y <= pos.y + 2; y++) {                // E W W W E  W - walkable
+    for (let x = pos.x - 1; x <= pos.x + 1; x++) {                    //   E E E    E - empty
+        for (let y = pos.y - 1; y <= pos.y + 1; y++) {                // E W W W E  W - walkable
             if (!U.validTile(x, y)) {                                // E W W W E
                 return false;                                        // E W W W E
             }                                                        //   E E E    Expected behaviour

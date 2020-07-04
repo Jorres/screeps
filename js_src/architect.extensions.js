@@ -85,8 +85,8 @@ var architectExtensions = {
             if (bestPosDist != config.INFINITY) {
                 var x = bestPos.x;
                 var y = bestPos.y;
-                for (var i = x - 1; i < x + 1; i++) {
-                    for (var j = y - 1; j < y + 1; j++) {
+                for (var i = x - 1; i <= x + 1; i++) {
+                    for (var j = y - 1; j <= y + 1; j++) {
                         var diff = Math.abs(i - x) + Math.abs(j - y);
                         var pos = new RoomPosition(i, j, room.name);
                         if (diff % 2 == 0) {
@@ -102,8 +102,8 @@ var architectExtensions = {
     }
 };
 function checkSuitablePlaceForExtensionPack(room, pos, obstacles) {
-    for (var x = pos.x - 2; x <= pos.x + 2; x++) {
-        for (var y = pos.y - 2; y <= pos.y + 2; y++) {
+    for (var x = pos.x - 1; x <= pos.x + 1; x++) {
+        for (var y = pos.y - 1; y <= pos.y + 1; y++) {
             if (!U.validTile(x, y)) {
                 return false;
             }
