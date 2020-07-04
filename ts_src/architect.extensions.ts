@@ -40,6 +40,7 @@ var architectExtensions = {
                     let curPos = new RoomPosition(i, j, room.name);
                     if (checkSuitablePlaceForExtensionPack(room, curPos, obstacles)) {
                         let distToMainPoints = 0;
+                        console.log(i + " " + j);
                         // for (let source of sources) {
                         //     distToMainPoints += PathFinder.search(curPos, source.pos).cost;
                         // }

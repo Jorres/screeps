@@ -42,6 +42,7 @@ var architectExtensions = {
                     var curPos = new RoomPosition(i, j, room.name);
                     if (checkSuitablePlaceForExtensionPack(room, curPos, obstacles)) {
                         var distToMainPoints = 0;
+                        console.log(i + " " + j);
                         try {
                             for (var spawns_1 = (e_1 = void 0, __values(spawns)), spawns_1_1 = spawns_1.next(); !spawns_1_1.done; spawns_1_1 = spawns_1.next()) {
                                 var spawn = spawns_1_1.value;
