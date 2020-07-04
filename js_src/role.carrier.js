@@ -77,7 +77,7 @@ var roleCarrier = {
         }
         creep.memory.pickingResource = false;
         var oldId = creep.memory.carryingFromId;
-        if (oldId && U.getById(oldId) && U.getById(oldId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+        if (oldId && U.getById(oldId) && U.getById(oldId).store && U.getById(oldId).store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
             return;
         }
         creep.memory.carryingFromId = storageSelector.selectStorageId(creep);

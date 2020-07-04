@@ -159,6 +159,29 @@ var U = {
         }
         return bestId;
     },
+    validTile: function (x, y) {
+        return x >= 0 && x < config.roomSingleDimension && y >= 0 && y < config.roomSingleDimension;
+    },
+    isConstructibleOn: function (room, x, y) {
+        var e_4, _a;
+        var onIt = room.lookAt(x, y);
+        try {
+            for (var onIt_1 = __values(onIt), onIt_1_1 = onIt_1.next(); !onIt_1_1.done; onIt_1_1 = onIt_1.next()) {
+                var obj = onIt_1_1.value;
+                if (obj['type'] != 'terrain') {
+                    return false;
+                }
+            }
+        }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        finally {
+            try {
+                if (onIt_1_1 && !onIt_1_1.done && (_a = onIt_1["return"])) _a.call(onIt_1);
+            }
+            finally { if (e_4) throw e_4.error; }
+        }
+        return true;
+    },
     filterBy: function (neededType) {
         return { filter: { structureType: neededType } };
     },

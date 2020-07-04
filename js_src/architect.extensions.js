@@ -74,10 +74,34 @@ var architectExtensions = {
                     }
                 }
             }
+            console.log("EXTENSION POS: " + bestPos.x + " " + bestPos.y);
         }
     }
 };
 function checkSuitablePlaceForExtensionPack(room, pos) {
-    return false;
+    for (var x = pos.x - 2; x < pos.x + 2; x++) {
+        for (var y = pos.y - 2; y < pos.y + 2; y++) {
+            if (!U.validTile(x, y)) {
+                return false;
+            }
+            var diff = Math.abs(x - pos.x) + Math.abs(y - pos.y);
+            if (diff != 4) {
+                return false;
+            }
+        }
+    }
+    var lookStructures = room.lookForAtArea(LOOK_STRUCTURES, pos.y - 2, pos.x - 2, pos.y + 2, pos.x + 2, true);
+    if (lookStructures.length > 0) {
+        return false;
+    }
+    var lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, pos.y - 2, pos.x - 2, pos.y + 2, pos.x + 2, true);
+    if (lookSites.length > 0) {
+        return false;
+    }
+    var lookRuins = room.lookForAtArea(LOOK_RUINS, pos.y - 2, pos.x - 2, pos.y + 2, pos.x + 2, true);
+    if (lookRuins.length > 0) {
+        return false;
+    }
+    return true;
 }
 module.exports = architectExtensions;

@@ -118,6 +118,19 @@ var U = {
         }
         return bestId;
     },
+    validTile: function(x: number, y: number): boolean {
+        return x >= 0 && x < config.roomSingleDimension && y >= 0 && y < config.roomSingleDimension;
+    },
+    isConstructibleOn: function(room: Room, x: number, y: number) {
+        let onIt = room.lookAt(x, y);
+        for (let obj of onIt) {
+            if (obj['type'] != 'terrain') {
+                return false;
+            }
+        }
+        return true;
+    },
+
 
     filterBy: function(neededType: string): AnyStructure[] {
         // @ts-ignore

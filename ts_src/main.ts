@@ -71,6 +71,7 @@ module.exports.loop = function() {
         var creep = Game.creeps[name];
         creep.memory.actionTaken = false;
 
+
         let role = creep.memory.role;
         if (role == 'upgrader') {
             roleUpgrader.run(creep);
