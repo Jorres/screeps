@@ -48,10 +48,22 @@ function checkSuitablePlaceForExtensionPack(room, pos) {
             }
         }
     }
-    var lx = pos.x - 2;
-    var ly = pos.y - 2;
-    var rx = pos.x + 2;
-    var ry = pos.y + 2;
+    var lx = pos.x - 1;
+    var ly = pos.y - 1;
+    var rx = pos.x + 1;
+    var ry = pos.y + 1;
+    var lookStructures = room.lookForAtArea(LOOK_STRUCTURES, ly, lx, ry, rx, true);
+    if (lookStructures.length > 0) {
+        return false;
+    }
+    var lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, ly, lx, ry, rx, true);
+    if (lookSites.length > 0) {
+        return false;
+    }
+    var lookRuins = room.lookForAtArea(LOOK_RUINS, ly, lx, ry, rx, true);
+    if (lookRuins.length > 0) {
+        return false;
+    }
     return true;
 }
 module.exports = architectExtensions;

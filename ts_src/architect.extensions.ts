@@ -87,22 +87,22 @@ function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition): bool
             // }                                                                    
         }
     }
-    let lx = pos.x - 2;
-    let ly = pos.y - 2;
-    let rx = pos.x + 2;
-    let ry = pos.y + 2;
-    // const lookStructures = room.lookForAtArea(LOOK_STRUCTURES, ly, lx, ry, rx, true);
-    // if (lookStructures.length > 0) {
-    //     return false;
-    // }
-    // const lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, ly, lx, ry, rx, true);
-    // if (lookSites.length > 0) {
-    //     return false;
-    // }
-    // const lookRuins = room.lookForAtArea(LOOK_RUINS, ly, lx, ry, rx, true);
-    // if (lookRuins.length > 0) {
-    //     return false;
-    // }
+    let lx = pos.x - 1;
+    let ly = pos.y - 1;
+    let rx = pos.x + 1;
+    let ry = pos.y + 1;
+    const lookStructures = room.lookForAtArea(LOOK_STRUCTURES, ly, lx, ry, rx, true);
+    if (lookStructures.length > 0) {
+        return false;
+    }
+    const lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, ly, lx, ry, rx, true);
+    if (lookSites.length > 0) {
+        return false;
+    }
+    const lookRuins = room.lookForAtArea(LOOK_RUINS, ly, lx, ry, rx, true);
+    if (lookRuins.length > 0) {
+        return false;
+    }
     return true;
 }
 
