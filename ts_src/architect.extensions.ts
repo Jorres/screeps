@@ -38,12 +38,12 @@ var architectExtensions = {
                     let curPos = new RoomPosition(i, j, room.name);
                     if (checkSuitablePlaceForExtensionPack(room, curPos)) {
                         let distToMainPoints = 0;
-                        for (let source of sources) {
-                            distToMainPoints += PathFinder.search(curPos, source.pos).cost;
-                        }
-                        for (let spawn of spawns) {
-                            distToMainPoints += PathFinder.search(curPos, spawn.pos).cost;
-                        }
+                        // for (let source of sources) {
+                        //     distToMainPoints += PathFinder.search(curPos, source.pos).cost;
+                        // }
+                        // for (let spawn of spawns) {
+                        //     distToMainPoints += PathFinder.search(curPos, spawn.pos).cost;
+                        // }
                         if (distToMainPoints < bestPosDist) {
                             bestPos = curPos;
                             bestPosDist = distToMainPoints;
@@ -76,29 +76,33 @@ var architectExtensions = {
 };
 
 function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition): boolean {
-    for (let x = pos.x - 2; x < pos.x + 2; x++) {                    //   E E E    E - empty
-        for (let y = pos.y - 2; y < pos.y + 2; y++) {                // E W W W E  W - walkable
+    for (let x = pos.x - 2; x <= pos.x + 2; x++) {                    //   E E E    E - empty
+        for (let y = pos.y - 2; y <= pos.y + 2; y++) {                // E W W W E  W - walkable
             if (!U.validTile(x, y)) {                                // E W W W E
                 return false;                                        // E W W W E
             }                                                        //   E E E    Expected behaviour
-            let diff = Math.abs(x - pos.x) + Math.abs(y - pos.y);
-            if (diff != 4 /* && !U.isConstructibleOn(new RoomPosition(i, j, room.name)) */) {  
-                return false;                                                    
-            }                                                                    
+            // let diff = Math.abs(x - pos.x) + Math.abs(y - pos.y);
+            // if (diff != 4 /* && !U.isConstructibleOn(new RoomPosition(i, j, room.name)) */) {  
+            //     return false;                                                    
+            // }                                                                    
         }
     }
-    const lookStructures = room.lookForAtArea(LOOK_STRUCTURES, pos.y - 2, pos.x - 2, pos.y + 2, pos.x + 2, true);
-    if (lookStructures.length > 0) {
-        return false;
-    }
-    const lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, pos.y - 2, pos.x - 2, pos.y + 2, pos.x + 2, true);
-    if (lookSites.length > 0) {
-        return false;
-    }
-    const lookRuins = room.lookForAtArea(LOOK_RUINS, pos.y - 2, pos.x - 2, pos.y + 2, pos.x + 2, true);
-    if (lookRuins.length > 0) {
-        return false;
-    }
+    let lx = pos.x - 2;
+    let ly = pos.y - 2;
+    let rx = pos.x + 2;
+    let ry = pos.y + 2;
+    // const lookStructures = room.lookForAtArea(LOOK_STRUCTURES, ly, lx, ry, rx, true);
+    // if (lookStructures.length > 0) {
+    //     return false;
+    // }
+    // const lookSites = room.lookForAtArea(LOOK_CONSTRUCTION_SITES, ly, lx, ry, rx, true);
+    // if (lookSites.length > 0) {
+    //     return false;
+    // }
+    // const lookRuins = room.lookForAtArea(LOOK_RUINS, ly, lx, ry, rx, true);
+    // if (lookRuins.length > 0) {
+    //     return false;
+    // }
     return true;
 }
 
