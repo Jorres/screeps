@@ -11,6 +11,7 @@ var __values = (this && this.__values) || function(o) {
 };
 var data = require('data');
 var U = require('U');
+var config = require('config');
 var architectExtensions = {
     run: function (room) {
         var e_1, _a, e_2, _b;
