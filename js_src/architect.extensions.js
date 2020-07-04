@@ -82,7 +82,22 @@ var architectExtensions = {
                     }
                 }
             }
-            console.log("EXTENSION POS: " + bestPos.x + " " + bestPos.y);
+            if (bestPosDist != config.INFINITY) {
+                var x = bestPos.x;
+                var y = bestPos.y;
+                for (var i = x - 1; i < x + 1; i++) {
+                    for (var j = y - 1; j < y + 1; j++) {
+                        var diff = Math.abs(i - x) + Math.abs(j - y);
+                        var pos = new RoomPosition(i, j, room.name);
+                        if (diff % 2 == 0) {
+                            pos.createConstructionSite(STRUCTURE_EXTENSION);
+                        }
+                        else {
+                            pos.createConstructionSite(STRUCTURE_ROAD);
+                        }
+                    }
+                }
+            }
         }
     }
 };

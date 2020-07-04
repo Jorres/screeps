@@ -61,25 +61,23 @@ var architectExtensions = {
                 }
             }
 
-            console.log("EXTENSION POS: " + bestPos.x + " " + bestPos.y);
+            // console.log("EXTENSION POS: " + bestPos.x + " " + bestPos.y);
 
-            // if (bestPosDist != config.INFINITY) {
-            //     let x = bestPos.x;                                             // E R E
-            //     let y = bestPos.y;                                             // R E R
-            //     for (let i = x - 1; i < x + 1; i++) {                          // E R E 
-            //         for (let j = y - 1; j < y + 1; j++) {                      // creates a neat square
-            //             let diff = Math.abs(i - x) + Math.abs(j - y);
-            //             let pos = new RoomPosition(i, j, room.name);
-            //             if (diff % 2 == 0) {
-            //                 pos.createConstructionSite(STRUCTURE_EXTENSION);
-            //             } else {
-            //                 pos.createConstructionSite(STRUCTURE_ROAD);
-            //             }
-            //         }
-            //     }
-            // }
-
-
+            if (bestPosDist != config.INFINITY) {
+                let x = bestPos.x;                                             // E R E
+                let y = bestPos.y;                                             // R E R
+                for (let i = x - 1; i < x + 1; i++) {                          // E R E 
+                    for (let j = y - 1; j < y + 1; j++) {                      // creates a neat square
+                        let diff = Math.abs(i - x) + Math.abs(j - y);
+                        let pos = new RoomPosition(i, j, room.name);
+                        if (diff % 2 == 0) {
+                            pos.createConstructionSite(STRUCTURE_EXTENSION);
+                        } else {
+                            pos.createConstructionSite(STRUCTURE_ROAD);
+                        }
+                    }
+                }
+            }
         }
     }
 };
