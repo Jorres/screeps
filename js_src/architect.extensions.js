@@ -67,7 +67,7 @@ var architectExtensions = {
                             }
                             finally { if (e_2) throw e_2.error; }
                         }
-                        if (distToMainPoints > bestPosDist) {
+                        if (distToMainPoints < bestPosDist) {
                             bestPos = curPos;
                             bestPosDist = distToMainPoints;
                         }
