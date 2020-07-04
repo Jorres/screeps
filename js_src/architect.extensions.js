@@ -46,7 +46,10 @@ var architectExtensions = {
                         try {
                             for (var spawns_1 = (e_1 = void 0, __values(spawns)), spawns_1_1 = spawns_1.next(); !spawns_1_1.done; spawns_1_1 = spawns_1.next()) {
                                 var spawn = spawns_1_1.value;
-                                distToMainPoints += PathFinder.search(curPos, spawn.pos).cost;
+                                distToMainPoints += PathFinder.search(curPos, {
+                                    pos: spawn.pos,
+                                    range: 1
+                                }).cost;
                             }
                         }
                         catch (e_1_1) { e_1 = { error: e_1_1 }; }
