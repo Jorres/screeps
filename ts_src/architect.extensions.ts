@@ -43,9 +43,9 @@ var architectExtensions = {
                         // for (let source of sources) {
                         //     distToMainPoints += PathFinder.search(curPos, source.pos).cost;
                         // }
-                        // for (let spawn of spawns) {
-                        //     distToMainPoints += PathFinder.search(curPos, spawn.pos).cost;
-                        // }
+                        for (let spawn of spawns) {
+                            distToMainPoints += PathFinder.search(curPos, spawn.pos).cost;
+                        }
                         if (distToMainPoints < bestPosDist) {
                             bestPos = curPos;
                             bestPosDist = distToMainPoints;
