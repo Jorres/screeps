@@ -14,7 +14,7 @@ var U = require('U');
 var config = require('config');
 var architectExtensions = {
     run: function (room) {
-        var e_1, _a;
+        var e_1, _a, e_2, _b;
         console.log(room.name);
         console.log("containers extensions running...");
         var controller = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTROLLER))[0];
@@ -44,10 +44,10 @@ var architectExtensions = {
                     if (checkSuitablePlaceForExtensionPack(room, curPos, obstacles)) {
                         var distToMainPoints = 0;
                         try {
-                            for (var spawns_1 = (e_1 = void 0, __values(spawns)), spawns_1_1 = spawns_1.next(); !spawns_1_1.done; spawns_1_1 = spawns_1.next()) {
-                                var spawn = spawns_1_1.value;
+                            for (var sources_1 = (e_1 = void 0, __values(sources)), sources_1_1 = sources_1.next(); !sources_1_1.done; sources_1_1 = sources_1.next()) {
+                                var source = sources_1_1.value;
                                 distToMainPoints += PathFinder.search(curPos, {
-                                    pos: spawn.pos,
+                                    pos: source.pos,
                                     range: 1
                                 }).cost;
                             }
@@ -55,9 +55,25 @@ var architectExtensions = {
                         catch (e_1_1) { e_1 = { error: e_1_1 }; }
                         finally {
                             try {
-                                if (spawns_1_1 && !spawns_1_1.done && (_a = spawns_1["return"])) _a.call(spawns_1);
+                                if (sources_1_1 && !sources_1_1.done && (_a = sources_1["return"])) _a.call(sources_1);
                             }
                             finally { if (e_1) throw e_1.error; }
+                        }
+                        try {
+                            for (var spawns_1 = (e_2 = void 0, __values(spawns)), spawns_1_1 = spawns_1.next(); !spawns_1_1.done; spawns_1_1 = spawns_1.next()) {
+                                var spawn = spawns_1_1.value;
+                                distToMainPoints += PathFinder.search(curPos, {
+                                    pos: spawn.pos,
+                                    range: 1
+                                }).cost;
+                            }
+                        }
+                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                        finally {
+                            try {
+                                if (spawns_1_1 && !spawns_1_1.done && (_b = spawns_1["return"])) _b.call(spawns_1);
+                            }
+                            finally { if (e_2) throw e_2.error; }
                         }
                         if (distToMainPoints < bestPosDist) {
                             bestPos = curPos;
@@ -85,7 +101,7 @@ function checkSuitablePlaceForExtensionPack(room, pos, obstacles) {
     return true;
 }
 function findObstaclesInTheRoom(room) {
-    var e_2, _a, e_3, _b, e_4, _c;
+    var e_3, _a, e_4, _b, e_5, _c;
     var obstacles = [];
     for (var i = 0; i < config.roomSingleDimension; i++) {
         obstacles[i] = [];
@@ -100,12 +116,12 @@ function findObstaclesInTheRoom(room) {
             obstacles[site.pos.x][site.pos.y]++;
         }
     }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    catch (e_3_1) { e_3 = { error: e_3_1 }; }
     finally {
         try {
             if (sites_1_1 && !sites_1_1.done && (_a = sites_1["return"])) _a.call(sites_1);
         }
-        finally { if (e_2) throw e_2.error; }
+        finally { if (e_3) throw e_3.error; }
     }
     var ruins = room.find(FIND_RUINS);
     try {
@@ -114,12 +130,12 @@ function findObstaclesInTheRoom(room) {
             obstacles[ruin.pos.x][ruin.pos.y]++;
         }
     }
-    catch (e_3_1) { e_3 = { error: e_3_1 }; }
+    catch (e_4_1) { e_4 = { error: e_4_1 }; }
     finally {
         try {
             if (ruins_1_1 && !ruins_1_1.done && (_b = ruins_1["return"])) _b.call(ruins_1);
         }
-        finally { if (e_3) throw e_3.error; }
+        finally { if (e_4) throw e_4.error; }
     }
     var structures = room.find(FIND_STRUCTURES);
     try {
@@ -128,12 +144,12 @@ function findObstaclesInTheRoom(room) {
             obstacles[structure.pos.x][structure.pos.y]++;
         }
     }
-    catch (e_4_1) { e_4 = { error: e_4_1 }; }
+    catch (e_5_1) { e_5 = { error: e_5_1 }; }
     finally {
         try {
             if (structures_1_1 && !structures_1_1.done && (_c = structures_1["return"])) _c.call(structures_1);
         }
-        finally { if (e_4) throw e_4.error; }
+        finally { if (e_5) throw e_5.error; }
     }
     return obstacles;
 }
