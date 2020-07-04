@@ -74,7 +74,7 @@ function checkSuitablePlaceForExtensionPack(room, pos, obstacles) {
                 return false;
             }
             var diff = Math.abs(x - pos.x) + Math.abs(y - pos.y);
-            if (diff != 4 && obstacles[x][y] > 0) {
+            if (diff != 4 && (obstacles[x][y] > 0 || data.terrainData.get(room.name).get(x, y) == TERRAIN_MASK_WALL)) {
                 return false;
             }
         }
@@ -83,9 +83,9 @@ function checkSuitablePlaceForExtensionPack(room, pos, obstacles) {
 }
 function findObstaclesInTheRoom(room) {
     var e_2, _a, e_3, _b, e_4, _c;
-    var obstacles;
+    var obstacles = [];
     for (var i = 0; i < config.roomSingleDimension; i++) {
-        obstacles.push([]);
+        obstacles[i] = [];
         for (var j = 0; j < config.roomSingleDimension; j++) {
             obstacles[i][j] = 0;
         }

@@ -88,7 +88,7 @@ function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition, obsta
             // if (diff != 4 /* && !U.isConstructibleOn(new RoomPosition(i, j, room.name)) */) {  
             //     return false;                                                    
             // }                                                                    
-            if (diff != 4 && obstacles[x][y] > 0) {
+            if (diff != 4 && (obstacles[x][y] > 0 || data.terrainData.get(room.name).get(x, y) == TERRAIN_MASK_WALL)) {
                 return false;
             }
         }
@@ -97,9 +97,9 @@ function checkSuitablePlaceForExtensionPack(room: Room, pos: RoomPosition, obsta
 }
 
 function findObstaclesInTheRoom(room: Room): number[][] {
-    let obstacles: number[][];
+    let obstacles: number[][] = [];
     for (let i = 0; i < config.roomSingleDimension; i++) {
-        obstacles.push([]);
+        obstacles[i] = [];
         for (let j = 0; j < config.roomSingleDimension; j++) {
             obstacles[i][j] = 0;
         }
