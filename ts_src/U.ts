@@ -6,17 +6,18 @@ const structuresWithEnergyStore: Set<StructureConstant> = new Set([
 ]);
 
 var U = {
-    getRoleSpecificCreeps: function(room: Room, roleName: string): number {
+    getRoleSpecificCreeps: function(room: Room, roleName: CreepRoles): number {
         let roleSpecificCreeps = 0;
-        let creeps = room.find(FIND_MY_CREEPS);
-        for (let creep of creeps) {
-            if (creep.memory.role == roleName) {
+        for (let creepName in Game.creeps) {
+            let creepMemory = Game.creeps[creepName].memory;
+            if (creepMemory.homeRoom.name == room.name && creepMemory.role == roleName) {
                 roleSpecificCreeps++;
             }
         }
         return roleSpecificCreeps;
     },
-    getRoleSpecificCreepsInGame: function(roleName: string): number {
+
+    getRoleSpecificCreepsInGame: function(roleName: CreepRoles): number {
         let roleSpecificCreeps = 0;
         for (let creepName in Game.creeps) {
             if (Game.creeps[creepName].memory.role == roleName) {
@@ -25,6 +26,7 @@ var U = {
         }
         return roleSpecificCreeps;
     },
+
     changeState: function(creep: Creep, state: AutomataState): void {
         creep.memory.autoState = state;
         creep.say(state);
@@ -53,11 +55,14 @@ var U = {
     moveAndPickup: function(creep: Creep, target: Resource) {
         return this.defaultAction(creep, target, () => creep.pickup(target));
     },
+    moveAndReserve: function(creep: Creep, target: StructureController) {
+        return this.defaultAction(creep, target, () => creep.reserveController(target));
+    },
     defaultAction: function(creep: Creep, target: Structure | StructureController | Source | Mineral | Deposit, action: any) {
         let actionRes = action();
         let moveRes = -1;
         if (actionRes == ERR_NOT_IN_RANGE) {
-            moveRes = defaultMove(creep, target);
+            moveRes = this.defaultMove(creep, target);
         }
         creep.memory.actionTaken = (actionRes == OK || moveRes == OK);
         return actionRes;
@@ -95,7 +100,7 @@ var U = {
     },
     moveToSpawn: function(creep: Creep): void {
         let spawn = creep.room.find(FIND_STRUCTURES, this.filterBy(STRUCTURE_SPAWN))[0];
-        defaultMove(creep, spawn);
+        this.defaultMove(creep, spawn);
     },
     nextToAnyOf(pos: RoomPosition, others: _HasRoomPosition[]): boolean {
         for (let other of others) {
@@ -143,15 +148,23 @@ var U = {
                 return structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources);
             }
         }) as StructureContainer[]);
-    }
+    },
+
+    defaultMove: function(creep: Creep, target: Structure | Source | Mineral | Deposit): number {
+        creep.memory.actionTaken = true;
+        return creep.statMoveTo(target, {
+            reusePath: config.reusePath, 
+            visualizePathStyle: {stroke: '#ffffff'}
+        });
+    },
+    getRandomInt: function(min: number, max: number): number {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min)) + min;
+    },
 };
 
-function defaultMove(creep: Creep, target: Structure | Source | Mineral | Deposit) {
-    return creep.moveTo(target, {
-        reusePath: config.reusePath, 
-        visualizePathStyle: {stroke: '#ffffff'}
-    });
-}
+
 
 // @ts-ignore
 module.exports = U;

@@ -131,7 +131,7 @@ var storageSelector = {
                 return !U.nextToAnyOf(source.pos, miners);
             }
         });
-        return availSources.length > 0 ? availSources[0].id : null;
+        return availSources.length > 0 ? availSources[U.getRandomInt(0, availSources.length)].id : null;
     }
 };
 module.exports = storageSelector;

@@ -1,6 +1,6 @@
-type CreepRoles = 'upgrader'|'harvester'|'builder'|'miner'|'carrier'|'longDistanceHarvester';
+type CreepRoles = 'upgrader'|'harvester'|'builder'|'miner'|'carrier'|'longDistanceHarvester'|'claimer';
 
-type AutomataState = 'noop'|'carry'|'build'|'repair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop'|'collect'|'gather'|'important';
+type AutomataState = 'noop'|'carry'|'build'|'repair'|'upgrade'|'harvest'|'carryingTo'|'carryingFrom'|'mine'|'drop'|'collect'|'gather'|'important'|'travel'|'reserve';
 // type AutomataBuilderState = 'build'|'repair'|'gather'|'important';
 // type AutomataUpgraderState = 'upgrade'|'gather';
 
@@ -57,4 +57,5 @@ type RoleBuilder = {
     reselectBuildingDst: (creep: Creep) => void;
     reselectRepairingDst: (creep: Creep) => void;
     reselectImportantDst: (creep: Creep) => void;
+    freeGatheringPlace: (creep: Creep) => void;
 };

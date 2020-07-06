@@ -11,6 +11,7 @@ var __values = (this && this.__values) || function(o) {
 };
 require('initialize')();
 require('behaviour.spawn')();
+require('behaviour.creep')();
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleMiner = require('role.miner');
@@ -23,44 +24,53 @@ var data = require('data');
 var config = require('config');
 var U = require('U');
 var architectGeneral = require('architect.general');
-var statistics = require('statistics');
 function isTower(structure) {
     return structure.structureType == STRUCTURE_TOWER;
 }
 var MAX_BUCKET_SIZE = 10000;
 module.exports.loop = function () {
-    var e_1, _a;
+    var e_1, _a, e_2, _b;
     console.log(Game.time);
     U.cleanupDeadCreeps();
-    var visited = new Set();
     for (var spawnName in Game.spawns) {
         var spawn = Game.spawns[spawnName];
         spawn.trySpawningProcess();
-        if (!visited.has(spawn.room.name)) {
-            var structures = spawn.room.find(FIND_STRUCTURES);
+    }
+    try {
+        for (var _c = __values(config.ownedRooms), _d = _c.next(); !_d.done; _d = _c.next()) {
+            var roomName = _d.value;
+            var room = Game.rooms[roomName];
+            var structures = room.find(FIND_STRUCTURES);
             try {
-                for (var structures_1 = (e_1 = void 0, __values(structures)), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
+                for (var structures_1 = (e_2 = void 0, __values(structures)), structures_1_1 = structures_1.next(); !structures_1_1.done; structures_1_1 = structures_1.next()) {
                     var structure = structures_1_1.value;
                     if (isTower(structure)) {
                         towerBehaviour.run(structure);
                     }
                 }
             }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
             finally {
                 try {
-                    if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
+                    if (structures_1_1 && !structures_1_1.done && (_b = structures_1["return"])) _b.call(structures_1);
                 }
-                finally { if (e_1) throw e_1.error; }
+                finally { if (e_2) throw e_2.error; }
             }
             if (U.oncePerTicks(5)) {
-                architectGeneral.run(spawn.room);
+                architectGeneral.run(room);
             }
+            var statistics = data.roomStatistics.get(roomName);
             if (U.oncePerTicks(statistics.intervalBetweenMeasurement)) {
-                statistics.run(spawn.room);
+                statistics.run(room);
             }
-            visited.add(spawn.room.name);
         }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (_d && !_d.done && (_a = _c["return"])) _a.call(_c);
+        }
+        finally { if (e_1) throw e_1.error; }
     }
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];

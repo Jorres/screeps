@@ -1,12 +1,9 @@
 // @ts-ignore
 var config: Config = require('config');
 // @ts-ignore
-var data = require('data');
+var data: DataStorage = require('data');
 // @ts-ignore
 var U = require('U');
-// @ts-ignore
-var statistics: Statistics = require('statistics');
-
 const FREEZE = 10;
 const COOL = 11;
 const WORRYING = 12;
@@ -49,33 +46,29 @@ function hasCarrying(spawn: StructureSpawn): boolean {
 }
 
 function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
-    let miners = U.getRoleSpecificCreeps(spawn.room, 'miner');
-    let carriers = U.getRoleSpecificCreeps(spawn.room, 'carrier');
-    let upgraders = U.getRoleSpecificCreeps(spawn.room, 'upgrader');
-    let builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
-    let harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
-    let longDistanceHarvesters = U.getRoleSpecificCreeps(spawn.room, 'longDistanceHarvester');
-
+    let roleNames: CreepRoles[] = ['miner', 'carrier', 'upgrader', 
+                                   'builder', 'harvester', 'claimer', 
+                                   'longDistanceHarvester', 'claimer'];
     let quantities: Map<CreepRoles, number> = new Map();
-    let roles: Pair<number, CreepRoles>[] = [];
+    for (let role of roleNames) {
+        quantities.set(role, U.getRoleSpecificCreeps(spawn.room, role));
+    }
 
-    quantities.set('miner', miners);
-    quantities.set('upgrader', upgraders);
-    quantities.set('builder', builders);
-    quantities.set('harvester', harvesters);
-    quantities.set('carrier', carriers);
-    // quantities.set('longDistanceHarvester', longDistanceHarvesters);
+    let roles: Pair<number, CreepRoles>[] = [];
     roles.push({first: findHarvesterNeedness(spawn, quantities), second: 'harvester'});
+    // roles.push({first: findClaimerNeedness(spawn, quantities), second: 'claimer'});
     roles.push({first: findCarrierNeedness(spawn, quantities), second: 'carrier'});
     roles.push({first: findUpgraderNeedness(spawn, quantities), second: 'upgrader'});
     roles.push({first: findMinerNeedness(spawn, quantities), second: 'miner'});
     roles.push({first: findBuilderNeedness(spawn, quantities), second: 'builder'});
-    // roles.push({first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester'});
+    roles.push({first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester'});
+
     roles.sort((a: Pair<number, string>, b: Pair<number, string>) => {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
 
     let ans: CreepRoles = roles[0].first >= COOL ? roles[0].second : null;
+    let statistics: Statistics = data.roomStatistics.get(spawn.room.name);
     if (ans == 'carrier') {
         statistics.miningContainersAvailableEnergy.dropData();
     } else if (ans == 'upgrader' || ans == 'builder') {
@@ -103,7 +96,19 @@ function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, nu
     return FREEZE;
 }
 
+function findClaimerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (quantities.get('claimer') == 0) {
+        return COOL;
+    }
+    return FREEZE;
+}
+
 function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (quantities.get('miner') > 0 && quantities.get('carrier') == 0) {
+        return PAINFUL;
+    }
+
+    let statistics: Statistics = data.roomStatistics.get(spawn.room.name);
     if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
         if (statisticallyEnoughCarriers(spawn.room)) {
             return FREEZE;
@@ -119,6 +124,7 @@ function findUpgraderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles,
         return PAINFUL;
     }
 
+    let statistics: Statistics = data.roomStatistics.get(spawn.room.name);
     if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy(spawn.room)) {
             return DYING - quantities.get('upgrader');
@@ -136,8 +142,11 @@ function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles
     if (harvesters > 2) {
         return FREEZE;
     }
-    if (miners == 0 || carriers == 0) {
+    if (miners == 0) {
         return PAINFUL;
+    }
+    if (carriers == 0) {
+        return WORRYING;
     }
     if (miners == 1) {
         return COOL;
@@ -146,10 +155,11 @@ function findHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles
 }
 
 function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
-    if (quantities.get('builder') == 0) {
+    if (quantities.get('builder') <= 1) {
         return PAINFUL;
     }
 
+    let statistics: Statistics = data.roomStatistics.get(spawn.room.name);
     let freeEnergy: metricArray<number> = statistics.freeEnergy;
     let allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy(spawn.room);
 
@@ -173,7 +183,7 @@ function findBuilderNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
 }
 
 function findLongDistanceHarvesterNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
-    if (quantities.get('longDistanceHarvester') >= 3) {
+    if (quantities.get('longDistanceHarvester') >= 4) {
         return FREEZE;
     }
     return COOL;
@@ -189,7 +199,8 @@ function trySpawn(spawn: StructureSpawn, roleName: CreepRoles): number {
 
     let newName = roleName + Game.time;
     let memoryObject: CreepMemory = {
-        role: roleName
+        role: roleName,
+        homeRoom: spawn.room,
     };
 
     if (roleName == 'longDistanceHarvester') {
@@ -209,9 +220,15 @@ function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartCon
         return assembleCarrier(curEnergy);
     } else if (roleName == 'longDistanceHarvester') {
         return assembleLongDistanceHarvester(curEnergy);
+    } else if (roleName == 'claimer') {
+        return assembleClaimer(curEnergy);
     } else {
         return bestEmergencyCreep(curEnergy);
     }
+}
+
+function assembleClaimer(curEnergy: number) : BodyPartConstant[] {
+    return [MOVE, MOVE, CLAIM];
 }
 
 function assembleCarrier(curEnergy: number): BodyPartConstant[] {
@@ -271,6 +288,7 @@ function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnerg
 }
 
 function statisticallyEnoughCarriers(room: Room): boolean {
+    let statistics: Statistics = data.roomStatistics.get(room.name);
     let containersEnergy: metricArray<number> = statistics.miningContainersAvailableEnergy;
     let n = containersEnergy.getDataLength();
 
@@ -280,11 +298,12 @@ function statisticallyEnoughCarriers(room: Room): boolean {
     }
     avrg /= n;
 
-    let totalMinerContainersCapacity = U.minerContainers(room).length * 1000;
-    return avrg <= 0.75 * totalMinerContainersCapacity;
+    let totalMinerContainersCapacity = U.minerContainers(room).length * CONTAINER_CAPACITY;
+    return avrg <= 0.8 * totalMinerContainersCapacity;
 }
 
 function isTherePotentialEnergy(room: Room): boolean {
+    let statistics: Statistics = data.roomStatistics.get(room.name);
     let freeEnergy: metricArray<number> = statistics.freeEnergy;
     let n = freeEnergy.getDataLength();
 
@@ -297,5 +316,5 @@ function isTherePotentialEnergy(room: Room): boolean {
     let diff: number = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
     let containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length;
 
-    return avrg >= containers * config.lowestToPickup && diff > 1000;
+    return avrg >= containers * config.lowestToPickup && diff > 100;
 }

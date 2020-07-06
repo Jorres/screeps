@@ -15,23 +15,12 @@ var structuresWithEnergyStore = new Set([
 ]);
 var U = {
     getRoleSpecificCreeps: function (room, roleName) {
-        var e_1, _a;
         var roleSpecificCreeps = 0;
-        var creeps = room.find(FIND_MY_CREEPS);
-        try {
-            for (var creeps_1 = __values(creeps), creeps_1_1 = creeps_1.next(); !creeps_1_1.done; creeps_1_1 = creeps_1.next()) {
-                var creep = creeps_1_1.value;
-                if (creep.memory.role == roleName) {
-                    roleSpecificCreeps++;
-                }
+        for (var creepName in Game.creeps) {
+            var creepMemory = Game.creeps[creepName].memory;
+            if (creepMemory.homeRoom.name == room.name && creepMemory.role == roleName) {
+                roleSpecificCreeps++;
             }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (creeps_1_1 && !creeps_1_1.done && (_a = creeps_1["return"])) _a.call(creeps_1);
-            }
-            finally { if (e_1) throw e_1.error; }
         }
         return roleSpecificCreeps;
     },
@@ -72,11 +61,14 @@ var U = {
     moveAndPickup: function (creep, target) {
         return this.defaultAction(creep, target, function () { return creep.pickup(target); });
     },
+    moveAndReserve: function (creep, target) {
+        return this.defaultAction(creep, target, function () { return creep.reserveController(target); });
+    },
     defaultAction: function (creep, target, action) {
         var actionRes = action();
         var moveRes = -1;
         if (actionRes == ERR_NOT_IN_RANGE) {
-            moveRes = defaultMove(creep, target);
+            moveRes = this.defaultMove(creep, target);
         }
         creep.memory.actionTaken = (actionRes == OK || moveRes == OK);
         return actionRes;
@@ -115,10 +107,10 @@ var U = {
     },
     moveToSpawn: function (creep) {
         var spawn = creep.room.find(FIND_STRUCTURES, this.filterBy(STRUCTURE_SPAWN))[0];
-        defaultMove(creep, spawn);
+        this.defaultMove(creep, spawn);
     },
     nextToAnyOf: function (pos, others) {
-        var e_2, _a;
+        var e_1, _a;
         try {
             for (var others_1 = __values(others), others_1_1 = others_1.next(); !others_1_1.done; others_1_1 = others_1.next()) {
                 var other = others_1_1.value;
@@ -127,17 +119,17 @@ var U = {
                 }
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
                 if (others_1_1 && !others_1_1.done && (_a = others_1["return"])) _a.call(others_1);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_1) throw e_1.error; }
         }
         return false;
     },
     findBiggest: function (structures, comparator) {
-        var e_3, _a;
+        var e_2, _a;
         var bestDiff = -1;
         var bestId = null;
         try {
@@ -150,12 +142,12 @@ var U = {
                 }
             }
         }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (structures_1_1 && !structures_1_1.done && (_a = structures_1["return"])) _a.call(structures_1);
             }
-            finally { if (e_3) throw e_3.error; }
+            finally { if (e_2) throw e_2.error; }
         }
         return bestId;
     },
@@ -163,7 +155,7 @@ var U = {
         return x >= 0 && x < config.roomSingleDimension && y >= 0 && y < config.roomSingleDimension;
     },
     isConstructibleOn: function (room, x, y) {
-        var e_4, _a;
+        var e_3, _a;
         var onIt = room.lookAt(x, y);
         try {
             for (var onIt_1 = __values(onIt), onIt_1_1 = onIt_1.next(); !onIt_1_1.done; onIt_1_1 = onIt_1.next()) {
@@ -173,12 +165,12 @@ var U = {
                 }
             }
         }
-        catch (e_4_1) { e_4 = { error: e_4_1 }; }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
                 if (onIt_1_1 && !onIt_1_1.done && (_a = onIt_1["return"])) _a.call(onIt_1);
             }
-            finally { if (e_4) throw e_4.error; }
+            finally { if (e_3) throw e_3.error; }
         }
         return true;
     },
@@ -192,12 +184,18 @@ var U = {
                 return structure.structureType == STRUCTURE_CONTAINER && U.nextToAnyOf(structure.pos, sources);
             }
         });
+    },
+    defaultMove: function (creep, target) {
+        creep.memory.actionTaken = true;
+        return creep.statMoveTo(target, {
+            reusePath: config.reusePath,
+            visualizePathStyle: { stroke: '#ffffff' }
+        });
+    },
+    getRandomInt: function (min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
     }
 };
-function defaultMove(creep, target) {
-    return creep.moveTo(target, {
-        reusePath: config.reusePath,
-        visualizePathStyle: { stroke: '#ffffff' }
-    });
-}
 module.exports = U;

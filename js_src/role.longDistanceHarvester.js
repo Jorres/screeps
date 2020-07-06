@@ -25,7 +25,7 @@ var roleLondDistanceHarvester = {
         }
         else {
             if (creep.room.name == creep.memory.targetRoomName) {
-                var target = creep.room.find(FIND_SOURCES)[0];
+                var target = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
                 U.moveAndHarvest(creep, target);
             }
             else {

@@ -1,5 +1,4 @@
 type Config = {
-    roomName: string;
     distantRoomToMine: string;
     reusePath: number;
     INFINITY: number;
@@ -9,12 +8,13 @@ type Config = {
     spawningConfig: {roleName: string}[];
     refillingOrder: string[];
     controllerToExtensions: number[];
+    roomsToReserve: Set<number>;
+    initialize: () => void;
+    ownedRooms: Set<string>;
 };
 
 var config: Config = {
-    // roomName: "W37N36",
-    roomName: "E7N9",
-    distantRoomToMine: "W38N36",
+    distantRoomToMine: "E6N9",
     reusePath: 1,
     lowestToPickup: 800,
     INFINITY: 1000000000,
@@ -46,6 +46,16 @@ var config: Config = {
     controllerToExtensions: [
         0, 0, 5, 10, 20, 30, 40 , 50, 60
     ],
+
+    roomsToReserve: new Set(),
+    ownedRooms: new Set(),
+
+    initialize: function() {
+        this.roomsToReserve.add('E6N9');
+
+        this.ownedRooms.add('E7N9');
+    },
+
 };
 
 // @ts-ignore

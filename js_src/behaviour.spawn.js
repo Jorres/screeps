@@ -12,7 +12,6 @@ var __values = (this && this.__values) || function(o) {
 var config = require('config');
 var data = require('data');
 var U = require('U');
-var statistics = require('statistics');
 var FREEZE = 10;
 var COOL = 11;
 var WORRYING = 12;
@@ -49,28 +48,36 @@ function hasCarrying(spawn) {
     return carriers > 0 || harvesters > 0;
 }
 function decideWhoIsNeeded(spawn) {
-    var miners = U.getRoleSpecificCreeps(spawn.room, 'miner');
-    var carriers = U.getRoleSpecificCreeps(spawn.room, 'carrier');
-    var upgraders = U.getRoleSpecificCreeps(spawn.room, 'upgrader');
-    var builders = U.getRoleSpecificCreeps(spawn.room, 'builder');
-    var harvesters = U.getRoleSpecificCreeps(spawn.room, 'harvester');
-    var longDistanceHarvesters = U.getRoleSpecificCreeps(spawn.room, 'longDistanceHarvester');
+    var e_1, _a;
+    var roleNames = ['miner', 'carrier', 'upgrader',
+        'builder', 'harvester', 'claimer',
+        'longDistanceHarvester', 'claimer'];
     var quantities = new Map();
+    try {
+        for (var roleNames_1 = __values(roleNames), roleNames_1_1 = roleNames_1.next(); !roleNames_1_1.done; roleNames_1_1 = roleNames_1.next()) {
+            var role = roleNames_1_1.value;
+            quantities.set(role, U.getRoleSpecificCreeps(spawn.room, role));
+        }
+    }
+    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+    finally {
+        try {
+            if (roleNames_1_1 && !roleNames_1_1.done && (_a = roleNames_1["return"])) _a.call(roleNames_1);
+        }
+        finally { if (e_1) throw e_1.error; }
+    }
     var roles = [];
-    quantities.set('miner', miners);
-    quantities.set('upgrader', upgraders);
-    quantities.set('builder', builders);
-    quantities.set('harvester', harvesters);
-    quantities.set('carrier', carriers);
     roles.push({ first: findHarvesterNeedness(spawn, quantities), second: 'harvester' });
     roles.push({ first: findCarrierNeedness(spawn, quantities), second: 'carrier' });
     roles.push({ first: findUpgraderNeedness(spawn, quantities), second: 'upgrader' });
     roles.push({ first: findMinerNeedness(spawn, quantities), second: 'miner' });
     roles.push({ first: findBuilderNeedness(spawn, quantities), second: 'builder' });
+    roles.push({ first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester' });
     roles.sort(function (a, b) {
         return U.dealWithSortResurnValue(b.first, a.first);
     });
     var ans = roles[0].first >= COOL ? roles[0].second : null;
+    var statistics = data.roomStatistics.get(spawn.room.name);
     if (ans == 'carrier') {
         statistics.miningContainersAvailableEnergy.dropData();
     }
@@ -95,7 +102,17 @@ function findMinerNeedness(spawn, quantities) {
     }
     return FREEZE;
 }
+function findClaimerNeedness(spawn, quantities) {
+    if (quantities.get('claimer') == 0) {
+        return COOL;
+    }
+    return FREEZE;
+}
 function findCarrierNeedness(spawn, quantities) {
+    if (quantities.get('miner') > 0 && quantities.get('carrier') == 0) {
+        return PAINFUL;
+    }
+    var statistics = data.roomStatistics.get(spawn.room.name);
     if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
         if (statisticallyEnoughCarriers(spawn.room)) {
             return FREEZE;
@@ -110,6 +127,7 @@ function findUpgraderNeedness(spawn, quantities) {
     if (quantities.get('upgrader') < 1) {
         return PAINFUL;
     }
+    var statistics = data.roomStatistics.get(spawn.room.name);
     if (statistics.freeEnergy.isEnoughStatistics()) {
         if (isTherePotentialEnergy(spawn.room)) {
             return DYING - quantities.get('upgrader');
@@ -127,8 +145,11 @@ function findHarvesterNeedness(spawn, quantities) {
     if (harvesters > 2) {
         return FREEZE;
     }
-    if (miners == 0 || carriers == 0) {
+    if (miners == 0) {
         return PAINFUL;
+    }
+    if (carriers == 0) {
+        return WORRYING;
     }
     if (miners == 1) {
         return COOL;
@@ -136,10 +157,11 @@ function findHarvesterNeedness(spawn, quantities) {
     return FREEZE;
 }
 function findBuilderNeedness(spawn, quantities) {
-    var e_1, _a;
-    if (quantities.get('builder') == 0) {
+    var e_2, _a;
+    if (quantities.get('builder') <= 1) {
         return PAINFUL;
     }
+    var statistics = data.roomStatistics.get(spawn.room.name);
     var freeEnergy = statistics.freeEnergy;
     var allowedByResources = freeEnergy.isEnoughStatistics() && isTherePotentialEnergy(spawn.room);
     if (allowedByResources) {
@@ -151,12 +173,12 @@ function findBuilderNeedness(spawn, quantities) {
                 buildingScore += site.progressTotal - site.progress;
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (sites_1_1 && !sites_1_1.done && (_a = sites_1["return"])) _a.call(sites_1);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
         var req = buildingScore == 0 ? 1 : Math.floor(buildingScore / 5000.0 + 1);
         var diff = Math.min(2, req) - quantities.get('builder');
@@ -170,7 +192,7 @@ function findBuilderNeedness(spawn, quantities) {
     return FREEZE;
 }
 function findLongDistanceHarvesterNeedness(spawn, quantities) {
-    if (quantities.get('longDistanceHarvester') >= 3) {
+    if (quantities.get('longDistanceHarvester') >= 4) {
         return FREEZE;
     }
     return COOL;
@@ -183,7 +205,8 @@ function trySpawn(spawn, roleName) {
     var maxEnergy = spawn.room.energyCapacityAvailable;
     var newName = roleName + Game.time;
     var memoryObject = {
-        role: roleName
+        role: roleName,
+        homeRoom: spawn.room
     };
     if (roleName == 'longDistanceHarvester') {
         memoryObject.homeRoom = spawn.room;
@@ -203,9 +226,15 @@ function getCreepConfiguration(roleName, curEnergy) {
     else if (roleName == 'longDistanceHarvester') {
         return assembleLongDistanceHarvester(curEnergy);
     }
+    else if (roleName == 'claimer') {
+        return assembleClaimer(curEnergy);
+    }
     else {
         return bestEmergencyCreep(curEnergy);
     }
+}
+function assembleClaimer(curEnergy) {
+    return [MOVE, MOVE, CLAIM];
 }
 function assembleCarrier(curEnergy) {
     return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE], 750);
@@ -244,7 +273,7 @@ function bestEmergencyCreep(curEnergy) {
     return assembleByChunks(curEnergy, [WORK, MOVE, CARRY], 800);
 }
 function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
-    var e_2, _a;
+    var e_3, _a;
     var ans = [];
     var universalPartCost = 0;
     try {
@@ -253,12 +282,12 @@ function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
             universalPartCost += config.bodyPartCost.get(part);
         }
     }
-    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+    catch (e_3_1) { e_3 = { error: e_3_1 }; }
     finally {
         try {
             if (chunk_1_1 && !chunk_1_1.done && (_a = chunk_1["return"])) _a.call(chunk_1);
         }
-        finally { if (e_2) throw e_2.error; }
+        finally { if (e_3) throw e_3.error; }
     }
     var spentEnergy = 0;
     while (curEnergy >= universalPartCost && spentEnergy < maxEnergyAllowed) {
@@ -269,6 +298,7 @@ function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
     return ans;
 }
 function statisticallyEnoughCarriers(room) {
+    var statistics = data.roomStatistics.get(room.name);
     var containersEnergy = statistics.miningContainersAvailableEnergy;
     var n = containersEnergy.getDataLength();
     var avrg = 0;
@@ -276,10 +306,11 @@ function statisticallyEnoughCarriers(room) {
         avrg += containersEnergy.getAt(i);
     }
     avrg /= n;
-    var totalMinerContainersCapacity = U.minerContainers(room).length * 1000;
-    return avrg <= 0.75 * totalMinerContainersCapacity;
+    var totalMinerContainersCapacity = U.minerContainers(room).length * CONTAINER_CAPACITY;
+    return avrg <= 0.8 * totalMinerContainersCapacity;
 }
 function isTherePotentialEnergy(room) {
+    var statistics = data.roomStatistics.get(room.name);
     var freeEnergy = statistics.freeEnergy;
     var n = freeEnergy.getDataLength();
     var avrg = 0;
@@ -289,5 +320,5 @@ function isTherePotentialEnergy(room) {
     avrg /= n;
     var diff = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
     var containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length;
-    return avrg >= containers * config.lowestToPickup && diff > 1000;
+    return avrg >= containers * config.lowestToPickup && diff > 100;
 }

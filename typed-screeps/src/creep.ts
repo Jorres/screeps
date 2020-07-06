@@ -192,6 +192,12 @@ interface Creep extends RoomObject {
      * @param y Y position of the target in the room.
      * @param opts An object containing pathfinding options flags (see Room.findPath for more info) or one of the following: reusePath, serializeMemory, noPathFinding
      */
+
+    /**
+     * Custom call, does the same that moveTo + gathers some arbitrary statistics
+     */
+    statMoveTo(target: any, opts?: MoveToOpts): CreepMoveReturnCode | ERR_NO_PATH | ERR_INVALID_TARGET;
+    
     moveTo(x: number, y: number, opts?: MoveToOpts): CreepMoveReturnCode | ERR_NO_PATH | ERR_INVALID_TARGET;
     /**
      * Find the optimal path to the target within the same room and move to it.

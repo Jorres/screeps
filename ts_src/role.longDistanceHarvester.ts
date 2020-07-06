@@ -29,7 +29,7 @@ var roleLondDistanceHarvester: RoleLongDistanceHarvester = {
             this.run(creep, 'carry');
         } else {
             if (creep.room.name == creep.memory.targetRoomName) {
-                let target = creep.room.find(FIND_SOURCES)[0];
+                let target = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
                 U.moveAndHarvest(creep, target);
             } else {
                 let exit = creep.room.findExitTo(creep.memory.targetRoomName);

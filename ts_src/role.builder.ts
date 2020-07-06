@@ -2,6 +2,10 @@
 var U = require('U');
 // @ts-ignore
 var storageSelector = require('storageSelector');
+// @ts-ignore
+var data: DataStorage = require('data');
+// @ts-ignore
+var config: Config = require('config');
 
 var roleBuilder: RoleBuilder = {
     run: function(creep: Creep, newState ?: AutomataState) {
@@ -28,6 +32,7 @@ var roleBuilder: RoleBuilder = {
 
     gatheringState: function(creep: Creep): void {
         if (creep.store.getFreeCapacity() == 0) {
+            this.freeGatheringPlace(creep);
             this.run(creep, 'important');
         } else {
             let targetId = storageSelector.selectStorageId(creep);
@@ -120,7 +125,8 @@ var roleBuilder: RoleBuilder = {
 
     // repairingDestId
     reselectRepairingDst: function(creep: Creep): void {
-        if (creep.memory.repairingDestId) {
+        let oldId = creep.memory.repairingDestId;
+        if (oldId && U.getById(oldId).hitsMax != U.getById(oldId).hits) {
             return;
         }
 
@@ -151,7 +157,22 @@ var roleBuilder: RoleBuilder = {
             (structure) => {
                 return structure.hitsMax - structure.hits;
             });
-    }
+    },
+
+    freeGatheringPlace(creep: Creep): void {
+        for (let x = creep.pos.x - 1; x <= creep.pos.x + 1; x++) {
+            for (let y = creep.pos.y - 1; y <= creep.pos.y + 1; y++) {
+                if (data.terrainData.get(creep.room.name).get(x, y) != TERRAIN_MASK_WALL) {
+                    creep.memory.actionTaken = true;
+                    creep.statMoveTo(new RoomPosition(x, y, creep.room.name), {
+                        reusePath: config.reusePath, 
+                        visualizePathStyle: {stroke: '#ffffff'}
+                    });
+                    return;
+                }
+            }
+        }
+    },
 };
 
 // @ts-ignore

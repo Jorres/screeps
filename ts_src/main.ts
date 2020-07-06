@@ -2,6 +2,8 @@
 require('initialize')();
 // @ts-ignore
 require('behaviour.spawn')();
+// @ts-ignore
+require('behaviour.creep')();
 
 // @ts-ignore
 var roleUpgrader = require('role.upgrader');
@@ -20,15 +22,13 @@ var roleLongDistanceHarvester = require('role.longDistanceHarvester');
 // @ts-ignore
 var towerBehaviour = require('behaviour.tower');
 // @ts-ignore
-var data = require('data');
+var data: DataStorage = require('data');
 // @ts-ignore
 var config: Config = require('config');
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
 var architectGeneral = require('architect.general');
-// @ts-ignore
-var statistics: Statistics = require('statistics');
 
 function isTower(structure: Structure): structure is StructureTower {
     return structure.structureType == STRUCTURE_TOWER;
@@ -42,35 +42,33 @@ module.exports.loop = function() {
     // checkGeneratePixel();
     U.cleanupDeadCreeps();
 
-    let visited: Set<string> = new Set();
     for (let spawnName in Game.spawns) {
         let spawn: StructureSpawn = Game.spawns[spawnName];
-
         spawn.trySpawningProcess();
+    }
 
-        if (!visited.has(spawn.room.name)) {
-            let structures = spawn.room.find(FIND_STRUCTURES);
-            for (let structure of structures) {
-                if (isTower(structure)) {
-                    towerBehaviour.run(structure);
-                }
+    for (let roomName of config.ownedRooms) {
+        let room = Game.rooms[roomName];
+        let structures = room.find(FIND_STRUCTURES);
+        for (let structure of structures) {
+            if (isTower(structure)) {
+                towerBehaviour.run(structure);
             }
+        }
 
-            if (U.oncePerTicks(5)) {
-                architectGeneral.run(spawn.room);
-            }
-            if (U.oncePerTicks(statistics.intervalBetweenMeasurement)) {
-                statistics.run(spawn.room);
-            }
+        if (U.oncePerTicks(5)) {
+            architectGeneral.run(room);
+        }
 
-            visited.add(spawn.room.name);
+        let statistics: Statistics = data.roomStatistics.get(roomName);
+        if (U.oncePerTicks(statistics.intervalBetweenMeasurement)) {
+            statistics.run(room);
         }
     }
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         creep.memory.actionTaken = false;
-
 
         let role = creep.memory.role;
         if (role == 'upgrader') {

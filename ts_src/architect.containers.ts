@@ -1,5 +1,5 @@
 // @ts-ignore
-var data = require('data');
+var data: DataStorage = require('data');
 // @ts-ignore
 var U = require('U');
 
@@ -27,13 +27,21 @@ var architectContainers = {
                     break;
                 }
             }
+            for (let site of containerSites) {
+                if (!U.nextToAnyOf(site.pos, sources)) {
+                    storageContainersPresent = true;
+                    break;
+                }
+            }
+
             if (!storageContainersPresent) {
+                let foundPos = false;
                 let spawn = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_SPAWN))[0];
-                for (let x = spawn.pos.x - 2; x <= spawn.pos.x + 2; x++) {
-                    for (let y = spawn.pos.x - 2; y <= spawn.pos.y + 2; y++) {
+                for (let x = spawn.pos.x - 2; !foundPos && x <= spawn.pos.x + 2; x++) {
+                    for (let y = spawn.pos.x - 2; !foundPos && y <= spawn.pos.y + 2; y++) {
                         if (data.terrainData.get(room.name).get(x, y) != TERRAIN_MASK_WALL) {
                             new RoomPosition(x, y, room.name).createConstructionSite(STRUCTURE_CONTAINER);
-                            break;
+                            foundPos = true;
                         }
                     }
                 }

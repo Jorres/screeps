@@ -8,10 +8,26 @@ interface Memory {
 
 interface CreepMemory {
     role: string;
-    autoState ?: 'harvest'|'noop'|'carry'|'mine'|'upgrade'|'collect'|'tryRepair'|'tryBuild'|'drop'|'carryingTo'|'carryingFrom';
+    autoState ?: AutomataState;
+    autoFunc ?: (creep: Creep) => void;
     currentActiveDestinationId ?: string;
     mineId     ?: string;
     carryingId ?: string;
+    actionTaken ?: boolean;
+    sourceDestId ?: string;
+    storageDestId ?: string;
+    repairingDestId ?: string;
+    buildingDestId ?: string;
+    importantDestId ?: string;
+    carryingToId ?: string;
+    carryingFromId ?: string;
+    fixed ?: string;
+    pickingResource ?: boolean;
+
+    homeRoom ?: Room;
+    targetRoomName ?: string;
+
+    prevPos ?: Pair<number, number>;
 }
 interface FlagMemory {}
 interface PowerCreepMemory {}

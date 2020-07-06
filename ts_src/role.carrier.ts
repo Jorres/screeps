@@ -1,7 +1,7 @@
 // @ts-ignore
 var U = require('U');
 // @ts-ignore
-var data = require('data');
+var data: DataStorage = require('data');
 // @ts-ignore
 var storageSelector = require('storageSelector');
 
