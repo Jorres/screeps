@@ -13,12 +13,15 @@ var config = require('config');
 var statisticsFactory = require('statisticsFactory');
 var data = {
     terrainData: new Map(),
+    ownedRooms: new Set(),
     minesReservationMap: new Map(),
     roomStatistics: new Map(),
     initialize: function () {
         var e_1, _a, e_2, _b;
+        this.ownedRooms.add('E7N9');
+        this.ownedRooms.add('E8N8');
         try {
-            for (var _c = __values(config.ownedRooms), _d = _c.next(); !_d.done; _d = _c.next()) {
+            for (var _c = __values(this.ownedRooms), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var roomName = _d.value;
                 this.roomStatistics.set(roomName, statisticsFactory.createNewStatistics());
             }
@@ -31,7 +34,7 @@ var data = {
             finally { if (e_1) throw e_1.error; }
         }
         try {
-            for (var _e = __values(config.ownedRooms), _f = _e.next(); !_f.done; _f = _e.next()) {
+            for (var _e = __values(this.ownedRooms), _f = _e.next(); !_f.done; _f = _e.next()) {
                 var roomName = _f.value;
                 this.terrainData.set(roomName, new Room.Terrain(roomName));
             }
@@ -43,6 +46,11 @@ var data = {
             }
             finally { if (e_2) throw e_2.error; }
         }
+    },
+    appendNewRoom: function (roomName) {
+        this.ownedRooms.add(roomName);
+        this.roomStatistics.set(roomName, statisticsFactory.createNewStatistics());
+        this.terrainData.set(roomName, new Room.Terrain(roomName));
     }
 };
 module.exports = data;

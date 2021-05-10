@@ -51,7 +51,7 @@ function decideWhoIsNeeded(spawn) {
     var e_1, _a;
     var roleNames = ['miner', 'carrier', 'upgrader',
         'builder', 'harvester', 'claimer',
-        'longDistanceHarvester', 'claimer'];
+        'longDistanceHarvester'];
     var quantities = new Map();
     try {
         for (var roleNames_1 = __values(roleNames), roleNames_1_1 = roleNames_1.next(); !roleNames_1_1.done; roleNames_1_1 = roleNames_1.next()) {
@@ -67,10 +67,11 @@ function decideWhoIsNeeded(spawn) {
         finally { if (e_1) throw e_1.error; }
     }
     var roles = [];
+    roles.push({ first: findMinerNeedness(spawn, quantities), second: 'miner' });
     roles.push({ first: findHarvesterNeedness(spawn, quantities), second: 'harvester' });
+    roles.push({ first: findClaimerNeedness(spawn, quantities), second: 'claimer' });
     roles.push({ first: findCarrierNeedness(spawn, quantities), second: 'carrier' });
     roles.push({ first: findUpgraderNeedness(spawn, quantities), second: 'upgrader' });
-    roles.push({ first: findMinerNeedness(spawn, quantities), second: 'miner' });
     roles.push({ first: findBuilderNeedness(spawn, quantities), second: 'builder' });
     roles.push({ first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester' });
     roles.sort(function (a, b) {
@@ -103,6 +104,9 @@ function findMinerNeedness(spawn, quantities) {
     return FREEZE;
 }
 function findClaimerNeedness(spawn, quantities) {
+    if (data.ownedRooms.has(config.curExpansionName)) {
+        return FREEZE;
+    }
     if (quantities.get('claimer') == 0) {
         return COOL;
     }
@@ -114,7 +118,7 @@ function findCarrierNeedness(spawn, quantities) {
     }
     var statistics = data.roomStatistics.get(spawn.room.name);
     if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
-        if (statisticallyEnoughCarriers(spawn.room)) {
+        if (enoughCarriers(spawn.room)) {
             return FREEZE;
         }
         else {
@@ -201,20 +205,35 @@ function trySpawn(spawn, roleName) {
     if (spawn.spawning) {
         return ERR_BUSY;
     }
-    var curEnergy = spawn.room.energyAvailable;
-    var maxEnergy = spawn.room.energyCapacityAvailable;
     var newName = roleName + Game.time;
     var memoryObject = {
         role: roleName,
         homeRoom: spawn.room
     };
     if (roleName == 'longDistanceHarvester') {
-        memoryObject.homeRoom = spawn.room;
         memoryObject.targetRoomName = config.distantRoomToMine;
     }
+    modifyIfDueForExpansion(spawn.room, roleName, memoryObject);
+    var curEnergy = spawn.room.energyAvailable;
     var boundEnergy = Math.min(curEnergy, 800);
     var creepConfiguration = getCreepConfiguration(roleName, boundEnergy);
     return spawn.spawnCreep(creepConfiguration, newName, { memory: memoryObject });
+}
+function modifyIfDueForExpansion(room, roleName, memoryObject) {
+    var expansionRoom = Game.rooms[config.curExpansionName];
+    if (!expansionRoom) {
+        return;
+    }
+    if (roleName == 'builder'
+        && U.getRoleSpecificCreeps(room, 'builder') > 0
+        && U.getRoleSpecificCreeps(expansionRoom, 'builder') < 2) {
+        memoryObject.homeRoom = expansionRoom;
+    }
+    if (roleName == 'upgrader'
+        && U.getRoleSpecificCreeps(room, 'upgrader') > 1
+        && U.getRoleSpecificCreeps(expansionRoom, 'upgrader') == 0) {
+        memoryObject.homeRoom = expansionRoom;
+    }
 }
 function getCreepConfiguration(roleName, curEnergy) {
     if (roleName == 'miner') {
@@ -240,7 +259,7 @@ function assembleCarrier(curEnergy) {
     return assembleByChunks(curEnergy, [CARRY, CARRY, MOVE], 750);
 }
 function assembleLongDistanceHarvester(curEnergy) {
-    return assembleByChunks(curEnergy, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE]);
+    return assembleByChunks(curEnergy, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE], 800);
 }
 function assembleMiner(curEnergy) {
     var sourceCapacity = 3000;
@@ -297,7 +316,7 @@ function assembleByChunks(curEnergy, chunk, maxEnergyAllowed) {
     }
     return ans;
 }
-function statisticallyEnoughCarriers(room) {
+function enoughCarriers(room) {
     var statistics = data.roomStatistics.get(room.name);
     var containersEnergy = statistics.miningContainersAvailableEnergy;
     var n = containersEnergy.getDataLength();
@@ -307,7 +326,37 @@ function statisticallyEnoughCarriers(room) {
     }
     avrg /= n;
     var totalMinerContainersCapacity = U.minerContainers(room).length * CONTAINER_CAPACITY;
+    var freeCapacity = calcFreeCapacity(room);
+    if (freeCapacity < 1) {
+        return true;
+    }
     return avrg <= 0.8 * totalMinerContainersCapacity;
+}
+function calcFreeCapacity(room) {
+    var e_4, _a;
+    var ans = 0;
+    var sources = room.find(FIND_SOURCES);
+    var containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+    try {
+        for (var containers_1 = __values(containers), containers_1_1 = containers_1.next(); !containers_1_1.done; containers_1_1 = containers_1.next()) {
+            var container = containers_1_1.value;
+            if (!U.nextToAnyOf(container.pos, sources)) {
+                ans += container.store.getFreeCapacity(RESOURCE_ENERGY) / CONTAINER_CAPACITY;
+            }
+        }
+    }
+    catch (e_4_1) { e_4 = { error: e_4_1 }; }
+    finally {
+        try {
+            if (containers_1_1 && !containers_1_1.done && (_a = containers_1["return"])) _a.call(containers_1);
+        }
+        finally { if (e_4) throw e_4.error; }
+    }
+    var storage = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_STORAGE))[0];
+    if (storage) {
+        ans += storage.store.getFreeCapacity(RESOURCE_ENERGY);
+    }
+    return ans;
 }
 function isTherePotentialEnergy(room) {
     var statistics = data.roomStatistics.get(room.name);
@@ -320,5 +369,5 @@ function isTherePotentialEnergy(room) {
     avrg /= n;
     var diff = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
     var containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length;
-    return avrg >= containers * config.lowestToPickup && diff > 100;
+    return avrg >= containers * config.lowestToPickup && diff > 0;
 }

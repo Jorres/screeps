@@ -64,6 +64,9 @@ var U = {
     moveAndReserve: function (creep, target) {
         return this.defaultAction(creep, target, function () { return creep.reserveController(target); });
     },
+    moveAndClaim: function (creep, target) {
+        return this.defaultAction(creep, target, function () { return creep.claimController(target); });
+    },
     defaultAction: function (creep, target, action) {
         var actionRes = action();
         var moveRes = -1;
@@ -196,6 +199,14 @@ var U = {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min;
+    },
+    dealWithStartAutoState: function (creep, newState, defaultState) {
+        if (newState) {
+            creep.memory.autoState = newState;
+        }
+        else if (!creep.memory.autoState) {
+            creep.memory.autoState = defaultState;
+        }
     }
 };
 module.exports = U;

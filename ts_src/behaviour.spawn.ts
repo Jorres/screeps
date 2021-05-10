@@ -4,6 +4,7 @@ var config: Config = require('config');
 var data: DataStorage = require('data');
 // @ts-ignore
 var U = require('U');
+
 const FREEZE = 10;
 const COOL = 11;
 const WORRYING = 12;
@@ -47,19 +48,19 @@ function hasCarrying(spawn: StructureSpawn): boolean {
 
 function decideWhoIsNeeded(spawn: StructureSpawn): CreepRoles|null {
     let roleNames: CreepRoles[] = ['miner', 'carrier', 'upgrader', 
-                                   'builder', 'harvester', 'claimer', 
-                                   'longDistanceHarvester', 'claimer'];
+        'builder', 'harvester', 'claimer', 
+        'longDistanceHarvester'];
     let quantities: Map<CreepRoles, number> = new Map();
     for (let role of roleNames) {
         quantities.set(role, U.getRoleSpecificCreeps(spawn.room, role));
     }
 
     let roles: Pair<number, CreepRoles>[] = [];
+    roles.push({first: findMinerNeedness(spawn, quantities), second: 'miner'});
     roles.push({first: findHarvesterNeedness(spawn, quantities), second: 'harvester'});
-    // roles.push({first: findClaimerNeedness(spawn, quantities), second: 'claimer'});
+    roles.push({first: findClaimerNeedness(spawn, quantities), second: 'claimer'});
     roles.push({first: findCarrierNeedness(spawn, quantities), second: 'carrier'});
     roles.push({first: findUpgraderNeedness(spawn, quantities), second: 'upgrader'});
-    roles.push({first: findMinerNeedness(spawn, quantities), second: 'miner'});
     roles.push({first: findBuilderNeedness(spawn, quantities), second: 'builder'});
     roles.push({first: findLongDistanceHarvesterNeedness(spawn, quantities), second: 'longDistanceHarvester'});
 
@@ -97,9 +98,14 @@ function findMinerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, nu
 }
 
 function findClaimerNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, number>): number {
+    if (data.ownedRooms.has(config.curExpansionName)) {
+        return FREEZE;
+    }
+
     if (quantities.get('claimer') == 0) {
         return COOL;
     }
+
     return FREEZE;
 }
 
@@ -110,7 +116,7 @@ function findCarrierNeedness(spawn: StructureSpawn, quantities: Map<CreepRoles, 
 
     let statistics: Statistics = data.roomStatistics.get(spawn.room.name);
     if (statistics.miningContainersAvailableEnergy.isEnoughStatistics()) {
-        if (statisticallyEnoughCarriers(spawn.room)) {
+        if (enoughCarriers(spawn.room)) {
             return FREEZE;
         } else {
             return DYING;
@@ -194,9 +200,6 @@ function trySpawn(spawn: StructureSpawn, roleName: CreepRoles): number {
         return ERR_BUSY;
     }
 
-    let curEnergy = spawn.room.energyAvailable;
-    let maxEnergy = spawn.room.energyCapacityAvailable;
-
     let newName = roleName + Game.time;
     let memoryObject: CreepMemory = {
         role: roleName,
@@ -204,13 +207,34 @@ function trySpawn(spawn: StructureSpawn, roleName: CreepRoles): number {
     };
 
     if (roleName == 'longDistanceHarvester') {
-        memoryObject.homeRoom = spawn.room;
         memoryObject.targetRoomName = config.distantRoomToMine;
     }
 
+    modifyIfDueForExpansion(spawn.room, roleName, memoryObject);
+
+    let curEnergy = spawn.room.energyAvailable;
     let boundEnergy = Math.min(curEnergy, 800);
     let creepConfiguration = getCreepConfiguration(roleName, boundEnergy);
     return spawn.spawnCreep(creepConfiguration, newName, {memory: memoryObject});
+}
+
+function modifyIfDueForExpansion(room: Room, roleName: CreepRoles, memoryObject: CreepMemory): void {
+    let expansionRoom = Game.rooms[config.curExpansionName];
+    if (!expansionRoom) {
+        return;
+    }
+
+    if (roleName == 'builder' 
+        && U.getRoleSpecificCreeps(room, 'builder') > 0 
+        && U.getRoleSpecificCreeps(expansionRoom, 'builder') < 2) {
+        memoryObject.homeRoom = expansionRoom;
+    }
+
+    if (roleName == 'upgrader' 
+        && U.getRoleSpecificCreeps(room, 'upgrader') > 1 
+        && U.getRoleSpecificCreeps(expansionRoom, 'upgrader') == 0) {
+        memoryObject.homeRoom = expansionRoom;
+    }
 }
 
 function getCreepConfiguration(roleName: string, curEnergy: number): BodyPartConstant[] {
@@ -236,7 +260,7 @@ function assembleCarrier(curEnergy: number): BodyPartConstant[] {
 }
 
 function assembleLongDistanceHarvester(curEnergy: number): BodyPartConstant[] {
-    return assembleByChunks(curEnergy, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE]);
+    return assembleByChunks(curEnergy, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE], 800);
 }
 
 function assembleMiner(curEnergy: number): BodyPartConstant[] {
@@ -272,7 +296,7 @@ function bestEmergencyCreep(curEnergy: number): BodyPartConstant[] {
     return assembleByChunks(curEnergy, [WORK, MOVE, CARRY], 800);
 }
 
-function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnergyAllowed ?: number): BodyPartConstant[] {
+function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnergyAllowed: number): BodyPartConstant[] {
     let ans: BodyPartConstant[] = [];
     let universalPartCost = 0;
     for (let part of chunk) {
@@ -287,7 +311,7 @@ function assembleByChunks(curEnergy: number, chunk: BodyPartConstant[], maxEnerg
     return ans;
 }
 
-function statisticallyEnoughCarriers(room: Room): boolean {
+function enoughCarriers(room: Room): boolean {
     let statistics: Statistics = data.roomStatistics.get(room.name);
     let containersEnergy: metricArray<number> = statistics.miningContainersAvailableEnergy;
     let n = containersEnergy.getDataLength();
@@ -299,7 +323,29 @@ function statisticallyEnoughCarriers(room: Room): boolean {
     avrg /= n;
 
     let totalMinerContainersCapacity = U.minerContainers(room).length * CONTAINER_CAPACITY;
+
+    let freeCapacity = calcFreeCapacity(room);
+    if (freeCapacity < 1) {
+        return true;
+    }
+
     return avrg <= 0.8 * totalMinerContainersCapacity;
+}
+
+function calcFreeCapacity(room: Room): number {
+    let ans = 0;
+    let sources = room.find(FIND_SOURCES);
+    let containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER));
+    for (let container of containers) {
+        if (!U.nextToAnyOf(container.pos, sources)) {
+            ans += (container as StructureContainer).store.getFreeCapacity(RESOURCE_ENERGY) / CONTAINER_CAPACITY;
+        }
+    }
+    let storage = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_STORAGE))[0];
+    if (storage) {
+        ans += (storage as StructureStorage).store.getFreeCapacity(RESOURCE_ENERGY); // this is like ultimate
+    }
+    return ans;
 }
 
 function isTherePotentialEnergy(room: Room): boolean {
@@ -316,5 +362,5 @@ function isTherePotentialEnergy(room: Room): boolean {
     let diff: number = freeEnergy.getAt(n - 1) - freeEnergy.getAt(0);
     let containers = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_CONTAINER)).length;
 
-    return avrg >= containers * config.lowestToPickup && diff > 100;
+    return avrg >= containers * config.lowestToPickup && diff > 0;
 }

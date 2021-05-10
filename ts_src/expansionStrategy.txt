@@ -1,0 +1,3 @@
+put flag in the room programmatically
+put curExpansionName in config, then flagManager puts it programmatically
+once controller claimed, put roomName in ownedRooms

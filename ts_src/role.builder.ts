@@ -9,11 +9,7 @@ var config: Config = require('config');
 
 var roleBuilder: RoleBuilder = {
     run: function(creep: Creep, newState ?: AutomataState) {
-        if (newState) {
-            creep.memory.autoState = newState;
-        } else if (!creep.memory.autoState) {
-            creep.memory.autoState = 'gather';
-        }
+        U.dealWithStartAutoState(creep, newState, 'gather');
 
         if (creep.memory.actionTaken) {
             return;
@@ -31,6 +27,11 @@ var roleBuilder: RoleBuilder = {
     },
 
     gatheringState: function(creep: Creep): void {
+        if (creep.room.name != creep.memory.homeRoom.name) {
+            creep.statMoveTo(Game.flags['claim']);
+            return;
+        }
+
         if (creep.store.getFreeCapacity() == 0) {
             this.freeGatheringPlace(creep);
             this.run(creep, 'important');

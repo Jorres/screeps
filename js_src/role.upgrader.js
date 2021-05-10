@@ -3,12 +3,7 @@ var config = require('config');
 var storageSelector = require('storageSelector');
 var roleUpgrader = {
     run: function (creep, newState) {
-        if (newState) {
-            creep.memory.autoState = newState;
-        }
-        else if (!creep.memory.autoState) {
-            creep.memory.autoState = 'gather';
-        }
+        U.dealWithStartAutoState(creep, newState, 'gather');
         if (creep.memory.actionTaken) {
             return;
         }
@@ -20,6 +15,10 @@ var roleUpgrader = {
         }
     },
     gatheringState: function (creep) {
+        if (creep.room.name != creep.memory.homeRoom.name) {
+            creep.statMoveTo(Game.flags['claim']);
+            return;
+        }
         if (creep.store.getFreeCapacity() == 0) {
             creep.memory.sourceDestId = null;
             creep.memory.storageDestId = null;

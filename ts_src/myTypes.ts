@@ -59,3 +59,10 @@ type RoleBuilder = {
     reselectImportantDst: (creep: Creep) => void;
     freeGatheringPlace: (creep: Creep) => void;
 };
+
+type RoleMiner = {
+    run: (creep: Creep, newState ?: AutomataState) =>  void;
+    mineState: (creep: Creep) => void;
+    dropState: (creep: Creep) => void;
+    getDesignatedMineId: (creep: Creep) => string;
+};

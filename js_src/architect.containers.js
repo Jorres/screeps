@@ -73,6 +73,9 @@ var architectContainers = {
             if (!storageContainersPresent) {
                 var foundPos = false;
                 var spawn = room.find(FIND_STRUCTURES, U.filterBy(STRUCTURE_SPAWN))[0];
+                if (!spawn) {
+                    return;
+                }
                 for (var x = spawn.pos.x - 2; !foundPos && x <= spawn.pos.x + 2; x++) {
                     for (var y = spawn.pos.x - 2; !foundPos && y <= spawn.pos.y + 2; y++) {
                         if (data.terrainData.get(room.name).get(x, y) != TERRAIN_MASK_WALL) {

@@ -58,6 +58,9 @@ var U = {
     moveAndReserve: function(creep: Creep, target: StructureController) {
         return this.defaultAction(creep, target, () => creep.reserveController(target));
     },
+    moveAndClaim: function(creep: Creep, target: StructureController) {
+        return this.defaultAction(creep, target, () => creep.claimController(target));
+    },
     defaultAction: function(creep: Creep, target: Structure | StructureController | Source | Mineral | Deposit, action: any) {
         let actionRes = action();
         let moveRes = -1;
@@ -162,6 +165,13 @@ var U = {
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min)) + min;
     },
+    dealWithStartAutoState: function(creep: Creep, newState: AutomataState, defaultState: AutomataState) {
+        if (newState) {
+            creep.memory.autoState = newState;
+        } else if (!creep.memory.autoState) {
+            creep.memory.autoState = defaultState;
+        }
+    }
 };
 
 

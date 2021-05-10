@@ -5,11 +5,7 @@ var storageSelector = require('storageSelector');
 
 var roleHarvester: RoleHarvester = {
     run: function(creep: Creep, newState ?: AutomataState) {
-        if (newState) {
-            creep.memory.autoState = newState;
-        } else if (!creep.memory.autoState) {
-            creep.memory.autoState = 'harvest';
-        }
+        U.dealWithStartAutoState(creep, newState, 'harvest');
 
         if (creep.memory.actionTaken) {
             return;

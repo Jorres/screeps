@@ -37,7 +37,7 @@ module.exports.loop = function () {
         spawn.trySpawningProcess();
     }
     try {
-        for (var _c = __values(config.ownedRooms), _d = _c.next(); !_d.done; _d = _c.next()) {
+        for (var _c = __values(data.ownedRooms), _d = _c.next(); !_d.done; _d = _c.next()) {
             var roomName = _d.value;
             var room = Game.rooms[roomName];
             var structures = room.find(FIND_STRUCTURES);
